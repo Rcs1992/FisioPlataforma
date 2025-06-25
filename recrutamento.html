@@ -1,0 +1,463 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Titulação de PEEP</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Certifique-se de que o plugin autoTable está carregado -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <style>
+    /* Reset e configurações básicas */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #eef2f7;
+      color: #333;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1, h2 {
+      color: #005b96;
+      margin-bottom: 10px;
+    }
+    p, ul {
+      margin-bottom: 15px;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    /* Container principal com redução de escala e margem inferior para evitar o banner */
+    .container {
+      max-width: 900px;
+      margin: 0 auto 120px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+      transform: scale(0.95);
+      transform-origin: top center;
+    }
+    /* Botões */
+    .button-container {
+      display: flex;
+      justify-content: flex-start;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    button {
+      background-color: #005b96;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #003f66;
+    }
+    /* Tabelas */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #005b96;
+      color: #fff;
+    }
+    td {
+      background-color: #f9f9f9;
+    }
+    /* Canvas do gráfico */
+    #chart-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+    canvas {
+      max-width: 600px;
+      max-height: 400px;
+    }
+    /* Esconde seções */
+    #step2, #step3 {
+      display: none;
+    }
+    /* Responsividade */
+    @media (max-width: 600px) {
+      button {
+        font-size: 14px;
+        padding: 8px 16px;
+      }
+      th, td {
+        font-size: 14px;
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Titulação Decremental da PEEP</h1>
+
+    <!-- Passo 1 -->
+    <div id="step1">
+      <div class="button-container">
+        <button onclick="goToStep2()">Ir para Passo 2</button>
+      </div>
+      <h2>Passo 1: MODO PCV</h2>
+      <p>Instruções:</p>
+      <ul>
+        <li>Aumentar PEEP para 15 cmH2O e permanecer por 10 segundos</li>
+        <li>Aumentar PEEP para 20 cmH2O e permanecer por 10 segundos</li>
+        <li>Aumentar PEEP para 26 cmH2O e permanecer por 30 segundos</li>
+      </ul>
+      <table>
+        <thead>
+          <tr>
+            <th>Pinsp</th>
+            <th>FR</th>
+            <th>TI</th>
+            <th>I:E</th>
+            <th>FiO2</th>
+            <th>PEEP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>15 cmH2O</td>
+            <td>10 irpm</td>
+            <td>3s</td>
+            <td>1:1</td>
+            <td>100%</td>
+            <td>10 cmH2O</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Passo 2 -->
+    <div id="step2">
+      <div class="button-container">
+        <button onclick="goToStep1()">Retornar ao Início</button>
+        <button onclick="goToStep3()">Ir para Passo 3</button>
+      </div>
+      <h2>Passo 2: MODO VCV e Titulação da PEEP</h2>
+      <p>Configurar: VC de 6 ml/kg, FR 20 irpm, I:E 1:2, FiO2 100%, a partir de PEEP de 26 cmH2O.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>PEEP</th>
+            <th>Pplat (cmH2O)</th>
+            <th>Driving Pressure (DP)</th>
+          </tr>
+        </thead>
+        <tbody id="peepTable">
+          <!-- Linhas serão inseridas via JavaScript -->
+        </tbody>
+      </table>
+      <div id="chart-container">
+        <canvas id="peepChart"></canvas>
+        <div id="minDP" style="margin-top: 10px; font-weight: bold;"></div>
+      </div>
+    </div>
+
+    <!-- Passo 3 -->
+    <div id="step3">
+      <div class="button-container">
+        <button onclick="goToStep1()">Retornar ao Início</button>
+      </div>
+      <h2>Passo 3: MODO PCV</h2>
+      <p>Instruções:</p>
+      <ul>
+        <li>Aumentar PEEP para 15 cmH2O e permanecer por 10 segundos</li>
+        <li>Aumentar PEEP para 20 cmH2O e permanecer por 10 segundos</li>
+        <li>Aumentar PEEP para 26 cmH2O e permanecer por 30 segundos</li>
+      </ul>
+      <table>
+        <thead>
+          <tr>
+            <th>Pinsp</th>
+            <th>FR</th>
+            <th>TI</th>
+            <th>I:E</th>
+            <th>FiO2</th>
+            <th>PEEP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>15 cmH2O</td>
+            <td>10 irpm</td>
+            <td>3s</td>
+            <td>1:1</td>
+            <td>100%</td>
+            <td>10 cmH2O</td>
+          </tr>
+        </tbody>
+      </table>
+      <p id="finalMinDP" style="font-weight: bold;"></p>
+      <!-- Botão para envio do PDF -->
+      <div class="button-container">
+        <button id="sendPdfButton">Enviar PDF por E-mail</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let chartInstance; // Guarda a instância do gráfico
+    let minPEEP; // Armazena a PEEP de menor DP
+
+    function goToStep2() {
+      document.getElementById('step1').style.display = 'none';
+      document.getElementById('step2').style.display = 'block';
+      createPeepTable();
+    }
+
+    function goToStep3() {
+      document.getElementById('step2').style.display = 'none';
+      document.getElementById('step3').style.display = 'block';
+      document.getElementById('finalMinDP').textContent = `A PEEP de menor Driving Pressure é: ${minPEEP} cmH2O`;
+    }
+
+    function goToStep1() {
+      location.reload();
+    }
+
+    function createPeepTable() {
+      const peepValues = [26, 24, 22, 20, 18, 16, 14, 12, 10, 8, 6];
+      const tableBody = document.getElementById('peepTable');
+      tableBody.innerHTML = ''; // Limpa a tabela
+
+      peepValues.forEach(peep => {
+        const row = document.createElement('tr');
+
+        // Coluna PEEP
+        const peepCell = document.createElement('td');
+        peepCell.textContent = peep + ' cmH2O';
+        row.appendChild(peepCell);
+
+        // Coluna Pplat com input
+        const pplatCell = document.createElement('td');
+        const pplatInput = document.createElement('input');
+        pplatInput.type = 'number';
+        pplatInput.style.width = '80px';
+        pplatInput.oninput = calculateDP;
+        pplatCell.appendChild(pplatInput);
+        row.appendChild(pplatCell);
+
+        // Coluna DP
+        const dpCell = document.createElement('td');
+        dpCell.textContent = '-';
+        row.appendChild(dpCell);
+
+        tableBody.appendChild(row);
+      });
+    }
+
+    function calculateDP() {
+      const rows = document.querySelectorAll('#peepTable tr');
+      let minDP = Infinity;
+      minPEEP = null;
+
+      rows.forEach(row => {
+        const peep = parseInt(row.cells[0].textContent);
+        const pplatInput = row.cells[1].querySelector('input');
+        const dpCell = row.cells[2];
+
+        if (pplatInput.value) {
+          const pplat = parseFloat(pplatInput.value);
+          const dp = pplat - peep;
+          dpCell.textContent = dp.toFixed(2);
+
+          if (dp < minDP || (dp === minDP && peep < minPEEP)) {
+            minDP = dp;
+            minPEEP = peep;
+          }
+        } else {
+          dpCell.textContent = '-';
+        }
+      });
+
+      // Atualiza o gráfico se houver dados
+      updateChart();
+    }
+
+    function updateChart() {
+      const rows = document.querySelectorAll('#peepTable tr');
+      const peepValues = [];
+      const dpValues = [];
+
+      rows.forEach(row => {
+        const peep = parseInt(row.cells[0].textContent);
+        const dpText = row.cells[2].textContent;
+        if (dpText !== '-' && !isNaN(dpText)) {
+          peepValues.push(peep);
+          dpValues.push(parseFloat(dpText));
+        }
+      });
+
+      const ctx = document.getElementById('peepChart').getContext('2d');
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: peepValues,
+          datasets: [{
+            label: 'Driving Pressure',
+            data: dpValues,
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 2,
+            fill: false,
+            tension: 0.4,
+            pointBackgroundColor: dpValues.map(dp => dp === Math.min(...dpValues) ? 'red' : 'rgba(75, 192, 192, 1)'),
+            pointRadius: dpValues.map(dp => dp === Math.min(...dpValues) ? 6 : 3)
+          }]
+        },
+        options: {
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'PEEP (cmH2O)'
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Driving Pressure (DP)'
+              }
+            }
+          }
+        }
+      });
+
+      // Exibe a PEEP com menor DP, se houver
+      if (minPEEP !== null) {
+        document.getElementById('minDP').textContent = `A PEEP de menor DP é: ${minPEEP} cmH2O`;
+      }
+    }
+
+    // Função para gerar o PDF e enviar por e-mail
+    async function generateAndSendPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      // Página 1: Passo 1
+      doc.setFontSize(22);
+      doc.text('Titulação Decremental da PEEP', 14, 22);
+      doc.setFontSize(16);
+      doc.text('Passo 1: MODO PCV', 14, 32);
+      doc.setFontSize(12);
+      doc.text(`Instruções:
+- Aumentar PEEP para 15 cmH2O e permanecer por 10 segundos
+- Aumentar PEEP para 20 cmH2O e permanecer por 10 segundos
+- Aumentar PEEP para 26 cmH2O e permanecer por 30 segundos`, 14, 42);
+      doc.autoTable({
+        startY: 70,
+        head: [['Pinsp', 'FR', 'TI', 'I:E', 'FiO2', 'PEEP']],
+        body: [['15 cmH2O', '10 irpm', '3s', '1:1', '100%', '10 cmH2O']]
+      });
+
+      // Página 2: Passo 2 – Titulação com dados dinâmicos
+      doc.addPage();
+      doc.setFontSize(16);
+      doc.text('Passo 2: MODO VCV e Titulação da PEEP', 14, 22);
+      doc.setFontSize(12);
+      doc.text('Configurar: VC de 6 ml/kg, FR 20 irpm, I:E 1:2, FiO2 100%, a partir de PEEP de 26 cmH2O.', 14, 32);
+      
+      // Extrai os dados da tabela de titulação (Passo 2)
+      const tableRows = [];
+      const rows = document.querySelectorAll('#peepTable tr');
+      rows.forEach(row => {
+        const peep = row.cells[0].textContent;
+        const pplat = row.cells[1].querySelector('input').value || '-';
+        const dp = row.cells[2].textContent;
+        tableRows.push([peep, pplat, dp]);
+      });
+      
+      doc.autoTable({
+        startY: 40,
+        head: [['PEEP', 'Pplat (cmH2O)', 'Driving Pressure (DP)']],
+        body: tableRows
+      });
+
+      // Página 3: Gráfico
+      const chartCanvas = document.getElementById('peepChart');
+      if (chartCanvas) {
+        // Converte o canvas para imagem
+        const chartImage = chartCanvas.toDataURL('image/png');
+        doc.addPage();
+        doc.setFontSize(16);
+        doc.text('Gráfico PEEP x Driving Pressure', 14, 22);
+        doc.addImage(chartImage, 'PNG', 14, 30, 180, 120);
+      }
+
+      // Página 4: Exibe a PEEP com menor DP
+      const minDPText = document.getElementById('minDP').textContent;
+      if (minDPText) {
+        doc.addPage();
+        doc.setFontSize(16);
+        doc.text('Menor Driving Pressure', 14, 22);
+        doc.setFontSize(12);
+        doc.text(minDPText, 14, 32);
+      }
+
+      // Página 5: Passo 3
+      doc.addPage();
+      doc.setFontSize(16);
+      doc.text('Passo 3: MODO PCV', 14, 22);
+      doc.setFontSize(12);
+      doc.text(`Instruções:
+- Aumentar PEEP para 15 cmH2O e permanecer por 10 segundos
+- Aumentar PEEP para 20 cmH2O e permanecer por 10 segundos
+- Aumentar PEEP para 26 cmH2O e permanecer por 30 segundos`, 14, 32);
+      doc.autoTable({
+        startY: 60,
+        head: [['Pinsp', 'FR', 'TI', 'I:E', 'FiO2', 'PEEP']],
+        body: [['15 cmH2O', '10 irpm', '3s', '1:1', '100%', '10 cmH2O']]
+      });
+
+      // Converte o PDF para um blob
+      const pdfBlob = doc.output('blob');
+
+      // Cria um FormData para envio
+      const formData = new FormData();
+      formData.append('pdf', pdfBlob, 'titulacao_peep.pdf');
+
+      try {
+        const response = await fetch('http://localhost:3000/send-email', {
+          method: 'POST',
+          body: formData
+        });
+        const result = await response.json();
+        alert(result.message);
+      } catch (error) {
+        console.error('Erro no envio do e-mail:', error);
+        alert('Houve um erro ao enviar o e-mail.');
+      }
+
+      // Opcional: salvar o PDF localmente
+      doc.save('titulacao_peep.pdf');
+    }
+
+    // Vincula o evento ao botão de envio de PDF
+    document.getElementById('sendPdfButton').addEventListener('click', generateAndSendPDF);
+  </script>
+</body>
+</html>
