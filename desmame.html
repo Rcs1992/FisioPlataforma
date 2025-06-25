@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Desmame e Extubação</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+            color: #4CAF50;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"], input[type="email"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        .alert {
+            color: #d9534f;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .success {
+            color: #5bc0de;
+            font-weight: bold;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Formulário de Desmame e Extubação</h1>
+        <div class="section">
+            <h2>Informações do Paciente</h2>
+            <label for="nome">Nome do Paciente:</label>
+            <input type="text" id="nome" required>
+            <label for="prontuario">Prontuário:</label>
+            <input type="text" id="prontuario" required>
+        </div>
+
+        <div class="section">
+            <h2>Estratégia de Desmame</h2>
+            <label><input type="radio" name="estrategia" value="pecaT"> TRE em Peça T</label>
+            <label><input type="radio" name="estrategia" value="ps5"> TRE com PS 5 e PEEP de 5</label>
+        </div>
+
+        <div class="section">
+            <h2>Dados do TRE</h2>
+            <label for="irrs-inicio">IRRS no Início:</label>
+            <input type="number" id="irrs-inicio" required>
+            <label for="irrs-fim">IRRS no Fim:</label>
+            <input type="number" id="irrs-fim" required>
+        </div>
+
+        <div class="section">
+            <h2>Pressão Inspiratória Máxima</h2>
+            <label for="pressao-inspiratoria">Pressão Inspiratória Máxima (cmH2O):</label>
+            <input type="number" id="pressao-inspiratoria" required>
+        </div>
+
+        <div class="section">
+            <h2>Cuff Leak Test</h2>
+            <label><input type="radio" name="cuff" value="positivo"> Positivo</label>
+            <label><input type="radio" name="cuff" value="negativo"> Negativo</label>
+        </div>
+
+        <div class="section">
+            <h2>Email para Envio</h2>
+            <label for="email">Endereço de Email:</label>
+            <input type="email" id="email" required>
+        </div>
+
+        <div class="section">
+            <button onclick="validarTRE()">Validar TRE</button>
+            <button onclick="gerarPDF()">Gerar PDF</button>
+            <button onclick="enviarEmail()">Enviar Email</button>
+        </div>
+
+        <div class="section">
+            <h2>Mensagens de Validação</h2>
+            <div id="mensagem-validacao"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        function validarTRE() {
+            let nome = document.getElementById("nome").value;
+            let prontuario = document.getElementById("prontuario").value;
+            let estrategia = document.querySelector('input[name="estrategia"]:checked');
+            let irrsInicio = document.getElementById("irrs-inicio").value;
+            let irrsFim = document.getElementById("irrs-fim").value;
+            let pressaoInspiratoria = document.getElementById("pressao-inspiratoria").value;
+            let cuffLeak = document.querySelector('input[name="cuff"]:checked');
+            let mensagemValidacao = document.getElementById("mensagem-validacao");
+
+            if (!nome || !prontuario || !estrategia || !irrsInicio || !irrsFim || !pressaoInspiratoria || !cuffLeak) {
+                mensagemValidacao.innerHTML = '<span class="alert">Por favor, preencha todos os campos antes de validar.</span>';
+                return false;
+            }
+
+            let estrategiaValue = estrategia.value;
+            let irrsInicioValue = parseFloat(irrsInicio);
+            let irrsFimValue = parseFloat(irrsFim);
+            let pressaoInspiratoriaValue = parseFloat(pressaoInspiratoria);
+            let cuffLeakValue = cuffLeak.value;
+
+            let alertas = '';
+            let corteIRRS = estrategiaValue === 'pecaT' ? 105 : 75;
+            let variacaoIRRS = verificarVariacaoIRRS(irrsInicioValue, irrsFimValue);
+
+            if (irrsFimValue >= corteIRRS) {
+                alertas += 'A IRRS no final está acima do ponto de corte, indicando risco de falha de extubação.<br>';
+            }
+
+            if (variacaoIRRS) {
+                alertas += variacaoIRRS + '<br>';
+            }
+
+            if (pressaoInspiratoriaValue < 20) {
+                alertas += 'A pressão inspiratória máxima está abaixo do ponto de corte, indicando fraqueza muscular que pode prejudicar o desmame.<br>';
+            }
+
+            if (cuffLeakValue === 'negativo') {
+                alertas += 'O cuff leak test foi negativo. O fisioterapeuta deve conversar com o médico sobre o uso de corticoide.<br>';
+            }
+
+            if (alertas === '') {
+                mensagemValidacao.innerHTML = '<span class="success">Todos os dados estão corretos e não há alertas.</span>';
+            } else {
+                mensagemValidacao.innerHTML = alertas;
+            }
+
+            return true;
+        }
+
+        function verificarVariacaoIRRS(irrsInicio, irrsFim) {
+            if (irrsFim > irrsInicio) {
+                let variacao = ((irrsFim - irrsInicio) / irrsInicio) * 100;
+                if (variacao >= 20) {
+                    return `A variação do IRRS foi de ${variacao.toFixed(2)}%, sugerindo risco de falha de extubação.`;
+                }
+            }
+            return '';
+        }
+
+        function gerarPDF() {
+            if (!validarTRE()) return;
+
+            const { jsPDF } = window.jspdf;
+            let doc = new jsPDF();
+
+            let nome = document.getElementById("nome").value;
+            let prontuario = document.getElementById("prontuario").value;
+            let estrategia = document.querySelector('input[name="estrategia"]:checked').value;
+            let irrsInicio = document.getElementById("irrs-inicio").value;
+            let irrsFim = document.getElementById("irrs-fim").value;
+            let pressaoInspiratoria = document.getElementById("pressao-inspiratoria").value;
+            let cuffLeak = document.querySelector('input[name="cuff"]:checked').value;
+            let mensagemValidacao = document.getElementById("mensagem-validacao").innerHTML;
+
+            doc.setFontSize(16);
+            doc.setFont("helvetica", "bold");
+            doc.text("Relatório de Desmame e Extubação", 20, 20);
+
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Nome do Paciente: ${nome}`, 20, 40);
+            doc.text(`Prontuário: ${prontuario}`, 20, 50);
+            doc.text(`Estratégia de Desmame: ${estrategia}`, 20, 60);
+            doc.text(`IRRS no Início: ${irrsInicio}`, 20, 70);
+            doc.text(`IRRS no Fim: ${irrsFim}`, 20, 80);
+            doc.text(`Pressão Inspiratória Máxima: ${pressaoInspiratoria}`, 20, 90);
+            doc.text(`Cuff Leak Test: ${cuffLeak}`, 20, 100);
+
+            if (mensagemValidacao) {
+                doc.text("Mensagens de Validação:", 20, 120);
+                doc.setFont("helvetica", "italic");
+                doc.text(mensagemValidacao.replace(/<br>/g, "\n").trim(), 20, 130);
+            }
+
+            doc.save('relatorio-desmame-extubacao.pdf');
+        }
+
+        function enviarEmail() {
+            if (!validarTRE()) return;
+
+            let nome = document.getElementById("nome").value;
+            let prontuario = document.getElementById("prontuario").value;
+            let estrategia = document.querySelector('input[name="estrategia"]:checked').value;
+            let irrsInicio = document.getElementById("irrs-inicio").value;
+            let irrsFim = document.getElementById("irrs-fim").value;
+            let pressaoInspiratoria = document.getElementById("pressao-inspiratoria").value;
+            let cuffLeak = document.querySelector('input[name="cuff"]:checked').value;
+            let email = document.getElementById("email").value;
+            let mensagemValidacao = document.getElementById("mensagem-validacao").innerHTML;
+
+            let dadosPaciente = `
+                Nome: ${nome}
+                Prontuário: ${prontuario}
+                Estratégia de Desmame: ${estrategia}
+                IRRS Início: ${irrsInicio}
+                IRRS Fim: ${irrsFim}
+                Pressão Inspiratória Máxima: ${pressaoInspiratoria}
+                Cuff Leak Test: ${cuffLeak}
+                \nMensagens de Validação: ${mensagemValidacao.replace(/<br>/g, "\n")}
+            `;
+
+            window.open(`mailto:${email}?subject=Dados do Paciente&body=${encodeURIComponent(dadosPaciente)}`);
+        }
+    </script>
+</body>
+</html>
+
+
