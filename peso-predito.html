@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculadora VM - Peso Predito</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s ease-in-out;
+    }
+
+    body {
+      background: linear-gradient(to right, #0d47a1, #1565c0);
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #ffffff;
+    }
+
+    .card {
+      background: #1e2a38;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 420px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #90caf9;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      font-weight: 600;
+      margin-top: 1rem;
+      display: block;
+      color: #bbdefb;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 0.4rem;
+      border-radius: 8px;
+      border: 1px solid #5c6bc0;
+      font-size: 1rem;
+      background-color: #283a52;
+      color: #ffffff;
+    }
+
+    input:focus, select:focus {
+      border-color: #82b1ff;
+      background-color: #324965;
+      outline: none;
+    }
+
+    button {
+      margin-top: 1.8rem;
+      width: 100%;
+      padding: 0.9rem;
+      background-color: #1976d2;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0d47a1;
+    }
+
+    .resultado {
+      margin-top: 2rem;
+      padding: 1.2rem;
+      background-color: #2e3e56;
+      border-left: 5px solid #42a5f5;
+      border-radius: 8px;
+      color: #e3f2fd;
+    }
+
+    .resultado strong {
+      display: block;
+      margin-bottom: 0.6rem;
+    }
+
+    .info-line {
+      margin: 0.3rem 0;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 1.5rem;
+      }
+
+      h2 {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Cálculo VM: Peso Predito e Volume Corrente</h2>
+
+    <label for="altura">📏 Altura (cm):</label>
+    <input type="number" id="altura" placeholder="Ex: 170" />
+
+    <label for="genero">⚧️ Gênero:</label>
+    <select id="genero">
+      <option value="">Selecione o gênero</option>
+      <option value="masculino">Masculino</option>
+      <option value="feminino">Feminino</option>
+    </select>
+
+    <button onclick="calcular()">Calcular</button>
+
+    <div class="resultado" id="resultado"></div>
+  </div>
+
+  <script>
+    function calcular() {
+      const altura = parseFloat(document.getElementById("altura").value);
+      const genero = document.getElementById("genero").value;
+      const resultadoDiv = document.getElementById("resultado");
+
+      if (!altura || !genero) {
+        resultadoDiv.innerHTML = "<strong>⚠️ Preencha todos os campos corretamente.</strong>";
+        return;
+      }
+
+      let pesoPredito;
+      if (genero === "masculino") {
+        pesoPredito = 50 + 0.91 * (altura - 152.4);
+      } else {
+        pesoPredito = 45.5 + 0.91 * (altura - 152.4);
+      }
+
+      pesoPredito = pesoPredito.toFixed(2);
+
+      const volumes = {
+        "5 mL/kg": (pesoPredito * 5).toFixed(1),
+        "6 mL/kg": (pesoPredito * 6).toFixed(1),
+        "7 mL/kg": (pesoPredito * 7).toFixed(1),
+        "8 mL/kg": (pesoPredito * 8).toFixed(1),
+      };
+
+      resultadoDiv.innerHTML = `
+        <strong>✅ Peso Predito:</strong>
+        <div class="info-line">${pesoPredito} kg</div>
+
+        <strong>💨 Volume Corrente Ideal:</strong>
+        <div class="info-line">• 5 mL/kg: ${volumes["5 mL/kg"]} mL</div>
+        <div class="info-line">• 6 mL/kg: ${volumes["6 mL/kg"]} mL</div>
+        <div class="info-line">• 7 mL/kg: ${volumes["7 mL/kg"]} mL</div>
+        <div class="info-line">• 8 mL/kg: ${volumes["8 mL/kg"]} mL</div>
+      `;
+    }
+  </script>
+</body>
+</html>
