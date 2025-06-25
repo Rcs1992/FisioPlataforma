@@ -1,481 +1,289 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus 5 Momentos para Higiene das Mãos - Fisioterapia CER Leblon</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Press Start 2P', cursive;
-            background-color: #1a1a1a;
-            color: #f2f2f2;
-            text-align: center;
-            padding: 20px;
-        }
-
-        h1 {
-            color: #00ff99;
-            font-size: 36px;
-            text-shadow: 2px 2px #000;
-            margin-bottom: 40px;
-        }
-
-        p {
-            font-size: 18px;
-            color: #ffdd59;
-            margin-bottom: 40px;
-        }
-
-        button {
-            background-color: #f39c12;
-            color: white;
-            padding: 15px 30px;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
-            font-family: 'Press Start 2P', cursive;
-        }
-
-        button:hover {
-            background-color: #00ff99;
-            transform: translateY(-3px);
-        }
-
-        @keyframes bgAnimation {
-            0% { background-position: 0 0; }
-            100% { background-position: 100% 100%; }
-        }
-
-        body {
-            background: radial-gradient(circle, #1a1a1a, #000) repeat;
-            animation: bgAnimation 20s linear infinite;
-        }
-
-        #gameContent {
-            display: none;
-            /* Estilos específicos para a área do jogo */
-        }
-    </style>
-</head>
-<body>
-
-    <!-- Página inicial -->
-    <div id="intro">
-        <h1>Meus 5 Momentos para Higiene das Mãos</h1>
-        <p>Embarque em uma Missão para Salvar Vidas e Prevenir Infecções!</p>
-        <button onclick="startGame()">Pronto para salvar vidas</button>
-    </div>
-
-    <!-- Conteúdo do jogo -->
-    <div id="gameContent">
-        <h2>O jogo começa aqui!</h2>
-        <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>5 Momentos da Lavagem das Mãos - Serviço de Fisioterapia</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Press Start 2P', cursive;
-            background-color: #1a1a1a;
-            color: #f2f2f2;
-            text-align: center;
-            padding: 20px;
-            margin: 1;
-        }
-
-        h1 {
-            color: #00ff99;
-            font-size: 28px;
-            text-shadow: 2px 2px #000;
-            margin-bottom: 40px;
-        }
-
-        #message, #result, #explanation, #lives, #score {
-            margin: 20px 0;
-            font-size: 18px;
-        }
-
-        #result {
-            font-size: 24px;
-            font-weight: bold;
-            opacity: 0;
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-
-        .show {
-            opacity: 1;
-            transform: scale(1.1);
-        }
-button {
-    background-color: #f39c12;
-    padding: 15px;
-    font-size: 18px;
-    border: 2px solid #f39c12;
-    border-radius: 0;
-    box-shadow: 4px 4px 0px #000;
-    text-transform: uppercase;
-}
-
-button:hover {
-    box-shadow: 6px 6px 0px #000;
-    transform: translate(-2px, -2px);
-    background-color: #ffcb6b;
-}
-h1 {
-    font-size: 36px;
-    color: #00ff99;
-    text-shadow: 0 0 5px #00ff99, 0 0 10px #00ff99, 0 0 20px #00ff99;
-}
-body {
-    background: radial-gradient(circle, #1a1a1a, #000) repeat;
-    animation: bgAnimation 20s linear infinite;
-}
-
-@keyframes bgAnimation {
-    0% { background-position: 0 0; }
-    100% { background-position: 100% 100%; }
-}
-#gameOver {
-    font-size: 48px;
-    color: #ff4d4d;
-    text-shadow: 0 0 10px #ff4d4d;
-}
-
-#congrats {
-    font-size: 48px;
-    color: #00ff99;
-    text-shadow: 0 0 10px #00ff99;
-}
-
-
-
-        button {
-            background-color: #0fbcf9;
-            color: white;
-            padding: 15px 30px;
-            margin: 10px;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
-            font-family: 'Press Start 2P', cursive;
-        }
-#gameOver {
-    font-size: 48px;
-    color: #ff4d4d;
-    text-shadow: 0 0 10px #ff4d4d;
-}
-
-#congrats {
-    font-size: 48px;
-    color: #00ff99;
-    text-shadow: 0 0 10px #00ff99;
-}
-
-        button:hover {
-            background-color: #00ff99;
-            transform: translateY(-3px);
-        }
-
-        .next-button, .restart-button {
-            margin-top: 20px;
-            background-color: #ffdd59;
-            color: #333;
-        }
-
-        .wrong-button {
-            background-color: #ff4d4d;
-        }
-
-        .wrong-button:hover {
-            background-color: #ff6b6b;
-        }
-
-        #lives {
-            font-size: 20px;
-            color: #ffdd59;
-        }
-
-        #score {
-            font-size: 20px;
-            color: #00ff99;
-        }
-
-        @media (max-width: 600px) {
-            button {
-                width: 100%;
-                margin: 5px 0;
-            }
-
-            h1 {
-                font-size: 20px;
-            }
-	    
-            #score, #lives {
-    transition: transform 0.3s ease, color 0.3s ease;
-}
-
-#score.gain {
-    transform: scale(1.2);
-    color: #00ff99;
-}
-
-#score.loss {
-    transform: scale(1.2);
-    color: #ff4d4d;
-}
-
-
-            #message, #result, #explanation, #lives, #score {
-                font-size: 16px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <h1>5 Momentos da Lavagem das Mãos - Serviço de Fisioterapia</h1>
-    <div id="message"></div>
-    <div id="result"></div>
-    <div id="explanation"></div>
-    <div id="lives"></div>
-    <div id="score">Pontuação: 0</div>
-    <script>
-        const moments = [
-            {
-                question: "1. Quando você deve higienizar as mãos pela primeira vez?",
-                options: [
-                    "Após realizar um procedimento",
-                    "Após tocar superfícies próximas",
-                    "Antes de tocar o paciente",
-                    "Depois de retirar as luvas",
-                    "Antes de realizar assepsia"
-                ],
-                correctAnswer: 2,
-                explanation: "Antes de tocar o paciente, a higiene das mãos previne a transmissão de micro-organismos para o paciente."
-            },
-            {
-                question: "2. Quando é o segundo momento da lavagem das mãos?",
-                options: [
-                    "Antes de tocar o paciente",
-                    "Após tocar superfícies próximas",
-                    "Antes de um procedimento limpo/asséptico",
-                    "Depois de retirar as luvas",
-                    "Após a realização de um procedimento"
-                ],
-                correctAnswer: 2,
-                explanation: "Antes de um procedimento limpo/asséptico, a higiene das mãos evita a introdução de patógenos no corpo do paciente."
-            },
-            {
-                question: "3. Qual é o terceiro momento da lavagem das mãos?",
-                options: [
-                    "Antes de tocar o paciente",
-                    "Depois de contato com fluídos corporais",
-                    "Antes de um procedimento asséptico",
-                    "Depois de tocar superfícies próximas ao paciente",
-                    "Após realizar um procedimento"
-                ],
-                correctAnswer: 1,
-                explanation: "Após risco de exposição a fluídos corporais, a higiene das mãos protege você e o ambiente da contaminação."
-            },
-            {
-                question: "4. Quando ocorre o quarto momento da lavagem das mãos?",
-                options: [
-                    "Depois de tocar o paciente",
-                    "Antes de colocar as luvas",
-                    "Antes de tocar o paciente",
-                    "Antes de realizar assepsia",
-                    "Após tocar os pertences do paciente"
-                ],
-                correctAnswer: 0,
-                explanation: "Após tocar o paciente, a higiene das mãos previne a transmissão de micro-organismos para o ambiente e outros pacientes."
-            },
-            {
-                question: "5. Qual é o quinto momento da lavagem das mãos?",
-                options: [
-                    "Antes de tocar o paciente",
-                    "Antes de um procedimento asséptico",
-                    "Após o contato com o ambiente próximo do paciente",
-                    "Após o contato com fluídos corporais",
-                    "Antes de tocar superfícies próximas ao paciente"
-                ],
-                correctAnswer: 2,
-                explanation: "Após tocar o ambiente próximo ao paciente, a higiene das mãos previne a contaminação cruzada entre pacientes."
-            }
-        ];
-
-        let currentPhase = localStorage.getItem('currentPhase') || 0;
-        let lives = localStorage.getItem('lives') || 2;
-        let score = localStorage.getItem('score') || 0;
-        let hasErrored = false;  // Flag para verificar se o jogador errou a questão atual
-        const messageDiv = document.getElementById('message');
-        const resultDiv = document.getElementById('result');
-        const explanationDiv = document.getElementById('explanation');
-        const livesDiv = document.getElementById('lives');
-        const scoreDiv = document.getElementById('score');
-
-        function updateLives() {
-            livesDiv.innerHTML = `Vidas restantes: ${lives}`;
-        }
-
-        function updateScore() {
-            scoreDiv.innerHTML = `Pontuação: ${score}`;
-        }
-
-        function loadPhase() {
-            if (lives <= 0) {
-                messageDiv.innerHTML = "Você perdeu todas as vidas! O jogo irá reiniciar.";
-                explanationDiv.innerHTML = "";
-                resultDiv.innerHTML = "";
-                addRestartButton();
-                return;
-            }
-
-            if (currentPhase >= moments.length) {
-                messageDiv.innerHTML = `Parabéns! Você completou todas as fases com ${score} pontos!`;
-                explanationDiv.innerHTML = "";
-                addRestartButton();
-                addShareButton();
-                localStorage.removeItem('currentPhase');
-                localStorage.removeItem('lives');
-                localStorage.removeItem('score');
-                return;
-            }
-
-            const phase = moments[currentPhase];
-            messageDiv.innerHTML = phase.question;
-            explanationDiv.innerHTML = "";
-            resultDiv.innerHTML = "";
-            resultDiv.classList.remove('show');
-
-            // Gerar botões com opções
-            messageDiv.innerHTML += "<br>";
-            hasErrored = false;  // Resetar flag de erro
-            phase.options.forEach((option, index) => {
-                const btn = document.createElement('button');
-                btn.innerHTML = option;
-                btn.onclick = () => checkAnswer(index, btn);
-                messageDiv.appendChild(btn);
-            });
-
-            updateLives();
-            updateScore();
-        }
-
-        function checkAnswer(answer, button) {
-            const phase = moments[currentPhase];
-            if (answer === phase.correctAnswer) {
-                resultDiv.innerHTML = "Correto!";
-                resultDiv.style.color = "green";
-                resultDiv.classList.add('show');
-                explanationDiv.innerHTML = phase.explanation;
-
-                // Bloquear os botões após acertar
-                const buttons = document.querySelectorAll('button');
-                buttons.forEach(btn => btn.disabled = true);
-
-                if (!hasErrored) {  // Só adicionar pontos se não houve erro antes
-                    score = parseInt(score) + 10;
-                    localStorage.setItem('score', score);
-                }
-
-                const nextButton = document.createElement('button');
-                nextButton.innerHTML = "Próximo";
-                nextButton.classList.add('next-button');
-                nextButton.onclick = () => {
-                    currentPhase++;
-                    localStorage.setItem('currentPhase', currentPhase);
-                    loadPhase();
-                };
-                explanationDiv.appendChild(nextButton);
-            } else {
-                resultDiv.innerHTML = "Errado!";
-                resultDiv.style.color = "red";
-                resultDiv.classList.add('show');
-                explanationDiv.innerHTML = "Você perdeu uma vida.";
-                lives--;
-                localStorage.setItem('lives', lives);
-
-                // Atualizar a flag de erro para que não adicione pontos na próxima vez
-                hasErrored = true;
-                score = parseInt(score) - 10;  // Perder 10 pontos ao errar
-                localStorage.setItem('score', score);
-
-                // Bloquear o botão de resposta errada
-                button.classList.add('wrong-button');
-                button.disabled = true;
-
-                updateLives();
-                updateScore();
-
-                if (lives <= 0) {
-                    loadPhase();
-                }
-            }
-        }
-
-        function addRestartButton() {
-            const restartButton = document.createElement('button');
-            restartButton.innerHTML = "Reiniciar Jogo";
-            restartButton.classList.add('restart-button');
-            restartButton.onclick = () => {
-                currentPhase = 0;
-                lives = 2;
-                score = 0;
-                localStorage.removeItem('currentPhase');
-                localStorage.removeItem('lives');
-                localStorage.removeItem('score');
-                loadPhase();
-            };
-            explanationDiv.appendChild(restartButton);
-        }
-
-        function addShareButton() {
-            const shareButton = document.createElement('button');
-            shareButton.innerHTML = "Compartilhar no WhatsApp";
-            shareButton.classList.add('next-button');
-            shareButton.onclick = () => {
-                const text = `Eu terminei o jogo dos 5 momentos de lavagem das mãos com uma pontuação de ${score} pontos!`;
-                const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
-                window.open(whatsappUrl, '_blank');
-            };
-            explanationDiv.appendChild(shareButton);
-        }
-function updateScore() {
-    scoreDiv.innerHTML = `Pontuação: ${score}`;
-    scoreDiv.classList.remove('gain', 'loss');
-    void scoreDiv.offsetWidth;  // Resetar animação
-
-    if (parseInt(score) > 0) {
-        scoreDiv.classList.add('gain');
-    } else {
-        scoreDiv.classList.add('loss');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Interpretação de Gasometria e Ventilação Mecânica</title>
+  <style>
+    /* Estilo geral e background com degradê azul */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #2980b9, #6dd5fa);
+      color: #333;
     }
-}
-        loadPhase();
-    </script>
-</body>
-</html>
-
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: #fff;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    h1, h2 {
+      text-align: center;
+      color: #2980b9;
+    }
+    .section {
+      margin-bottom: 2rem;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input[type="number"],
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    input:invalid {
+      border-color: #e74c3c;
+    }
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .checkbox-container input {
+      margin-right: 8px;
+    }
+    button {
+      display: block;
+      width: 100%;
+      background-color: #2980b9;
+      color: #fff;
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: #1c5980;
+    }
+    .resultado {
+      background: #f4f4f4;
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 15px;
+      white-space: pre-line;
+      border: 1px solid #ccc;
+    }
+    .aviso {
+      color: #e74c3c;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Interpretação de Gasometria e Ventilação Mecânica</h1>
+    
+    <!-- Seção de Gasometria -->
+    <div class="section" id="gasometria-section">
+      <h2>Dados da Gasometria</h2>
+      <label for="ph">pH (normal: 7.35 - 7.45)</label>
+      <input type="number" step="0.01" id="ph" placeholder="Ex: 7.40" required>
+      
+      <label for="pco2">pCO₂ (mmHg) (normal: 35 - 45)</label>
+      <input type="number" step="0.1" id="pco2" placeholder="Ex: 40" required>
+      
+      <label for="hco3">HCO₃⁻ (mmol/L) (normal: 22 - 26)</label>
+      <input type="number" step="0.1" id="hco3" placeholder="Ex: 24" required>
+      
+      <label for="po2">pO₂ (mmHg) (opcional)</label>
+      <input type="number" step="0.1" id="po2" placeholder="Ex: 90">
+      
+      <label for="be">BE (Excesso de Base) (opcional)</label>
+      <input type="number" step="0.1" id="be" placeholder="Ex: -2">
+      
+      <button onclick="interpretarGasometria()">Interpretar Gasometria</button>
+      
+      <div class="resultado" id="resultadoGasometria"></div>
     </div>
-
-    <script>
-        function startGame() {
-            // Esconde a introdução
-            document.getElementById("intro").style.display = "none";
-            
-            // Exibe o conteúdo do jogo
-            document.getElementById("gameContent").style.display = "block";
+    
+    <!-- Seção de Ventilação Mecânica -->
+    <div class="section" id="ventilacao-section">
+      <h2>Dados da Ventilação Mecânica</h2>
+      <label for="vt">Volume Corrente (mL)</label>
+      <input type="number" step="1" id="vt" placeholder="Ex: 450">
+      
+      <label for="fr">Frequência Respiratória (bpm)</label>
+      <input type="number" step="1" id="fr" placeholder="Ex: 16">
+      
+      <label for="ti">Tempo Inspiratório (segundos)</label>
+      <input type="number" step="0.1" id="ti" placeholder="Ex: 1.0">
+      
+      <label for="pico">Pressão de Pico (cmH₂O)</label>
+      <input type="number" step="1" id="pico" placeholder="Ex: 30">
+      
+      <div class="checkbox-container">
+        <input type="checkbox" id="obstrutivo">
+        <label for="obstrutivo" style="margin:0;">Paciente com distúrbio obstrutivo</label>
+      </div>
+      
+      <button onclick="interpretarVentilacao()">Confirmar Ventilação</button>
+      
+      <div class="resultado" id="resultadoVentilacao"></div>
+    </div>
+    
+  </div>
+  
+  <script>
+    // Função para validar os campos essenciais de gasometria
+    function validarGasometria(ph, pco2, hco3) {
+      let erros = [];
+      if (isNaN(ph)) erros.push("pH é obrigatório.");
+      if (isNaN(pco2)) erros.push("pCO₂ é obrigatório.");
+      if (isNaN(hco3)) erros.push("HCO₃⁻ é obrigatório.");
+      return erros;
+    }
+    
+    // Interpretação dos dados de gasometria
+    function interpretarGasometria() {
+      const ph = parseFloat(document.getElementById('ph').value);
+      const pco2 = parseFloat(document.getElementById('pco2').value);
+      const hco3 = parseFloat(document.getElementById('hco3').value);
+      const po2 = parseFloat(document.getElementById('po2').value);
+      const be = parseFloat(document.getElementById('be').value);
+      
+      let erros = validarGasometria(ph, pco2, hco3);
+      if (erros.length) {
+        document.getElementById('resultadoGasometria').innerText = "Erros:\n" + erros.join("\n");
+        return;
+      }
+      
+      let alerta = "";
+      if (ph < 7.35 || ph > 7.45) alerta += "pH fora do normal (" + ph + ").\n";
+      if (pco2 < 35 || pco2 > 45) alerta += "pCO₂ fora do normal (" + pco2 + " mmHg).\n";
+      if (hco3 < 22 || hco3 > 26) alerta += "HCO₃⁻ fora do normal (" + hco3 + " mmol/L).\n";
+      if (!isNaN(po2) && (po2 < 80 || po2 > 100)) alerta += "pO₂ fora do normal (" + po2 + " mmHg).\n";
+      if (!isNaN(be) && (be < -2 || be > 2)) alerta += "BE fora do normal (" + be + ").\n";
+      
+      let interpretacao = "";
+      if (ph < 7.35) {
+        interpretacao += "Acidose. ";
+        if (pco2 > 45) {
+          interpretacao += "Predominância respiratória (pCO₂ elevado).\n";
+        } else if (hco3 < 22) {
+          interpretacao += "Predominância metabólica (HCO₃⁻ baixo).\n";
+        } else {
+          interpretacao += "Possível acidose mista.\n";
         }
-    </script>
-
+      } else if (ph > 7.45) {
+        interpretacao += "Alcalose. ";
+        if (pco2 < 35) {
+          interpretacao += "Predominância respiratória (pCO₂ baixo).\n";
+        } else if (hco3 > 26) {
+          interpretacao += "Predominância metabólica (HCO₃⁻ alto).\n";
+        } else {
+          interpretacao += "Possível alcalose mista.\n";
+        }
+      } else {
+        interpretacao += "pH dentro da normalidade.\n";
+      }
+      
+      let resultado = "Interpretação da Gasometria:\n" + interpretacao;
+      if (alerta) resultado += "\nParâmetros fora da normalidade:\n" + alerta;
+      document.getElementById('resultadoGasometria').innerText = resultado;
+    }
+    
+    // Interpretação dos dados da ventilação mecânica com ênfase na proteção pulmonar
+    function interpretarVentilacao() {
+      const vt = parseFloat(document.getElementById('vt').value);
+      const fr = parseFloat(document.getElementById('fr').value);
+      const ti = parseFloat(document.getElementById('ti').value);
+      const pico = parseFloat(document.getElementById('pico').value);
+      const obstrutivo = document.getElementById('obstrutivo').checked;
+      
+      // Dados gasométricos para integração (se disponíveis)
+      const ph = parseFloat(document.getElementById('ph').value);
+      const pco2 = parseFloat(document.getElementById('pco2').value);
+      const hco3 = parseFloat(document.getElementById('hco3').value);
+      
+      let resultado = "Interpretação da Ventilação Mecânica:\n";
+      
+      // Validação dos dados ventilatórios
+      if (isNaN(vt) || isNaN(fr) || isNaN(ti) || isNaN(pico)) {
+        document.getElementById('resultadoVentilacao').innerText = "Por favor, preencha todos os dados de ventilação.";
+        return;
+      }
+      
+      // Orientações para Volume Corrente (VT)
+      if (vt < 300) {
+        resultado += "- Volume corrente muito baixo (<300 mL): risco de hipoventilação e atelectasia. Evite reduções drásticas.\n";
+      } else if (vt >= 300 && vt < 450) {
+        resultado += "- Volume corrente baixo: considere um ajuste cuidadoso, visando manter a proteção pulmonar sem comprometer a ventilação.\n";
+      } else if (vt >= 450 && vt <= 700) {
+        resultado += "- Volume corrente adequado: favorável à proteção pulmonar (meta ~6 mL/kg de peso predito), monitorando Pplat (<30 cmH₂O) e driving pressure.\n";
+      } else {
+        resultado += "- Volume corrente elevado (>700 mL): risco de volutrauma. Reduza o volume, mas sempre mantendo a Pplat e driving pressure dentro dos limites seguros.\n";
+      }
+      
+      // Orientações para Frequência Respiratória (FR)
+      if (fr < 10) {
+        resultado += "- Frequência respiratória baixa: pode contribuir para hipercapnia, especialmente com VT baixo.\n";
+      } else if (fr <= 20) {
+        resultado += "- Frequência respiratória adequada.\n";
+      } else if (fr <= 30) {
+        resultado += "- Frequência respiratória elevada: cuidado com a redução do tempo expiratório, o que pode levar à hiperinsuflação.\n";
+      } else {
+        resultado += "- Frequência respiratória muito elevada: risco de fadiga muscular e hiperventilação. Ajuste com cautela.\n";
+      }
+      
+      // Orientações para Tempo Inspiratório (TI)
+      if (ti < 0.8) {
+        resultado += "- Tempo inspiratório curto: pode comprometer a oxigenação e a distribuição do VT.\n";
+      } else if (ti <= 1.5) {
+        resultado += "- Tempo inspiratório adequado, permitindo uma inspiração eficaz sem prejudicar o tempo expiratório.\n";
+      } else {
+        resultado += "- Tempo inspiratório prolongado: prejudica o tempo expiratório, aumentando o risco de hiperinsuflação, especialmente em pacientes obstrutivos.\n";
+      }
+      
+      // Orientações para Pressão de Pico (pico)
+      if (pico < 20) {
+        resultado += "- Pressão de pico baixa: pode indicar suporte ventilatório insuficiente ou baixa complacência pulmonar.\n";
+      } else if (pico <= 40) {
+        resultado += "- Pressão de pico adequada: desde que a Pplat esteja <30 cmH₂O e a driving pressure seja baixa, o risco de barotrauma se mantém controlado.\n";
+      } else {
+        resultado += "- Pressão de pico elevada (>40 cmH₂O): risco aumentado de barotrauma. Reduza VT ou ajuste a PEEP para diminuir a driving pressure.\n";
+      }
+      
+      // Integração com os dados gasométricos, se disponíveis
+      if (!isNaN(ph) && !isNaN(pco2) && !isNaN(hco3)) {
+        if (ph < 7.35 && pco2 > 45) {
+          resultado += "\nIntegração Gasométrica:\n- Gasometria indica acidose respiratória. Considere, com cautela, aumentar a frequência respiratória para melhorar a eliminação de CO₂, sem reduzir o VT a ponto de comprometer a ventilação efetiva.\n";
+        } else if (ph > 7.45 && pco2 < 35) {
+          resultado += "\nIntegração Gasométrica:\n- Gasometria indica alcalose respiratória. Considere ajustar o tempo expiratório, evitando aumentar excessivamente a frequência respiratória.\n";
+        }
+      } else {
+        resultado += "\nDados gasométricos não completos para integração com a ventilação.\n";
+      }
+      
+      // Sugestões específicas para quadros obstrutivos
+      if (obstrutivo) {
+        resultado += "\nPaciente com distúrbio obstrutivo:\n";
+        resultado += "- Prolongue o tempo expiratório (reduza a frequência e/ou o tempo inspiratório) para melhorar o esvaziamento alveolar e reduzir a hiperinsuflação.\n";
+        resultado += "- Ajuste a PEEP para manter os alvéolos abertos, sem contribuir para a hiperinsuflação; monitore a pressão platô se disponível.\n";
+        resultado += "- Considere o uso de broncodilatadores e medidas para manejo de secreções conforme o quadro clínico.\n";
+      }
+      
+      document.getElementById('resultadoVentilacao').innerText = resultado;
+    }
+  </script>
 </body>
 </html>
