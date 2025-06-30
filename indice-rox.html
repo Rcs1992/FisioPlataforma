@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculadora ROX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background: linear-gradient(to right, #0d47a1, #1565c0);
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 2rem;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+    }
+
+    .card {
+      background: #1e2a38;
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    h2 {
+      text-align: center;
+      color: #90caf9;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: 600;
+      color: #bbdefb;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      margin-top: 0.4rem;
+      border-radius: 6px;
+      border: none;
+      background: #2e3e56;
+      color: #fff;
+    }
+
+    button {
+      margin-top: 2rem;
+      width: 100%;
+      padding: 0.8rem;
+      background: #1976d2;
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0d47a1;
+    }
+
+    .resultado {
+      margin-top: 2rem;
+      background: #2e3e56;
+      padding: 1rem;
+      border-left: 5px solid #42a5f5;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>🧮 Calculadora do Índice de ROX</h2>
+
+    <label>Saturação de O₂ (SpO₂ %) :</label>
+    <input type="number" id="spo2" min="0" max="100">
+
+    <label>Fração inspirada de oxigênio (FiO₂):</label>
+    <input type="number" id="fio2" step="0.01" min="0.21" max="1.0" placeholder="Ex: 0.5 para 50%">
+
+    <label>Frequência respiratória (irpm):</label>
+    <input type="number" id="fr" min="1">
+
+    <button onclick="calcularROX()">Calcular ROX</button>
+
+    <div class="resultado" id="resultado"></div>
+  </div>
+
+  <script>
+    function calcularROX() {
+      const spo2 = parseFloat(document.getElementById('spo2').value);
+      const fio2 = parseFloat(document.getElementById('fio2').value);
+      const fr = parseFloat(document.getElementById('fr').value);
+      const resultadoDiv = document.getElementById("resultado");
+
+      if (isNaN(spo2) || isNaN(fio2) || isNaN(fr) || fio2 === 0 || fr === 0) {
+        resultadoDiv.innerHTML = "<strong>⚠️ Preencha todos os campos corretamente.</strong>";
+        return;
+      }
+
+      const rox = (spo2 / fio2) / fr;
+      let interpretacao = "";
+
+      if (rox >= 4.88) {
+        interpretacao = "✅ Bom prognóstico – menor risco de falência da oxigenoterapia de alto fluxo.";
+      } else if (rox >= 3.85) {
+        interpretacao = "🟡 Atenção – risco moderado de falha, monitorar evolução.";
+      } else {
+        interpretacao = "🔴 Alto risco – possível necessidade de suporte ventilatório avançado.";
+      }
+
+      resultadoDiv.innerHTML = `
+        <strong>🧾 Índice de ROX:</strong> ${rox.toFixed(2)}<br>
+        <strong>🔍 Interpretação:</strong> ${interpretacao}
+      `;
+    }
+  </script>
+</body>
+</html>
