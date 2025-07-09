@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Fisio Plataforma</title>
-  <!-- Fontes Modernas -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -14,8 +13,16 @@
       --btn-bg: rgba(255,255,255,0.1);
       --btn-hover: rgba(255,255,255,0.2);
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { height: 100%; overflow: hidden; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      min-height: 100%;
+      overflow-y: auto;
+      background: var(--bg-color);
+    }
     body {
       font-family: 'Rajdhani', sans-serif;
       color: var(--text-light);
@@ -28,7 +35,6 @@
       width: 100%;
       height: 100%;
       z-index: -1;
-      background: var(--bg-color);
     }
     .container {
       position: relative;
@@ -40,9 +46,7 @@
       border-radius: 1.5rem;
       background: rgba(0,0,0,0.3);
       box-shadow: 0 8px 16px rgba(0,0,0,0.6);
-      top: 50%;
-      transform: translateY(-50%);
-      margin: 0 auto;
+      margin: 3rem auto;
     }
     h1 {
       font-family: 'Orbitron', sans-serif;
@@ -86,7 +90,11 @@
       transform: translateY(0);
       box-shadow: 0 3px 5px rgba(0,0,0,0.4);
     }
-    .btn svg { width: 1.2rem; height: 1.2rem; fill: var(--accent); }
+    .btn svg {
+      width: 1.2rem;
+      height: 1.2rem;
+      fill: var(--accent);
+    }
   </style>
 </head>
 <body>
@@ -199,23 +207,30 @@
     function createParticles() {
       particles = [];
       for (let i = 0; i < 100; i++) {
-        particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 3 + 1, speed: Math.random() * 0.5 + 0.2, color: colors[Math.floor(Math.random() * colors.length)] });
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 3 + 1,
+          speed: Math.random() * 0.5 + 0.2,
+          color: colors[Math.floor(Math.random() * colors.length)]
+        });
       }
     }
     function animate() {
-      // desenha fundo azul escuro
       ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--bg-color');
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       particles.forEach(p => {
         p.y -= p.speed;
         if (p.y < 0) p.y = canvas.height;
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fillStyle = p.color;
         ctx.fill();
       });
       requestAnimationFrame(animate);
     }
-    createParticles(); animate();
+    createParticles();
+    animate();
   </script>
 </body>
 </html>
