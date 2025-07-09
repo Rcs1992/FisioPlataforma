@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Índice de Barthel</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f7fb;
+      color: #333;
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      color: #2a5d8f;
+    }
+    .grupo {
+      margin-top: 20px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+    select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      background: #2a5d8f;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 10px;
+      margin-top: 20px;
+      width: 100%;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #1f456a;
+    }
+    .resultado {
+      background: #e3f2fd;
+      border-left: 5px solid #2a5d8f;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧩 Índice de Barthel</h1>
+
+  <form id="formBarthel">
+    <div class="grupo">
+      <label for="alimentacao">Alimentação</label>
+      <select id="alimentacao">
+        <option value="10">Independente</option>
+        <option value="5">Necessita ajuda leve</option>
+        <option value="0">Dependente</option>
+      </select>
+    </div>
+
+    <div class="grupo">
+      <label for="banho">Banho</label>
+      <select id="banho">
+        <option value="5">Independente</option>
+        <option value="0">Dependente</option>
+      </select>
+    </div>
+
+    <div class="grupo">
+      <label for="higiene">Higiene pessoal</label>
+      <select id="higiene">
+        <option value="5">Independente</option>
+        <option value="0">Dependente</option>
+      </select>
+    </div>
+
+    <div class="grupo">
+      <label for="vestir">Vestir-se</label>
+      <select id="vestir">
+        <option value="10">Independente</option>
+        <option value="5">Necessita ajuda</option>
+        <option value="0">Dependente</option>
+      </select>
+    </div>
+
+    <div class="grupo">
+      <label for="intestino">Controle de intestinos</label>
+      <select id="intestino">
+        <option value="10">Contínencia total</option>
+        <option value="5">Ocasional</option>
+        <option value="0">Incontinente</option>
+      </select>
+    </div>
+
+    <div class="grupo">
+      <label for="bexiga">Controle da bexiga</label>
+      <select id="bexiga">
+        <option value="10">Contínencia total</option>
+        <option value="5">Ocasional</option>
+        <option value="0">Incontinente</option>
+      </select>
+    </div>
+
+    <div class="grupo">
+      <label for="sanitario">Uso do vaso sanitário</label>
+      <select id="sanitario">
+        <option value="10">Independente</option>
+        <option value="5">Necessita ajuda</option>
+        <option value="0">Dependente</option>
+      </select>
+    </div>
+
+    <div class="grupo">
+      <label for="transferencia">Transferência (leito ↔ cadeira)</label>
+      <select id="transferencia">
+        <option value="15">Independente</option>
+        <option value="10">Ajuda leve</option>
+        <option value="5">Grande ajuda</option>
+        <option value="0">Dependente</option>
+      </select>
+    </div>
+
+    <div class="grupo">
+      <label for="deambulacao">Deambulação</label>
+      <select id="deambulacao">
+        <option value="15">Independente</option>
+        <option value="10">Com auxílio</option>
+        <option value="5">Usa cadeira de rodas</option>
+        <option value="0">Impossível</option>
+      </select>
+    </div>
+
+    <div class="grupo">
+      <label for="escadas">Subir escadas</label>
+      <select id="escadas">
+        <option value="10">Independente</option>
+        <option value="5">Com ajuda</option>
+        <option value="0">Incapaz</option>
+      </select>
+    </div>
+
+    <button type="button" onclick="calcularBarthel()">Calcular Pontuação</button>
+  </form>
+
+  <div id="resultado" class="resultado" style="display:none;"></div>
+
+  <script>
+    function calcularBarthel() {
+      const campos = [
+        "alimentacao", "banho", "higiene", "vestir", "intestino",
+        "bexiga", "sanitario", "transferencia", "deambulacao", "escadas"
+      ];
+      let total = 0;
+
+      campos.forEach(id => {
+        total += parseInt(document.getElementById(id).value);
+      });
+
+      let grau = "";
+      if (total >= 100) grau = "🔵 Independência Total";
+      else if (total >= 91) grau = "🟢 Independência Leve";
+      else if (total >= 61) grau = "🟡 Dependência Moderada";
+      else if (total >= 21) grau = "🟠 Dependência Grave";
+      else grau = "🔴 Dependência Total";
+
+      const resultado = document.getElementById("resultado");
+      resultado.style.display = "block";
+      resultado.innerHTML = `<strong>Pontuação Total:</strong> ${total}<br/>
+                             <strong>Classificação:</strong> ${grau}`;
+    }
+  </script>
+</body>
+</html>
