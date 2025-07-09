@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MIF – Medida de Independência Funcional</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f7fb;
+      color: #333;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      color: #2a5d8f;
+    }
+    h2 {
+      color: #444;
+      margin-top: 30px;
+    }
+    label {
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
+    }
+    select {
+      width: 100%;
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+    .descricao {
+      font-size: 12px;
+      color: #777;
+      margin-bottom: 12px;
+    }
+    button {
+      background: #2a5d8f;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 10px;
+      margin-top: 20px;
+      width: 100%;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #1f456a;
+    }
+    .resultado {
+      background: #e3f2fd;
+      border-left: 5px solid #2a5d8f;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧮 MIF – Medida de Independência Funcional</h1>
+
+  <form id="formMIF">
+    <h2>Domínio Motor</h2>
+    <div id="motor"></div>
+
+    <h2>Domínio Cognitivo</h2>
+    <div id="cognitivo"></div>
+
+    <button type="button" onclick="calcularMIF()">Calcular MIF</button>
+  </form>
+
+  <div id="resultado" class="resultado" style="display:none;"></div>
+
+  <script>
+    const niveis = [
+      { valor: 7, texto: "7 - Independente: realiza sozinho, com segurança e tempo adequado" },
+      { valor: 6, texto: "6 - Independente modificado: com dispositivo auxiliar ou tempo prolongado" },
+      { valor: 5, texto: "5 - Supervisão: precisa apenas de orientação ou supervisão" },
+      { valor: 4, texto: "4 - Assistência mínima: realiza ≥75% da tarefa" },
+      { valor: 3, texto: "3 - Assistência moderada: realiza 50–74% da tarefa" },
+      { valor: 2, texto: "2 - Assistência máxima: realiza 25–49% da tarefa" },
+      { valor: 1, texto: "1 - Dependente total: realiza <25% ou requer 2 pessoas" }
+    ];
+
+    const itensMotor = [
+      "Alimentação", "Higiene pessoal", "Banho", "Vestir parte superior", "Vestir parte inferior",
+      "Uso do vaso sanitário", "Controle da bexiga", "Controle intestinal",
+      "Transferência: leito ↔ cadeira", "Transferência: vaso sanitário", "Transferência: chuveiro",
+      "Deambulação", "Subir escadas"
+    ];
+
+    const itensCognitivo = [
+      "Compreensão", "Expressão", "Interação social", "Resolução de problemas", "Memória"
+    ];
+
+    function criarCampo(nome, grupo) {
+      const container = document.createElement("div");
+
+      const label = document.createElement("label");
+      label.innerText = nome;
+      container.appendChild(label);
+
+      const select = document.createElement("select");
+      select.name = grupo;
+      niveis.forEach(n => {
+        const opt = document.createElement("option");
+        opt.value = n.valor;
+        opt.title = n.texto;
+        opt.text = `${n.valor} - ${n.texto.split(":")[1]}`;
+        select.appendChild(opt);
+      });
+      container.appendChild(select);
+
+      const descricao = document.createElement("div");
+      descricao.className = "descricao";
+      descricao.innerText = "1: dependente total | 7: totalmente independente";
+      container.appendChild(descricao);
+
+      return container;
+    }
+
+    window.onload = () => {
+      const divMotor = document.getElementById("motor");
+      itensMotor.forEach(i => divMotor.appendChild(criarCampo(i, "mifMotor")));
+
+      const divCognitivo = document.getElementById("cognitivo");
+      itensCognitivo.forEach(i => divCognitivo.appendChild(criarCampo(i, "mifCognitivo")));
+    }
+
+    function calcularMIF() {
+      const motor = document.getElementsByName('mifMotor');
+      const cognitivo = document.getElementsByName('mifCognitivo');
+
+      let somaMotor = 0, somaCognitivo = 0;
+
+      for (let i = 0; i < motor.length; i++) somaMotor += parseInt(motor[i].value);
+      for (let i = 0; i < cognitivo.length; i++) somaCognitivo += parseInt(cognitivo[i].value);
+
+      const total = somaMotor + somaCognitivo;
+
+      let interpretacao = "";
+      if (total >= 108) interpretacao = "🟢 Independência Funcional Alta";
+      else if (total >= 85) interpretacao = "🟡 Independência Moderada";
+      else interpretacao = "🔴 Dependência Funcional";
+
+      const resultado = document.getElementById("resultado");
+      resultado.style.display = "block";
+      resultado.innerHTML = `<strong>Domínio Motor:</strong> ${somaMotor}/91<br/>
+                             <strong>Domínio Cognitivo:</strong> ${somaCognitivo}/35<br/>
+                             <strong>Pontuação Total:</strong> ${total}/126<br/>
+                             <strong>Classificação:</strong> ${interpretacao}`;
+    }
+  </script>
+</body>
+</html>
