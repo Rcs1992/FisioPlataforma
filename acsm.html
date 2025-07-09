@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ACSM – Questionário de Estratificação de Risco</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f7fc;
+      padding: 20px;
+      color: #333;
+      max-width: 900px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      color: #0a3d62;
+    }
+    fieldset {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    legend {
+      font-weight: bold;
+      color: #0a3d62;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+    }
+    input[type="checkbox"] {
+      margin-right: 8px;
+    }
+    button {
+      background: #0a3d62;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background: #06314d;
+    }
+    .resultado {
+      margin-top: 20px;
+      background: #e3f2fd;
+      border-left: 5px solid #0a3d62;
+      padding: 15px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>ACSM – Questionário de Estratificação de Risco</h1>
+
+  <form id="formACSM">
+    <fieldset>
+      <legend>1. Histórico, Sintomas e Outras Questões de Saúde</legend>
+      <label><input type="checkbox" name="conclusao1" value="1">Doença cardiovascular (ex: infarto, cirurgia, marca-passo)</label>
+      <label><input type="checkbox" name="conclusao1" value="1">Sintomas no esforço (dor no peito, falta de ar, tontura)</label>
+      <label><input type="checkbox" name="conclusao1" value="1">Diabetes, doenças pulmonares, renais, musculoesqueléticas ou gravidez</label>
+      <label><input type="checkbox" name="conclusao1" value="1">Uso de medicações cardiovasculares</label>
+    </fieldset>
+
+    <fieldset>
+      <legend>2. Fatores de Risco Cardiovasculares</legend>
+      <label><input type="checkbox" name="conclusao2" value="1">Idade: Homens ≥ 45 anos / Mulheres ≥ 55 anos</label>
+      <label><input type="checkbox" name="conclusao2" value="1">Tabagismo atual ou < 6 meses</label>
+      <label><input type="checkbox" name="conclusao2" value="1">Hipertensão (ou medicado para hipertensão)</label>
+      <label><input type="checkbox" name="conclusao2" value="1">Colesterol total > 200 mg/dL ou LDL > 130 mg/dL</label>
+      <label><input type="checkbox" name="conclusao2" value="1">HDL < 40 mg/dL</label>
+      <label><input type="checkbox" name="conclusao2" value="1">Histórico familiar de DCV precoce (homens < 55, mulheres < 65)</label>
+      <label><input type="checkbox" name="conclusao2" value="1">Sedentarismo (<120 min/sem de atividade moderada)</label>
+      <label><input type="checkbox" name="conclusao2" value="1">Sobrepeso ou obesidade (> 9 kg acima do peso)</label>
+      <label><input type="checkbox" name="conclusao2" value="1">Glicemia > 100 mg/dL ou DM2</label>
+    </fieldset>
+
+    <button type="button" onclick="avaliarACSM()">Avaliar Estratificação</button>
+  </form>
+
+  <div id="resultado" class="resultado" style="display:none;"></div>
+
+  <script>
+    function avaliarACSM() {
+      const riscoAlto = document.querySelectorAll('input[name="conclusao1"]:checked').length > 0;
+      const fatoresRisco = document.querySelectorAll('input[name="conclusao2"]:checked').length;
+
+      let mensagem = "";
+
+      if (riscoAlto) {
+        mensagem = "🔴 <strong>Conclusão 1 – Risco Elevado:</strong> Requer avaliação médica antes de iniciar atividades. Recomenda-se iniciar com supervisão especializada.";
+      } else if (fatoresRisco > 1) {
+        mensagem = "🟠 <strong>Conclusão 2 – Risco Moderado:</strong> Consulte um profissional de saúde antes de iniciar o programa de exercícios.";
+      } else {
+        mensagem = "🟢 <strong>Conclusão 3 – Risco Baixo:</strong> Você está apto a iniciar um programa de exercícios de forma segura, inclusive sem avaliação médica prévia.";
+      }
+
+      const div = document.getElementById("resultado");
+      div.style.display = "block";
+      div.innerHTML = mensagem;
+    }
+  </script>
+</body>
+</html>
