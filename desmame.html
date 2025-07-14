@@ -102,6 +102,31 @@
     align-items: center;
     gap: 5px;
 }
+
+        @media print {
+    body {
+        background: white;
+        color: black;
+    }
+    .container {
+        box-shadow: none;
+        border: none;
+        max-width: 100%;
+        padding: 0;
+    }
+    button, input[type="radio"], input[type="text"], input[type="number"], input[type="email"] {
+        display: none;
+    }
+    .checklist-options {
+        display: none;
+    }
+    .checklist-label::after {
+        content: attr(data-valor);
+        font-weight: bold;
+        margin-left: 10px;
+    }
+}
+
 </style>
 </head>
 <body>
@@ -232,7 +257,7 @@
 
         <div class="section">
             <button onclick="validarTRE()">Validar TRE</button>
-            <button onclick="gerarPDF()">Gerar PDF</button>
+            <button onclick="imprimirTela()">Imprimir PDF (visual)</button>
             <button onclick="enviarEmail()">Enviar e-mail</button>
         </div>
 
@@ -283,6 +308,11 @@
 
     alert("Checklist completo e sem alertas. OK para continuar.");
     return true;
+}
+        
+function imprimirTela() {
+    if (!verificarChecklist() || !validarTRE()) return;
+    window.print();
 }
 
 function formatarItem(nome) {
