@@ -267,7 +267,7 @@
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.legacy.min.js"></script>
     <script>
        
        function verificarChecklist() {
@@ -394,8 +394,8 @@ function formatarItem(nome) {
 function gerarPDF() {
     if (!verificarChecklist() || !validarTRE()) return;
 
- const { jsPDF } = window.jspdf;
-    let doc = new jsPDF();
+    let doc = new jsPDF(); // Agora funciona com legacy
+    const pageWidth = doc.internal.pageSize.getWidth();
     let y = 20;
 
     const centerText = (text, y) => {
@@ -459,7 +459,7 @@ function gerarPDF() {
 
     y += 6;
 
-    // Seção de TRE
+    // Dados do TRE
     doc.setFont("helvetica", "bold");
     doc.setFillColor(220, 240, 255);
     doc.rect(10, y - 4, 190, 8, "F");
@@ -489,6 +489,11 @@ function gerarPDF() {
 
     doc.save('relatorio-desmame-extubacao.pdf');
 }
+function getRadioValue(name) {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? el.value : "não preenchido";
+}
+
 function enviarEmail() {
     if (!verificarChecklist() || !validarTRE()) return;
 
