@@ -5,69 +5,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulário de Desmame e Extubação</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        .section {
-            margin-bottom: 20px;
-        }
-        .section h2 {
-            border-bottom: 2px solid #4CAF50;
-            padding-bottom: 10px;
-            color: #4CAF50;
-        }
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-        input[type="text"], input[type="number"], input[type="email"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        input[type="radio"] {
-            margin-right: 10px;
-        }
-        .alert {
-            color: #d9534f;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        .success {
-            color: #5bc0de;
-            font-weight: bold;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-    </style>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #e9e9e9;
+        margin: 0;
+        padding: 20px;
+        color: #222;
+    }
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+    h1 {
+        text-align: center;
+        color: #8B0000;
+    }
+    .section {
+        margin-bottom: 20px;
+    }
+    .section h2 {
+        border-bottom: 2px solid #8B0000;
+        padding-bottom: 10px;
+        color: #8B0000;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+        color: #333;
+    }
+    input[type="text"], input[type="number"], input[type="email"] {
+        width: calc(100% - 22px);
+        padding: 10px;
+        margin: 5px 0;
+        border: 1px solid #aaa;
+        border-radius: 4px;
+    }
+    input[type="radio"] {
+        margin-right: 10px;
+    }
+    .alert {
+        color: #b22222;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+    .success {
+        color: #444;
+        font-weight: bold;
+    }
+    button {
+        padding: 10px 20px;
+        background-color: #8B0000;
+        border: none;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-right: 10px;
+    }
+    button:hover {
+        background-color: #600000;
+    }
+    .checklist-item {
+        margin-bottom: 10px;
+    }
+    
+    .checklist-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #ccc;
+    font-size: 15px;
+}
+
+.checklist-label {
+    flex: 1;
+    color: #333;
+}
+
+.checklist-options {
+    display: flex;
+    gap: 20px;
+}
+
+.checklist-options label {
+    font-weight: normal;
+    color: #111;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+</style>
 </head>
 <body>
     <div class="container">
@@ -79,6 +114,89 @@
             <label for="prontuario">Prontuário:</label>
             <input type="text" id="prontuario" required>
         </div>
+<div class="section">
+    <h2>Checklist Inicial para Extubação</h2>
+    <div class="checklist-item">
+        <div class="checklist-label">Reversibilidade do quadro:</div>
+        <div class="checklist-options">
+            <label><input type="radio" name="reversibilidade" value="sim"> SIM</label>
+            <label><input type="radio" name="reversibilidade" value="nao"> NÃO</label>
+        </div>
+    </div>
+
+    <div class="checklist-item">
+        <div class="checklist-label">Glasgow &gt; 8:</div>
+        <div class="checklist-options">
+            <label><input type="radio" name="glasgow" value="sim"> SIM</label>
+            <label><input type="radio" name="glasgow" value="nao"> NÃO</label>
+        </div>
+    </div>
+
+    <div class="checklist-item">
+        <div class="checklist-label">Estabilidade hemodinâmica:</div>
+        <div class="checklist-options">
+            <label><input type="radio" name="hemodinamica" value="sim"> SIM</label>
+            <label><input type="radio" name="hemodinamica" value="nao"> NÃO</label>
+        </div>
+    </div>
+
+    <div class="checklist-item">
+        <div class="checklist-label">Hemoglobina &gt; 8 g/dL:</div>
+        <div class="checklist-options">
+            <label><input type="radio" name="hemoglobina" value="sim"> SIM</label>
+            <label><input type="radio" name="hemoglobina" value="nao"> NÃO</label>
+        </div>
+    </div>
+
+    <div class="checklist-item">
+        <div class="checklist-label">Afebril:</div>
+        <div class="checklist-options">
+            <label><input type="radio" name="afebril" value="sim"> SIM</label>
+            <label><input type="radio" name="afebril" value="nao"> NÃO</label>
+        </div>
+    </div>
+
+    <div class="checklist-item">
+        <div class="checklist-label">Balanço hídrico zerado ou negativo:</div>
+        <div class="checklist-options">
+            <label><input type="radio" name="balanco" value="sim"> SIM</label>
+            <label><input type="radio" name="balanco" value="nao"> NÃO</label>
+        </div>
+    </div>
+
+    <div class="checklist-item">
+        <div class="checklist-label">Trocas gasosas adequadas:</div>
+        <div class="checklist-options">
+            <label><input type="radio" name="gasosas" value="sim"> SIM</label>
+            <label><input type="radio" name="gasosas" value="nao"> NÃO</label>
+        </div>
+    </div>
+
+    <div class="checklist-item">
+        <div class="checklist-label">Capacidade de proteger vias aéreas:</div>
+        <div class="checklist-options">
+            <label><input type="radio" name="vias" value="sim"> SIM</label>
+            <label><input type="radio" name="vias" value="nao"> NÃO</label>
+        </div>
+    </div>
+
+    <div class="checklist-item">
+        <div class="checklist-label">Sem cirurgia programada em 48h:</div>
+        <div class="checklist-options">
+            <label><input type="radio" name="cirurgia" value="sim"> SIM</label>
+            <label><input type="radio" name="cirurgia" value="nao"> NÃO</label>
+        </div>
+    </div>
+
+    <div class="checklist-item">
+        <div class="checklist-label">Cuff Leak Test positivo (inicial):</div>
+        <div class="checklist-options">
+            <label><input type="radio" name="cuffchecklist" value="sim"> SIM</label>
+            <label><input type="radio" name="cuffchecklist" value="nao"> NÃO</label>
+        </div>
+    </div>
+</div>
+    <button onclick="verificarChecklist()" style="margin: 10px 0;">Verificar Checklist</button>
 
         <div class="section">
             <h2>Estratégia de Desmame</h2>
@@ -126,6 +244,63 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
+       
+       function verificarChecklist() {
+    const itens = [
+        "reversibilidade",
+        "glasgow",
+        "hemodinamica",
+        "hemoglobina",
+        "afebril",
+        "balanco",
+        "gasosas",
+        "vias",
+        "cirurgia",
+        "cuffchecklist"
+    ];
+
+    let incompletos = [];
+    let negativos = [];
+
+    itens.forEach(nome => {
+        const selecionado = document.querySelector(`input[name="${nome}"]:checked`);
+        if (!selecionado) {
+            incompletos.push(nome);
+        } else if (selecionado.value === "nao") {
+            negativos.push(nome);
+        }
+    });
+
+    if (incompletos.length > 0) {
+        alert(`Faltam itens para marcar no checklist:\n\n${incompletos.map(n => formatarItem(n)).join("\n")}`);
+        return false;
+    }
+
+    if (negativos.length > 0) {
+        alert(`Atenção: Os seguintes itens estão marcados como NÃO:\n\n${negativos.map(n => formatarItem(n)).join("\n")}\n\nRecomenda-se reavaliação antes de prosseguir.`);
+        return false;
+    }
+
+    alert("Checklist completo e sem alertas. OK para continuar.");
+    return true;
+}
+
+function formatarItem(nome) {
+    const nomesLegiveis = {
+        reversibilidade: "Reversibilidade do quadro",
+        glasgow: "Glasgow > 8",
+        hemodinamica: "Estabilidade hemodinâmica",
+        hemoglobina: "Hemoglobina > 8 g/dL",
+        afebril: "Afebril",
+        balanco: "Balanço hídrico zerado ou negativo",
+        gasosas: "Trocas gasosas adequadas",
+        vias: "Capacidade de proteger vias aéreas",
+        cirurgia: "Sem cirurgia programada em 48h",
+        cuffchecklist: "Cuff Leak Test positivo (inicial)"
+    };
+    return nomesLegiveis[nome] || nome;
+}
+
         function validarTRE() {
             let nome = document.getElementById("nome").value;
             let prontuario = document.getElementById("prontuario").value;
@@ -186,72 +361,183 @@
             return '';
         }
 
-        function gerarPDF() {
-            if (!validarTRE()) return;
+ function gerarPDF() {
+    if (!verificarChecklist() || !validarTRE()) return;
 
-            const { jsPDF } = window.jspdf;
-            let doc = new jsPDF();
+    const { jsPDF } = window.jspdf;
+    let doc = new jsPDF();
+   doc.setFillColor(230, 230, 230); // cinza claro
+   doc.rect(10, 30, 190, 12, "F"); // fundo título checklist
+   doc.setFontSize(14);
+   doc.setTextColor(0, 0, 0);
+   doc.setFont("helvetica", "bold");
+   doc.text("Checklist Inicial", 15, 38);
 
-            let nome = document.getElementById("nome").value;
-            let prontuario = document.getElementById("prontuario").value;
-            let estrategia = document.querySelector('input[name="estrategia"]:checked').value;
-            let irrsInicio = document.getElementById("irrs-inicio").value;
-            let irrsFim = document.getElementById("irrs-fim").value;
-            let pressaoInspiratoria = document.getElementById("pressao-inspiratoria").value;
-            let cuffLeak = document.querySelector('input[name="cuff"]:checked').value;
-            let mensagemValidacao = document.getElementById("mensagem-validacao").innerHTML;
 
-            doc.setFontSize(16);
-            doc.setFont("helvetica", "bold");
-            doc.text("Relatório de Desmame e Extubação", 20, 20);
+    let nome = document.getElementById("nome").value;
+    let prontuario = document.getElementById("prontuario").value;
+    let estrategia = document.querySelector('input[name="estrategia"]:checked').value;
+    let irrsInicio = document.getElementById("irrs-inicio").value;
+    let irrsFim = document.getElementById("irrs-fim").value;
+    let pressaoInspiratoria = document.getElementById("pressao-inspiratoria").value;
+    let cuffLeak = document.querySelector('input[name="cuff"]:checked').value;
+    let mensagemValidacao = document.getElementById("mensagem-validacao").innerHTML;
 
-            doc.setFontSize(12);
-            doc.setFont("helvetica", "normal");
-            doc.text(`Nome do Paciente: ${nome}`, 20, 40);
-            doc.text(`Prontuário: ${prontuario}`, 20, 50);
-            doc.text(`Estratégia de Desmame: ${estrategia}`, 20, 60);
-            doc.text(`IRRS no Início: ${irrsInicio}`, 20, 70);
-            doc.text(`IRRS no Fim: ${irrsFim}`, 20, 80);
-            doc.text(`Pressão Inspiratória Máxima: ${pressaoInspiratoria}`, 20, 90);
-            doc.text(`Cuff Leak Test: ${cuffLeak}`, 20, 100);
+    // Dados do checklist
+    const checklist = [
+        { nome: "Reversibilidade do quadro", campo: "reversibilidade" },
+        { nome: "Glasgow > 8", campo: "glasgow" },
+        { nome: "Estabilidade hemodinâmica", campo: "hemodinamica" },
+        { nome: "Hemoglobina > 8 g/dL", campo: "hemoglobina" },
+        { nome: "Afebril", campo: "afebril" },
+        { nome: "Balanço hídrico zerado ou negativo", campo: "balanco" },
+        { nome: "Trocas gasosas adequadas", campo: "gasosas" },
+        { nome: "Capacidade de proteger vias aéreas", campo: "vias" },
+        { nome: "Sem cirurgia programada em 48h", campo: "cirurgia" },
+        { nome: "Cuff Leak Test positivo (inicial)", campo: "cuffchecklist" }
+    ];
 
-            if (mensagemValidacao) {
-                doc.text("Mensagens de Validação:", 20, 120);
-                doc.setFont("helvetica", "italic");
-                doc.text(mensagemValidacao.replace(/<br>/g, "\n").trim(), 20, 130);
-            }
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text("Relatório de Desmame e Extubação", 20, 20);
 
-            doc.save('relatorio-desmame-extubacao.pdf');
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+
+    let y = 35;
+    doc.text(`Nome do Paciente: ${nome}`, 20, y); y += 8;
+    doc.text(`Prontuário: ${prontuario}`, 20, y); y += 12;
+
+    doc.setFillColor(230, 230, 230); // cinza claro
+doc.rect(10, 30, 190, 12, "F"); // fundo título checklist
+doc.setFontSize(14);
+doc.setTextColor(0, 0, 0);
+doc.setFont("helvetica", "bold");
+doc.text("Checklist Inicial", 15, 38);
+
+// Novo bloco de checklist com fundo visual
+y = 45;
+checklist.forEach(item => {
+    const valor = getRadioValue(item.campo);
+    if (valor === "nao") {
+        doc.setTextColor(200, 0, 0); // vermelho
+    } else {
+        doc.setTextColor(50, 50, 50); // preto/cinza escuro
+    }
+    doc.text(`${item.nome}: ${valor.toUpperCase()}`, 15, y);
+    y += 7;
+});
+
+
+    checklist.forEach(item => {
+        const valor = getRadioValue(item.campo);
+        if (valor === "nao") {
+            doc.setTextColor(200, 0, 0); // vermelho para NÃO
+        } else {
+            doc.setTextColor(0, 0, 0); // preto para SIM
         }
+        doc.text(`${item.nome}: ${valor.toUpperCase()}`, 20, y);
+        y += 7;
+    });
 
-        function enviarEmail() {
-            if (!validarTRE()) return;
+    doc.setTextColor(0, 0, 0); // reset para preto
+    y += 5;
+    y += 5;
+doc.setFillColor(240, 240, 255); // azul muito claro
+doc.rect(10, y, 190, 10, "F");
+doc.setTextColor(0, 0, 0);
+doc.setFont("helvetica", "bold");
+doc.text("Dados do TRE", 15, y + 7);
+y += 15;
 
-            let nome = document.getElementById("nome").value;
-            let prontuario = document.getElementById("prontuario").value;
-            let estrategia = document.querySelector('input[name="estrategia"]:checked').value;
-            let irrsInicio = document.getElementById("irrs-inicio").value;
-            let irrsFim = document.getElementById("irrs-fim").value;
-            let pressaoInspiratoria = document.getElementById("pressao-inspiratoria").value;
-            let cuffLeak = document.querySelector('input[name="cuff"]:checked').value;
-            let email = document.getElementById("email").value;
-            let mensagemValidacao = document.getElementById("mensagem-validacao").innerHTML;
+    
+    doc.setFont("helvetica", "bold");
+    doc.text("Dados do TRE:", 20, y); y += 8;
+    doc.setFont("helvetica", "normal");
 
-            let dadosPaciente = `
-                Nome: ${nome}
-                Prontuário: ${prontuario}
-                Estratégia de Desmame: ${estrategia}
-                IRRS Início: ${irrsInicio}
-                IRRS Fim: ${irrsFim}
-                Pressão Inspiratória Máxima: ${pressaoInspiratoria}
-                Cuff Leak Test: ${cuffLeak}
-                \nMensagens de Validação: ${mensagemValidacao.replace(/<br>/g, "\n")}
-            `;
+    doc.text(`Estratégia de Desmame: ${estrategia}`, 20, y); y += 7;
+    doc.text(`IRRS no Início: ${irrsInicio}`, 20, y); y += 7;
+    doc.text(`IRRS no Fim: ${irrsFim}`, 20, y); y += 7;
+    doc.text(`Pressão Inspiratória Máxima: ${pressaoInspiratoria}`, 20, y); y += 7;
+    doc.text(`Cuff Leak Test (final): ${cuffLeak}`, 20, y); y += 12;
 
-            window.open(`mailto:${email}?subject=Dados do Paciente&body=${encodeURIComponent(dadosPaciente)}`);
-        }
-    </script>
+    if (mensagemValidacao) {
+        doc.setFont("helvetica", "bold");
+        doc.text("Mensagens de Validação:", 20, y); y += 8;
+        doc.setFont("helvetica", "italic");
+
+        let mensagens = mensagemValidacao.replace(/<br>/g, "\n").trim();
+        let linhas = doc.splitTextToSize(mensagens, 170);
+        doc.text(linhas, 20, y);
+    }
+
+    doc.save('relatorio-desmame-extubacao.pdf');
+}
+
+// Função auxiliar para pegar valor de radio buttons
+function getRadioValue(name) {
+    let radios = document.querySelectorAll(`input[name="${name}"]`);
+    for (let r of radios) {
+        if (r.checked) return r.value;
+    }
+    return "não informado";
+}
+
+function enviarEmail() {
+    if (!verificarChecklist() || !validarTRE()) return;
+
+    let nome = document.getElementById("nome").value;
+    let prontuario = document.getElementById("prontuario").value;
+    let estrategia = document.querySelector('input[name="estrategia"]:checked').value;
+    let irrsInicio = document.getElementById("irrs-inicio").value;
+    let irrsFim = document.getElementById("irrs-fim").value;
+    let pressaoInspiratoria = document.getElementById("pressao-inspiratoria").value;
+    let cuffLeak = document.querySelector('input[name="cuff"]:checked').value;
+    let email = document.getElementById("email").value;
+    let mensagemValidacao = document.getElementById("mensagem-validacao").innerHTML;
+
+    // Checklist
+    const checklist = [
+        { nome: "Reversibilidade do quadro", campo: "reversibilidade" },
+        { nome: "Glasgow > 8", campo: "glasgow" },
+        { nome: "Estabilidade hemodinâmica", campo: "hemodinamica" },
+        { nome: "Hemoglobina > 8 g/dL", campo: "hemoglobina" },
+        { nome: "Afebril", campo: "afebril" },
+        { nome: "Balanço hídrico zerado ou negativo", campo: "balanco" },
+        { nome: "Trocas gasosas adequadas", campo: "gasosas" },
+        { nome: "Capacidade de proteger vias aéreas", campo: "vias" },
+        { nome: "Sem cirurgia programada em 48h", campo: "cirurgia" },
+        { nome: "Cuff Leak Test positivo (inicial)", campo: "cuffchecklist" }
+    ];
+
+    let checklistTexto = checklist.map(item => {
+        const valor = getRadioValue(item.campo);
+        const alerta = valor === "nao" ? " ⚠" : "";
+        return `${item.nome}: ${valor.toUpperCase()}${alerta}`;
+    }).join("\n");
+
+    let dadosPaciente = `
+Relatório de Desmame e Extubação
+
+Nome: ${nome}
+Prontuário: ${prontuario}
+
+CHECKLIST INICIAL:
+${checklistTexto}
+
+DADOS DO TRE:
+Estratégia de Desmame: ${estrategia}
+IRRS Início: ${irrsInicio}
+IRRS Fim: ${irrsFim}
+Pressão Inspiratória Máxima: ${pressaoInspiratoria}
+Cuff Leak Test (final): ${cuffLeak}
+
+Mensagens de Validação:
+${mensagemValidacao.replace(/<br>/g, "\n")}
+    `;
+
+    window.open(`mailto:${email}?subject=Relatório de Desmame&body=${encodeURIComponent(dadosPaciente)}`);
+}
+  </script>
 </body>
 </html>
-
-
