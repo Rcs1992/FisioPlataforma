@@ -233,7 +233,7 @@
         <div class="section">
             <button onclick="validarTRE()">Validar TRE</button>
             <button onclick="gerarPDF()">Gerar PDF</button>
-            <button onclick="enviarEmail()">Enviar dados</button>
+            <button onclick="enviarEmail()">Enviar e-mail</button>
         </div>
 
         <div class="section">
@@ -461,48 +461,6 @@ function getRadioValue(name) {
         if (r.checked) return r.value;
     }
     return "não informado";
-}
-async function enviarParaSheets() {
-    if (!validarTRE() || !verificarChecklist()) return;
-
-    const url = "https://script.google.com/macros/s/AKfycbwgAo0EeINdkTqilPpWUgXtb2CMV3AoTlrHKJxjg9aqQGsV9y6ddVB1-kUa75tFBz5w0Q/exec";
-
-    // Monta o objeto com todos os dados do formulário
-    let dados = {
-        nome: document.getElementById("nome").value,
-        prontuario: document.getElementById("prontuario").value,
-        estrategia: document.querySelector('input[name="estrategia"]:checked').value,
-        irrsInicio: document.getElementById("irrs-inicio").value,
-        irrsFim: document.getElementById("irrs-fim").value,
-        pressaoInspiratoria: document.getElementById("pressao-inspiratoria").value,
-        cuffLeak: document.querySelector('input[name="cuff"]:checked').value,
-        checklist_reversibilidade: document.querySelector('input[name="reversibilidade"]:checked')?.value || "",
-        // ... Inclua todos os campos do checklist da mesma forma
-        // Exemplo:
-        // checklist_glasgow: document.querySelector('input[name="glasgow"]:checked')?.value || "",
-        // checklist_hemodinamica: ...
-    };
-
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            body: JSON.stringify(dados),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        const result = await response.json();
-
-        if (result.result === "success") {
-            alert("Dados enviados para o Google Sheets com sucesso!");
-        } else {
-            alert("Erro ao enviar dados: " + result.message);
-        }
-
-    } catch (error) {
-        alert("Erro na conexão: " + error.message);
-    }
 }
 function enviarEmail() {
     if (!verificarChecklist() || !validarTRE()) return;
