@@ -266,7 +266,7 @@
         </div>
     </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.legacy.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
        
        function verificarChecklist() {
@@ -393,7 +393,7 @@ function formatarItem(nome) {
 function gerarPDF() {
     if (!verificarChecklist() || !validarTRE()) return;
 
-    let doc = new jsPDF(); // Agora funciona com legacy
+    let doc = new jspdf.jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     let y = 20;
 
@@ -487,6 +487,11 @@ function gerarPDF() {
     }
 
     doc.save('relatorio-desmame-extubacao.pdf');
+
+     } catch (e) {
+        alert("Erro ao gerar PDF: " + e.message);
+        console.error(e);
+    }
 }
 function getRadioValue(name) {
     const el = document.querySelector(`input[name="${name}"]:checked`);
