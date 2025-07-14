@@ -391,6 +391,7 @@ function formatarItem(nome) {
         }
 
 function gerarPDF() {
+     try {
     if (!verificarChecklist() || !validarTRE()) return;
 
     let doc = new jspdf.jsPDF();
