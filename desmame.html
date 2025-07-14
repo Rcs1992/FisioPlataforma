@@ -361,18 +361,11 @@ function formatarItem(nome) {
             return '';
         }
 
- function gerarPDF() {
+function gerarPDF() {
     if (!verificarChecklist() || !validarTRE()) return;
 
     const { jsPDF } = window.jspdf;
     let doc = new jsPDF();
-   doc.setFillColor(230, 230, 230); // cinza claro
-   doc.rect(10, 30, 190, 12, "F"); // fundo título checklist
-   doc.setFontSize(14);
-   doc.setTextColor(0, 0, 0);
-   doc.setFont("helvetica", "bold");
-   doc.text("Checklist Inicial", 15, 38);
-
 
     let nome = document.getElementById("nome").value;
     let prontuario = document.getElementById("prontuario").value;
@@ -397,78 +390,65 @@ function formatarItem(nome) {
         { nome: "Cuff Leak Test positivo (inicial)", campo: "cuffchecklist" }
     ];
 
+    // Cabeçalho
     doc.setFontSize(16);
     doc.setFont("helvetica", "bold");
     doc.text("Relatório de Desmame e Extubação", 20, 20);
 
     doc.setFontSize(12);
     doc.setFont("helvetica", "normal");
+    doc.text(`Nome do Paciente: ${nome}`, 20, 30);
+    doc.text(`Prontuário: ${prontuario}`, 20, 40);
 
-    let y = 35;
-    doc.text(`Nome do Paciente: ${nome}`, 20, y); y += 8;
-    doc.text(`Prontuário: ${prontuario}`, 20, y); y += 12;
+    // Checklist com fundo cinza
+    doc.setFillColor(230, 230, 230);
+    doc.rect(10, 45, 190, 12, "F");
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont("helvetica", "bold");
+    doc.text("Checklist Inicial", 15, 53);
 
-    doc.setFillColor(230, 230, 230); // cinza claro
-doc.rect(10, 30, 190, 12, "F"); // fundo título checklist
-doc.setFontSize(14);
-doc.setTextColor(0, 0, 0);
-doc.setFont("helvetica", "bold");
-doc.text("Checklist Inicial", 15, 38);
-
-// Novo bloco de checklist com fundo visual
-y = 45;
-checklist.forEach(item => {
-    const valor = getRadioValue(item.campo);
-    if (valor === "nao") {
-        doc.setTextColor(200, 0, 0); // vermelho
-    } else {
-        doc.setTextColor(50, 50, 50); // preto/cinza escuro
-    }
-    doc.text(`${item.nome}: ${valor.toUpperCase()}`, 15, y);
-    y += 7;
-});
-
+    let y = 60;
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
 
     checklist.forEach(item => {
         const valor = getRadioValue(item.campo);
         if (valor === "nao") {
             doc.setTextColor(200, 0, 0); // vermelho para NÃO
         } else {
-            doc.setTextColor(0, 0, 0); // preto para SIM
+            doc.setTextColor(50, 50, 50); // cinza escuro para SIM
         }
-        doc.text(`${item.nome}: ${valor.toUpperCase()}`, 20, y);
+        doc.text(`${item.nome}: ${valor.toUpperCase()}`, 15, y);
         y += 7;
     });
 
-    doc.setTextColor(0, 0, 0); // reset para preto
+    // Barra azul para dados do TRE
     y += 5;
-    y += 5;
-doc.setFillColor(240, 240, 255); // azul muito claro
-doc.rect(10, y, 190, 10, "F");
-doc.setTextColor(0, 0, 0);
-doc.setFont("helvetica", "bold");
-doc.text("Dados do TRE", 15, y + 7);
-y += 15;
-
-    
+    doc.setFillColor(240, 240, 255);
+    doc.rect(10, y, 190, 10, "F");
+    doc.setTextColor(0, 0, 0);
     doc.setFont("helvetica", "bold");
-    doc.text("Dados do TRE:", 20, y); y += 8;
+    doc.text("Dados do TRE", 15, y + 7);
+    y += 15;
+
     doc.setFont("helvetica", "normal");
+    doc.text(`Estratégia de Desmame: ${estrategia}`, 15, y); y += 7;
+    doc.text(`IRRS no Início: ${irrsInicio}`, 15, y); y += 7;
+    doc.text(`IRRS no Fim: ${irrsFim}`, 15, y); y += 7;
+    doc.text(`Pressão Inspiratória Máxima: ${pressaoInspiratoria}`, 15, y); y += 7;
+    doc.text(`Cuff Leak Test (final): ${cuffLeak}`, 15, y); y += 12;
 
-    doc.text(`Estratégia de Desmame: ${estrategia}`, 20, y); y += 7;
-    doc.text(`IRRS no Início: ${irrsInicio}`, 20, y); y += 7;
-    doc.text(`IRRS no Fim: ${irrsFim}`, 20, y); y += 7;
-    doc.text(`Pressão Inspiratória Máxima: ${pressaoInspiratoria}`, 20, y); y += 7;
-    doc.text(`Cuff Leak Test (final): ${cuffLeak}`, 20, y); y += 12;
-
+    // Mensagens de validação
     if (mensagemValidacao) {
         doc.setFont("helvetica", "bold");
-        doc.text("Mensagens de Validação:", 20, y); y += 8;
+        doc.text("Mensagens de Validação:", 15, y);
+        y += 8;
         doc.setFont("helvetica", "italic");
 
         let mensagens = mensagemValidacao.replace(/<br>/g, "\n").trim();
-        let linhas = doc.splitTextToSize(mensagens, 170);
-        doc.text(linhas, 20, y);
+        let linhas = doc.splitTextToSize(mensagens, 180);
+        doc.text(linhas, 15, y);
     }
 
     doc.save('relatorio-desmame-extubacao.pdf');
