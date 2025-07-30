@@ -117,6 +117,37 @@
     </div>
   </div>
 
+  <!-- Estado Geral (em menu suspenso) -->
+<label for="estadoGeralSelect">Avalição Física:</label>
+<select id="estadoGeralSelect" multiple>
+  <option value="afebril">Afebril</option>
+  <option value="febril">Febril</option>
+  <option value="normocorado(a)">Normocorado(a)</option>
+  <option value="hipocorado(a)">Hipocorado(a)</option>
+  <option value="acianótico(a)">Acianótico(a)</option>
+  <option value="cianótico(a)">Cianótico(a)</option>
+  <option value="hidratado(a)">Hidratado(a)</option>
+  <option value="desidratado(a)">Desidratado(a)</option>
+  <option value="anictérico(a)">Anictérico(a)</option>
+  <option value="ictérico(a)">Ictérico(a)</option>
+  <option value="extremidades quentes e perfundidas">Extremidades quentes e perfundidas</option>
+  <option value="extremidades frias e hipoperfundidas">Extremidades frias e hipoperfundidas</option>
+</select>
+
+<!-- Detalhes de Sedação (em menu suspenso com campo de dose abaixo) -->
+<label for="sedacaoSelect">Medicações sedativas utilizadas:</label>
+<select id="sedacaoSelect" multiple>
+  <option value="Fentanil">Fentanil</option>
+  <option value="Midazolam">Midazolam</option>
+  <option value="Ketamina">Ketamina</option>
+  <option value="Propofol">Propofol</option>
+  <option value="Precedex">Precedex</option>
+  <option value="Morfina">Morfina</option>
+</select>
+<label for="doseSedativos">Doses ou observações:</label>
+<input type="text" id="doseSedativos" placeholder="Ex: Fentanil 100mcg/h, Propofol 20ml/h">
+
+
   <div class="section">
     <label for="ventilacao">Ventilação</label>
     <select id="ventilacao">
@@ -236,6 +267,11 @@
       const rass = document.getElementById("rass").value;
       const sedacaoTexto = sedado ? ` Paciente sedado, RASS: ${rass}.` : "";
 
+     const estadoGeralnovo = Array.from(document.getElementById("estadoGeralSelect").selectedOptions).map(option => option.value);
+     const sedativos = Array.from(document.getElementById("sedacaoSelect").selectedOptions).map(option => option.value);
+     const doseSedativos = document.getElementById("doseSedativos").value;
+
+      
       const ventilacao = document.getElementById("ventilacao").value;
       const oxigenioDetalhe = document.getElementById("oxigenioDetalhe").value;
 
@@ -260,6 +296,13 @@
 
       const texto = 
 `Paciente em leito de UTI, ${estadoGeral}. Apresenta-se ${consciencia}.${sedacaoTexto}
+if (estadoGeralnovo.length > 0) {
+  texto += `\nAvaliação física: ${estadoGeralnovo.join(', ')}.`;
+}
+if (sedativos.length > 0 || doseSedativos) {
+  texto += `\nSedação: ${sedativos.join(', ')}.`;
+  if (doseSedativos) texto += ` Observações: ${doseSedativos}.`;
+}
 Encontra-se ${ventilacao}${oxigenioDetalhe ? ", utilizando: " + oxigenioDetalhe : ""}.
 Sinais vitais: FC ${fc} bpm, PA ${pa}, FR ${fr} irpm, SpO₂ ${spo2}%, Tº ${temp}°C.
 Exame respiratório: ${exameRespiratorio || "sem alterações relevantes"}.
