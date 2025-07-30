@@ -260,58 +260,60 @@
       return condutas.length ? `Condutas realizadas: ${condutas.join(", ")}.` : "";
     }
 
-    function gerarEvolucao() {
-      const estadoGeral = document.getElementById("estadoGeral").value;
-      const consciencia = document.getElementById("nivelConsciencia").value;
-      const sedado = document.getElementById("sedado").checked;
-      const rass = document.getElementById("rass").value;
-      const sedacaoTexto = sedado ? ` Paciente sedado, RASS: ${rass}.` : "";
+function gerarEvolucao() {
+  const estadoGeral = document.getElementById("estadoGeral").value;
+  const consciencia = document.getElementById("nivelConsciencia").value;
+  const sedado = document.getElementById("sedado").checked;
+  const rass = document.getElementById("rass").value;
+  const sedacaoTexto = sedado ? ` Paciente sedado, RASS: ${rass}.` : "";
 
-     const estadoGeralnovo = Array.from(document.getElementById("estadoGeralSelect").selectedOptions).map(option => option.value);
-     const sedativos = Array.from(document.getElementById("sedacaoSelect").selectedOptions).map(option => option.value);
-     const doseSedativos = document.getElementById("doseSedativos").value;
+  const estadoGeralnovo = Array.from(document.getElementById("estadoGeralSelect").selectedOptions).map(option => option.value);
+  const sedativos = Array.from(document.getElementById("sedacaoSelect").selectedOptions).map(option => option.value);
+  const doseSedativos = document.getElementById("doseSedativos").value;
 
-      
-      const ventilacao = document.getElementById("ventilacao").value;
-      const oxigenioDetalhe = document.getElementById("oxigenioDetalhe").value;
+  const ventilacao = document.getElementById("ventilacao").value;
+  const oxigenioDetalhe = document.getElementById("oxigenioDetalhe").value;
 
-      const fc = document.getElementById("fc").value;
-      const pa = document.getElementById("pa").value;
-      const fr = document.getElementById("fr").value;
-      const spo2 = document.getElementById("spo2").value;
-      const temp = document.getElementById("temp").value;
+  const fc = document.getElementById("fc").value;
+  const pa = document.getElementById("pa").value;
+  const fr = document.getElementById("fr").value;
+  const spo2 = document.getElementById("spo2").value;
+  const temp = document.getElementById("temp").value;
 
-      const exameRespiratorio = Array.from(document.getElementById("exameRespiratorio").selectedOptions).map(opt => opt.value).join(" ");
-      const exameAbdominal = Array.from(document.getElementById("exameAbdominal").selectedOptions).map(opt => opt.value).join(" ");
+  const exameRespiratorio = Array.from(document.getElementById("exameRespiratorio").selectedOptions).map(opt => opt.value).join(" ");
+  const exameAbdominal = Array.from(document.getElementById("exameAbdominal").selectedOptions).map(opt => opt.value).join(" ");
 
+  const ims = document.getElementById("ims").value;
+  const mrc = document.getElementById("mrc").value;
 
-      const ims = document.getElementById("ims").value;
-      const mrc = document.getElementById("mrc").value;
+  const mobilidadeTexto = (ims || mrc) 
+    ? `Mobilidade: IMS ${ims || "-"}, MRC ${mrc || "-"}.` 
+    : "";
 
-      const mobilidadeTexto = (ims || mrc) 
-        ? `Mobilidade: IMS ${ims || "-"}, MRC ${mrc || "-"}.` 
-        : "";
+  const condutaTexto = gerarCondutasTexto();
 
-      const condutaTexto = gerarCondutasTexto();
+  let texto = `Paciente em leito de UTI, ${estadoGeral}. Apresenta-se ${consciencia}.${sedacaoTexto}\n`;
 
-      const texto = 
-`Paciente em leito de UTI, ${estadoGeral}. Apresenta-se ${consciencia}.${sedacaoTexto}
-if (estadoGeralnovo.length > 0) {
-  texto += `\nAvaliação física: ${estadoGeralselect.join(', ')}.`;
+  if (estadoGeralnovo.length > 0) {
+    texto += `Avaliação física: ${estadoGeralnovo.join(', ')}.\n`;
+  }
+
+  if (sedativos.length > 0 || doseSedativos) {
+    texto += `Sedação: ${sedativos.join(', ')}.`;
+    if (doseSedativos) texto += ` Observações: ${doseSedativos}.`;
+    texto += `\n`;
+  }
+
+  texto += `Encontra-se ${ventilacao}${oxigenioDetalhe ? ", utilizando: " + oxigenioDetalhe : ""}.\n`;
+  texto += `Sinais vitais: FC ${fc} bpm, PA ${pa}, FR ${fr} irpm, SpO₂ ${spo2}%, Tº ${temp}°C.\n`;
+  texto += `Exame respiratório: ${exameRespiratorio || "sem alterações relevantes"}.\n`;
+  texto += `Exame abdominal: ${exameAbdominal || "sem alterações relevantes"}.\n`;
+
+  if (mobilidadeTexto) texto += mobilidadeTexto + '\n';
+  if (condutaTexto) texto += condutaTexto + '\n';
+
+  document.getElementById("output").innerText = texto;
 }
-if (sedativos.length > 0 || doseSedativos) {
-  texto += `\nSedação: ${sedativos.join(', ')}.`;
-  if (doseSedativos) texto += ` Observações: ${doseSedativos}.`;
-}
-Encontra-se ${ventilacao}${oxigenioDetalhe ? ", utilizando: " + oxigenioDetalhe : ""}.
-Sinais vitais: FC ${fc} bpm, PA ${pa}, FR ${fr} irpm, SpO₂ ${spo2}%, Tº ${temp}°C.
-Exame respiratório: ${exameRespiratorio || "sem alterações relevantes"}.
-Exame abdominal: ${exameAbdominal || "sem alterações relevantes"}.
-${mobilidadeTexto}
-${condutaTexto}`;
-
-      document.getElementById("output").innerText = texto;
-    }
   </script>
 </body>
 </html>
