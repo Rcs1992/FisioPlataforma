@@ -143,11 +143,11 @@
     <option value="MV preservado sem ruídos adventícios">MV preservado sem ruídos adventícios</option>
     <option value="MV com presença de">MV com presença de</option>
     <option value="MV reduzido">MV reduzido</option>
-    <option value="Roncos">com roncos</option>
-    <option value="Sibilos">com sibilos</option>
-    <option value="Estertores crepitantes"> com estertores crepitantes</option>
+    <option value="Roncos">roncos</option>
+    <option value="Sibilos">sibilos</option>
+    <option value="Estertores crepitantes">estertores crepitantes</option>
     <option value="MV abolido">MV abolido</option>
-    <option value="Globalmente">Globalmente</option>
+    <option value="Globalmente">globalmente</option>
     <option value="Base direita">em base direita</option>
     <option value="Base esquerda">em base esquerda</option>
     <option value="À Direita">em HTX D</option>
@@ -242,8 +242,8 @@
       const spo2 = document.getElementById("spo2").value;
       const temp = document.getElementById("temp").value;
 
-      const exameRespiratorio = Array.from(document.getElementById("exameRespiratorio").selectedOptions).map(opt => opt.value).join(", ");
-      const exameAbdominal = Array.from(document.getElementById("exameAbdominal").selectedOptions).map(opt => opt.value).join(", ");
+      const exameRespiratorio = Array.from(document.getElementById("exameRespiratorio").selectedOptions).map(opt => opt.value).join(" ");
+      const exameAbdominal = Array.from(document.getElementById("exameAbdominal").selectedOptions).map(opt => opt.value).join(" ");
 
 
       const ims = document.getElementById("ims").value;
