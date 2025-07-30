@@ -140,12 +140,19 @@
 <div class="section">
   <label for="exameRespiratorio">Exame Respiratório</label>
   <select id="exameRespiratorio" multiple>
-    <option value="MV preservado">MV preservado</option>
+    <option value="MV preservado sem ruídos adventícios">MV preservado sem ruídos adventícios</option>
+    <option value="MV com presença de">MV com presença de</option>
     <option value="MV reduzido">MV reduzido</option>
-    <option value="Roncos">Roncos</option>
-    <option value="Sibilos">Sibilos</option>
-    <option value="Estertores crepitantes">Estertores crepitantes</option>
+    <option value="Roncos">com roncos</option>
+    <option value="Sibilos">com sibilos</option>
+    <option value="Estertores crepitantes"> com estertores crepitantes</option>
     <option value="MV abolido">MV abolido</option>
+    <option value="Globalmente">Globalmente</option>
+    <option value="Base direita">em base direita</option>
+    <option value="Base esquerda">em base esquerda</option>
+    <option value="À Direita">em HTX D</option>
+    <option value="À esquerda">em HTX E</option>
+    
   </select>
 
   <label for="exameAbdominal">Exame Abdominal</label>
@@ -155,8 +162,7 @@
     <option value="Flácido">Flácido</option>
     <option value="Tenso">Tenso</option>
     <option value="Doloroso à palpação">Doloroso à palpação</option>
-    <option value="Peristalse presente">Peristalse presente</option>
-    <option value="Peristalse ausente">Peristalse ausente</option>
+    <option value="Sem dor à palpação">Sem presença de dor</option>
   </select>
 </div>
 
@@ -187,10 +193,32 @@
 
   <div id="output" class="output"></div>
 
+  <button onclick="copiarEvolucao()" style="margin-top: 10px;">📋 Copiar Evolução</button>
+
   <script>
     document.getElementById("sedado").addEventListener("change", function () {
       document.getElementById("sedacaoDetalhes").classList.toggle("hidden", !this.checked);
     });
+
+    function copiarEvolucao() {
+  const output = document.getElementById("output");
+  const texto = output.innerText || output.textContent;
+
+  if (texto.trim() === "") {
+    alert("Nada para copiar.");
+    return;
+  }
+
+  // Cria um elemento temporário
+  const temp = document.createElement("textarea");
+  temp.value = texto;
+  document.body.appendChild(temp);
+  temp.select();
+  document.execCommand("copy");
+  document.body.removeChild(temp);
+
+  alert("Evolução copiada para a área de transferência!");
+}
 
     function gerarCondutasTexto() {
       const select = document.getElementById("condutas");
