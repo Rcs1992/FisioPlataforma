@@ -239,6 +239,9 @@
       <option>Avaliação da mecânica ventilatória</option>
     </select>
   </div>
+  
+<label for="obsFinais">Observações Finais:</label>
+<textarea id="obsFinais" rows="3" placeholder="Digite aqui..."></textarea>
 
   <button onclick="gerarEvolucao()">Gerar Evolução</button>
 
@@ -294,26 +297,26 @@ function gerarEvolucao() {
 
   const ventilacao = document.getElementById("ventilacao").value;
   const oxigenioDetalhe = document.getElementById("oxigenioDetalhe").value;
+
   // Parâmetros de ventilação mecânica
-const modoVM = document.getElementById("modoVM").value;
-const pinsp = document.getElementById("pinsp").value;
-const peep = document.getElementById("peep").value;
-const fio2 = document.getElementById("fio2").value;
-const vc = document.getElementById("vc").value;
-const frVM = document.getElementById("frVM").value;
+  const modoVM = document.getElementById("modoVM").value;
+  const pinsp = document.getElementById("pinsp").value;
+  const peep = document.getElementById("peep").value;
+  const fio2 = document.getElementById("fio2").value;
+  const vc = document.getElementById("vc").value;
+  const frVM = document.getElementById("frVM").value;
 
-let parametrosVM = "";
-if (ventilacao === "em ventilação mecânica") {
-  parametrosVM = " Parâmetros ventilatórios:";
-  if (modoVM) parametrosVM += ` modo ${modoVM},`;
-  if (pinsp) parametrosVM += ` Pinsp/PS ${pinsp},`;
-  if (peep) parametrosVM += ` PEEP ${peep},`;
-  if (fio2) parametrosVM += ` FiO₂ ${fio2}%,`;
-  if (vc) parametrosVM += ` VC ${vc},`;
-  if (frVM) parametrosVM += ` FR ${frVM} irpm,`;
-  parametrosVM = parametrosVM.replace(/,+$/, "."); // remove vírgula final e adiciona ponto
-}
-
+  let parametrosVM = "";
+  if (ventilacao === "em ventilação mecânica") {
+    parametrosVM = " Parâmetros ventilatórios:";
+    if (modoVM) parametrosVM += ` modo ${modoVM},`;
+    if (pinsp) parametrosVM += ` Pinsp/PS ${pinsp},`;
+    if (peep) parametrosVM += ` PEEP ${peep},`;
+    if (fio2) parametrosVM += ` FiO₂ ${fio2}%,`;
+    if (vc) parametrosVM += ` VC ${vc},`;
+    if (frVM) parametrosVM += ` FR ${frVM} irpm,`;
+    parametrosVM = parametrosVM.replace(/,+$/, "."); // remove vírgula final e adiciona ponto
+  }
 
   const fc = document.getElementById("fc").value;
   const pa = document.getElementById("pa").value;
@@ -333,6 +336,7 @@ if (ventilacao === "em ventilação mecânica") {
 
   const condutaTexto = gerarCondutasTexto();
 
+  // ✅ Começa a montar o texto
   let texto = `Paciente em leito de UTI, ${estadoGeral}. Apresenta-se ${consciencia}.${sedacaoTexto}\n`;
 
   if (estadoGeralnovo.length > 0) {
@@ -346,7 +350,8 @@ if (ventilacao === "em ventilação mecânica") {
   }
 
   texto += `Encontra-se ${ventilacao}${oxigenioDetalhe ? ", utilizando: " + oxigenioDetalhe : ""}.\n`;
- if (parametrosVM) texto += parametrosVM + "\n";
+  if (parametrosVM) texto += parametrosVM + "\n";
+
   texto += `Sinais vitais: FC ${fc} bpm, PA ${pa}, FR ${fr} irpm, SpO₂ ${spo2}%, Tº ${temp}°C.\n`;
   texto += `Exame respiratório: ${exameRespiratorio || "sem alterações relevantes"}.\n`;
   texto += `Exame abdominal: ${exameAbdominal || "sem alterações relevantes"}.\n`;
@@ -354,8 +359,16 @@ if (ventilacao === "em ventilação mecânica") {
   if (mobilidadeTexto) texto += mobilidadeTexto + '\n';
   if (condutaTexto) texto += condutaTexto + '\n';
 
+  // ✅ Observações finais (agora no lugar certo)
+  const obsFinais = document.getElementById("obsFinais").value;
+  if (obsFinais.trim() !== "") {
+    texto += `Obs.: ${obsFinais}\n`;
+  }
+
+  // ✅ Exibe na tela
   document.getElementById("output").innerText = texto;
 }
+
   </script>
 </body>
 </html>
