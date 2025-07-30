@@ -79,24 +79,28 @@
   </style>
 </head>
 <body>
+  <label for="leito">Leito:</label>
+<input type="text" id="leito" name="leito" placeholder="Ex: 12" />
+<br>
+  
   <div class="section">
     <label for="estadoGeral">Estado Geral</label>
     <select id="estadoGeral">
-      <option value="acordado, responsivo">Acordado, responsivo</option>
-      <option value="sonolento, responsivo ao chamado">Sonolento, responsivo</option>
-      <option value="rebaixado, responde à dor">Rebaixado, responde à dor</option>
-      <option value="não responsivo a nenhum estímulo">Sem resposta a estímulos</option>
+      <option value="acordado(a), responsivo(a)">Acordado(a), responsivo(a)</option>
+      <option value="sonolento(a), responsivo(a) ao chamado">Sonolento(a), responsivo(a)</option>
+      <option value="rebaixado(a), responde à dor">Rebaixado(a), responde à dor</option>
+      <option value="não responsivo(a) a nenhum estímulo">Sem resposta a estímulos</option>
     </select>
   </div>
 
   <div class="section">
     <label for="nivelConsciencia">Nível de Consciência</label>
     <select id="nivelConsciencia">
-      <option value="consciente e orientado">Consciente e orientado</option>
-      <option value="confuso">Confuso</option>
-      <option value="agitado">Agitado</option>
-      <option value="rebaixado">Rebaixado</option>
-      <option value="comatoso">Comatoso</option>
+      <option value="consciente e orientado(a)">Consciente e orientado(a)</option>
+      <option value="confuso(a)">Confuso(a)</option>
+      <option value="agitado(a)">Agitado(a)</option>
+      <option value="rebaixado(a)">Rebaixado(a)</option>
+      <option value="comatoso(a)">Comatoso(a)</option>
     </select>
 
     <label><input type="checkbox" id="sedado" /> Paciente sedado</label>
@@ -335,9 +339,12 @@ function gerarEvolucao() {
     : "";
 
   const condutaTexto = gerarCondutasTexto();
+  
+  const leito = document.getElementById("leito").value || "não informado";
+
 
   // ✅ Começa a montar o texto
-  let texto = `Paciente em leito de UTI, ${estadoGeral}. Apresenta-se ${consciencia}.${sedacaoTexto}\n`;
+  let texto = `Paciente internado na UTI, leito ${leito}, ${estadoGeral}. Apresenta-se ${consciencia}.${sedacaoTexto}\n`;
 
   if (estadoGeralnovo.length > 0) {
     texto += `Avaliação física: ${estadoGeralnovo.join(', ')}.\n`;
