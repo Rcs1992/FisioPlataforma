@@ -158,6 +158,23 @@
 
     <input type="text" id="oxigenioDetalhe" placeholder="Detalhe: cateter, máscara, VM..." />
   </div>
+  <div id="vmDetalhes" class="row hidden" style="margin-top: 6px;">
+  <select id="modoVM">
+    <option value="">Modo</option>
+    <option value="PCV">PCV</option>
+    <option value="PRVC">PRVC</option>
+    <option value="VCV">VCV</option>
+    <option value="PSV">PSV</option>
+    <option value="PAV">PAV</option>
+    <option value="APRV">APRV</option>
+    <option value="SIMV">SIMV</option>
+  </select>
+  <input type="text" id="pinsp" placeholder="Pinsp/PS" />
+  <input type="text" id="peep" placeholder="PEEP" />
+  <input type="text" id="fio2" placeholder="FiO₂ %" />
+  <input type="text" id="vc" placeholder="VC" />
+  <input type="text" id="frVM" placeholder="FR VM" />
+</div>
 
   <div class="section">
     <div class="row">
@@ -233,6 +250,10 @@
     document.getElementById("sedado").addEventListener("change", function () {
       document.getElementById("sedacaoDetalhes").classList.toggle("hidden", !this.checked);
     });
+    document.getElementById("ventilacao").addEventListener("change", function () {
+  const vmDetalhes = document.getElementById("vmDetalhes");
+  vmDetalhes.classList.toggle("hidden", this.value !== "em ventilação mecânica");
+});
 
     function copiarEvolucao() {
   const output = document.getElementById("output");
@@ -273,6 +294,26 @@ function gerarEvolucao() {
 
   const ventilacao = document.getElementById("ventilacao").value;
   const oxigenioDetalhe = document.getElementById("oxigenioDetalhe").value;
+  // Parâmetros de ventilação mecânica
+const modoVM = document.getElementById("modoVM").value;
+const pinsp = document.getElementById("pinsp").value;
+const peep = document.getElementById("peep").value;
+const fio2 = document.getElementById("fio2").value;
+const vc = document.getElementById("vc").value;
+const frVM = document.getElementById("frVM").value;
+
+let parametrosVM = "";
+if (ventilacao === "em ventilação mecânica") {
+  parametrosVM = " Parâmetros ventilatórios:";
+  if (modoVM) parametrosVM += ` modo ${modoVM},`;
+  if (pinsp) parametrosVM += ` Pinsp/PS ${pinsp},`;
+  if (peep) parametrosVM += ` PEEP ${peep},`;
+  if (fio2) parametrosVM += ` FiO₂ ${fio2}%,`;
+  if (vc) parametrosVM += ` VC ${vc},`;
+  if (frVM) parametrosVM += ` FR ${frVM} irpm,`;
+  parametrosVM = parametrosVM.replace(/,+$/, "."); // remove vírgula final e adiciona ponto
+}
+
 
   const fc = document.getElementById("fc").value;
   const pa = document.getElementById("pa").value;
@@ -305,6 +346,7 @@ function gerarEvolucao() {
   }
 
   texto += `Encontra-se ${ventilacao}${oxigenioDetalhe ? ", utilizando: " + oxigenioDetalhe : ""}.\n`;
+ if (parametrosVM) texto += parametrosVM + "\n";
   texto += `Sinais vitais: FC ${fc} bpm, PA ${pa}, FR ${fr} irpm, SpO₂ ${spo2}%, Tº ${temp}°C.\n`;
   texto += `Exame respiratório: ${exameRespiratorio || "sem alterações relevantes"}.\n`;
   texto += `Exame abdominal: ${exameAbdominal || "sem alterações relevantes"}.\n`;
