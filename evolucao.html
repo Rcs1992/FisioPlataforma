@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evolução Fisioterapêutica</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 10px;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+
+    h2 {
+      margin-top: 20px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    textarea, select, input[type="number"], input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    .checkbox-group, .subgroup {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: #fff;
+      padding: 6px 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+
+    button {
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      background-color: #007BFF;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #resultado {
+      background-color: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-top: 20px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 5px;
+      }
+
+      .checkbox-group, .subgroup {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h2>Gerador de Evolução Fisioterapêutica - UTI</h2>
+
+  <!-- Campos anteriores omitidos por brevidade -->
+  
+    <!-- Sinais Vitais -->
+  <label>Frequência Cardíaca (FC - bpm):</label>
+  <input type="number" id="fc">
+  <label>Pressão Arterial (PA - mmHg):</label>
+  <input type="text" id="pa" placeholder="ex: 120/80">
+  <label>Frequência Respiratória (FR - irpm):</label>
+  <input type="number" id="fr">
+  <label>Saturação de O₂ (SpO₂ - %):</label>
+  <input type="number" id="spo2">
+  <label>Temperatura (°C):</label>
+  <input type="number" step="0.1" id="temp">
+
+  <!-- Estado Geral Detalhado -->
+  <label>Estado geral (marque todas as observações que se aplicam):</label>
+  <div class="checkbox-group" id="estadoGeralGrupo">
+    <label><input type="checkbox" class="estadoGeral" value="afebril"> Afebril</label>
+    <label><input type="checkbox" class="estadoGeral" value="febril"> Febril</label>
+    <label><input type="checkbox" class="estadoGeral" value="normocorado(a)"> Normocorado(a)</label>
+    <label><input type="checkbox" class="estadoGeral" value="hipocorado(a)"> Hipocorado(a)</label>
+    <label><input type="checkbox" class="estadoGeral" value="acianótico(a)"> Acianótico(a)</label>
+    <label><input type="checkbox" class="estadoGeral" value="cianótico(a)"> Cianótico(a)</label>
+    <label><input type="checkbox" class="estadoGeral" value="hidratado(a)"> Hidratado(a)</label>
+    <label><input type="checkbox" class="estadoGeral" value="desidratado(a)"> Desidratado(a)</label>
+    <label><input type="checkbox" class="estadoGeral" value="anictérico(a)"> Anictérico(a)</label>
+    <label><input type="checkbox" class="estadoGeral" value="ictérico(a)"> Ictérico(a)</label>
+    <label><input type="checkbox" class="estadoGeral" value="extremidades quentes e perfundidas"> Extremidades quentes e perfundidas</label>
+    <label><input type="checkbox" class="estadoGeral" value="extremidades frias e hipoperfundidas"> Extremidades frias e hipoperfundidas</label>
+  </div>
+
+
+
+  <!-- Nível de Consciência -->
+  <label>Nível de consciência (marque todas que se aplicam):</label>
+  <div class="checkbox-group" id="nivelConscienciaGrupo">
+    <label><input type="checkbox" class="nivelConsciencia" value="alerta"> Alerta</label>
+    <label><input type="checkbox" class="nivelConsciencia" value="orientado(a) em tempo e espaço"> Orientado(a)</label>
+    <label><input type="checkbox" class="nivelConsciencia" value="sonolento(a)"> Sonolento(a)</label>
+    <label><input type="checkbox" class="nivelConsciencia" value="rebaixado(a)"> Rebaixado(a)</label>
+    <label><input type="checkbox" class="nivelConsciencia" value="responsivo(a) a estímulos verbais"> Responsivo(a) a estímulos verbais</label>
+    <label><input type="checkbox" class="nivelConsciencia" value="sem resposta a estímulos dolorosos"> Sem resposta a estímulos dolorosos</label>
+    <label><input type="checkbox" id="sedado" class="nivelConsciencia" value="sedado(a)"> Sedado(a)</label>
+  </div>
+
+  <!-- Detalhes de sedação -->
+  <div id="sedacaoDetalhes" class="hidden">
+    <label>Medicações sedativas utilizadas (marque todas):</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" class="sedativo" value="Fentanil"> Fentanil</label>
+      <label><input type="checkbox" class="sedativo" value="Midazolam"> Midazolam</label>
+      <label><input type="checkbox" class="sedativo" value="Ketamina"> Ketamina</label>
+      <label><input type="checkbox" class="sedativo" value="Propofol"> Propofol</label>
+      <label><input type="checkbox" class="sedativo" value="Precedex"> Precedex</label>
+      <label><input type="checkbox" class="sedativo" value="Morfina"> Morfina</label>
+    </div>
+    <label>Doses ou observações:</label>
+    <input type="text" id="doseSedativos" placeholder="Ex: Fentanil 100mcg/h, Propofol 20ml/h">
+ <div id="rassContainer" style="margin-top: 10px;">
+  <label for="rass">Escala RASS:</label>
+  <select id="rass">
+    <option value="">Selecione</option>
+    <option value="+4">+4 - Muito agitado (combativo)</option>
+    <option value="+3">+3 - Agitação moderada</option>
+    <option value="+2">+2 - Levemente agitado</option>
+    <option value="+1">+1 - Inquieto</option>
+    <option value="0">0 - Alerta e calmo</option>
+    <option value="-1">-1 - Sonolento</option>
+    <option value="-2">-2 - Sedação leve</option>
+    <option value="-3">-3 - Sedação moderada</option>
+    <option value="-4">-4 - Sedação profunda</option>
+    <option value="-5">-5 - Não desperta</option>
+  </select>
+</div>
+ </div>
+
+  
+    <!-- Ventilação -->
+  <label>Ventilação:</label>
+  <select id="ventilacao">
+    <option value="em ventilação espontânea">Ventilação espontânea</option>
+    <option value="em oxigenoterapia">Oxigenoterapia</option>
+    <option value="em Ventilação Mecânica (VM)">Ventilação Mecânica (VM)</option>
+    <option value="em Ventilação Não Invasiva (VNI)">Ventilação Não Invasiva (VNI)</option>
+  </select>
+  <label>Se oxigenoterapia ou VM/VNI, especifique interface/modo e fluxo:</label>
+  <input type="text" id="oxigenioDetalhe" placeholder="Ex: Cateter nasal 3L/min ou VM modo PSV + PEEP 5cmH₂O">
+
+  <!-- Exame Respiratório -->
+  <label>Exame Respiratório:</label>
+  <div class="checkbox-group" id="exameRespiratorioGrupo">
+    <label><input type="checkbox" class="exameRespiratorio" value="MV presente bilateralmente"> MV presente bilateralmente</label>
+    <label><input type="checkbox" class="exameRespiratorio" value="MV reduzido à direita"> MV reduzido à direita</label>
+    <label><input type="checkbox" class="exameRespiratorio" value="MV reduzido à esquerda"> MV reduzido à esquerda</label>
+    <label><input type="checkbox" class="exameRespiratorio" value="presença de roncos"> Presença de roncos</label>
+    <label><input type="checkbox" class="exameRespiratorio" value="presença de sibilos"> Presença de sibilos</label>
+    <label><input type="checkbox" class="exameRespiratorio" value="presença de estertores crepitantes"> Estertores crepitantes</label>
+    <label><input type="checkbox" class="exameRespiratorio" value="uso de musculatura acessória"> Uso de musculatura acessória</label>
+  </div>
+
+  <!-- Exame Abdominal -->
+  <label>Exame Abdominal:</label>
+  <div class="checkbox-group" id="exameAbdominalGrupo">
+    <label><input type="checkbox" class="exameAbdominal" value="abdome plano"> Abdome plano</label>
+    <label><input type="checkbox" class="exameAbdominal" value="abdome globoso"> Abdome globoso</label>
+    <label><input type="checkbox" class="exameAbdominal" value="abdome gravídtico"> Abdome gravídico</label>
+    <label><input type="checkbox" class="exameAbdominal" value="sem dor à palpação"> Sem dor</label>
+    <label><input type="checkbox" class="exameAbdominal" value="com dor à palpação"> doloroso à palpação</label>
+  </div>
+
+<div class="mb-4">
+  <label for="ims" class="block font-semibold">IMS (ICU Mobility Scale):</label>
+  <input type="number" id="ims" min="0" max="10" class="border rounded p-1 w-full" placeholder="0 a 10">
+</div>
+
+<div class="mb-4">
+  <label for="mrc" class="block font-semibold">MRC (Força muscular - Soma dos 6 grupos):</label>
+  <input type="number" id="mrc" min="0" max="60" class="border rounded p-1 w-full" placeholder="0 a 60">
+</div>
+
+  <!-- Condutas -->
+  <label>Condutas realizadas:</label>
+  <div class="checkbox-group" id="condutaGrupo">
+    <label><input type="checkbox" class="conduta" value="realizada avaliação fisioterapêutica"> Avaliação fisioterapêutica</label>
+    <label><input type="checkbox" class="conduta" value="aplicadas técnicas de higiene brônquica"> Higiene brônquica</label>
+    <label><input type="checkbox" class="conduta" value="realizadas orientações posturais"> Orientações posturais</label>
+    <label><input type="checkbox" class="conduta" value="realizadas medidas de prevenção de complicações"> Prevenção de complicações</label>
+    <label><input type="checkbox" class="conduta" value="mobilização ativa ou assistida no leito"> Mobilização ativa/assistida</label>
+  </div>
+
+
+  <!-- Botão e Resultado -->
+  <button onclick="gerarEvolucao()">Gerar Evolução</button>
+  <div id="resultado">
+    <h3>Evolução Gerada:</h3>
+    <textarea id="textoEvolucao" rows="16" readonly></textarea>
+  </div>
+
+  <script>
+    // Mostrar/ocultar sedação
+    document.getElementById("sedado").addEventListener("change", function () {
+      document.getElementById("sedacaoDetalhes").classList.toggle("hidden", !this.checked);
+    });
+
+    function gerarEvolucao() {
+      const fc = document.getElementById("fc").value;
+      const pa = document.getElementById("pa").value;
+      const fr = document.getElementById("fr").value;
+      const spo2 = document.getElementById("spo2").value;
+      const temp = document.getElementById("temp").value;
+const ims = document.getElementById("ims").value;
+const mrc = document.getElementById("mrc").value;
+
+let mobilidadeTexto = "";
+if (ims || mrc) {
+  mobilidadeTexto = `\nMobilidade: ${ims ? "IMS " + ims : ""}${ims && mrc ? ", " : ""}${mrc ? "MRC " + mrc + "/60" : ""}.`;
+}
+
+      const ventilacao = document.getElementById("ventilacao").value;
+      const oxigenioDetalhe = document.getElementById("oxigenioDetalhe").value;
+
+
+      const estadoGeral = Array.from(document.querySelectorAll(".estadoGeral:checked")).map(cb => cb.value).join(", ");
+      const conscienciaArray = Array.from(document.querySelectorAll(".nivelConsciencia:checked")).map(cb => cb.value);
+      const consciencia = conscienciaArray.join(", ");
+      const condutas = Array.from(document.querySelectorAll(".conduta:checked")).map(cb => cb.value).join(", ");
+      const exameRespiratorio = Array.from(document.querySelectorAll(".exameRespiratorio:checked")).map(cb => cb.value).join(", ");
+      const exameAbdominal = Array.from(document.querySelectorAll(".exameAbdominal:checked")).map(cb => cb.value).join(", ");
+
+      let sedacaoTexto = "";
+      if (conscienciaArray.includes("sedado(a)")) {
+        const sedativos = Array.from(document.querySelectorAll(".sedativo:checked")).map(cb => cb.value).join(", ");
+        const dose = document.getElementById("doseSedativos").value;
+        sedacaoTexto = ` Sedado(a) com ${sedativos}. ${dose ? "Doses: " + dose + "." : ""}`;
+      }
+const rass = document.getElementById("rass").value;
+if (conscienciaArray.includes("sedado(a)") && rass) {
+  sedacaoTexto += ` Escala de sedação RASS: ${rass}.`;
+}
+
+      const condutaTexto = condutas.length > 0 ? `Conduta: ${condutas}.` : "Conduta: sem intervenções específicas neste turno.";
+
+      const texto = 
+`Paciente em leito de UTI, ${estadoGeral}. Apresenta-se ${consciencia}.${sedacaoTexto}
+Encontra-se ${ventilacao}${oxigenioDetalhe ? ", utilizando: " + oxigenioDetalhe : ""}.
+Sinais vitais: FC ${fc} bpm, PA ${pa}, FR ${fr} irpm, SpO₂ ${spo2}%, Tº ${temp}°C.
+Exame respiratório: ${exameRespiratorio || "sem alterações relevantes"}.
+Exame abdominal: ${exameAbdominal || "sem alterações relevantes"}.
+${mobilidadeTexto}
+${condutaTexto}`;
+
+      document.getElementById("textoEvolucao").value = texto;
+    }
+  </script>
+</body>
+</html>
+
+
+
