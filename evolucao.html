@@ -151,6 +151,23 @@
 <label for="doseSedativos">Doses ou observações:</label>
 <input type="text" id="doseSedativos" placeholder="Ex: Fentanil 100mcg/h, Propofol 20ml/h">
 
+<label><input type="checkbox" id="usaDVA"> Uso de drogas</label>
+<div id="dvaGrupo" style="display: none; margin-top: 10px;">
+
+  <label for="drogaVasoativa">Drogas (selecione todas que estiver usando):</label>
+  <select id="drogaVasoativa" multiple size="5">
+    <option value="Noradrenalina">Noradrenalina</option>
+    <option value="Vasopressina">Vasopressina</option>
+    <option value="Dobutamina">Dobutamina</option>
+    <option value="Adrenalina">Adrenalina</option>
+    <option value="Nipride">Nipride</option>
+    <option value="Tridil">Tridil</option>
+  </select>
+
+  <label for="doseDVA">Dose e observações (ex: Noradrenalina 0,1 mcg/kg/min; Vasopressina 0,04 UI/min):</label>
+  <textarea id="doseDVA" rows="3" placeholder="Descreva as doses e observações aqui..."></textarea>
+</div>
+
 
   <div class="section">
     <label for="ventilacao">Ventilação</label>
@@ -262,6 +279,10 @@
   vmDetalhes.classList.toggle("hidden", this.value !== "em ventilação mecânica");
 });
 
+document.getElementById("usaDVA").addEventListener("change", function () {
+  document.getElementById("dvaGrupo").style.display = this.checked ? "block" : "none";
+});
+
     function copiarEvolucao() {
   const output = document.getElementById("output");
   const texto = output.innerText || output.textContent;
@@ -355,6 +376,19 @@ function gerarEvolucao() {
     if (doseSedativos) texto += ` Observações: ${doseSedativos}.`;
     texto += `\n`;
   }
+  
+  if (document.getElementById("usaDVA").checked) {
+  const drogas = Array.from(document.getElementById("drogaVasoativa").selectedOptions).map(opt => opt.value);
+  const doseObs = document.getElementById("doseDVA").value.trim();
+
+  if (drogas.length > 0) {
+    texto += `Com necessidade de: ${drogas.join(", ")}.`;
+    if (doseObs) texto += ` Doses/observações: ${doseObs}.`;
+    texto += `\n`;
+  } else {
+    texto += `Uso de drogas vasoativas informado, porém nenhuma droga selecionada.\n`;
+  }
+}
 
   texto += `Encontra-se ${ventilacao}${oxigenioDetalhe ? ", utilizando: " + oxigenioDetalhe : ""}.\n`;
   if (parametrosVM) texto += parametrosVM + "\n";
