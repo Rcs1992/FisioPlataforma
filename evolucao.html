@@ -137,13 +137,29 @@
     </div>
   </div>
 
-  <div class="section">
-    <label>Exame Respiratório</label>
-    <textarea id="exameRespiratorio" placeholder="Roncos, MV reduzido, etc."></textarea>
+<div class="section">
+  <label for="exameRespiratorio">Exame Respiratório</label>
+  <select id="exameRespiratorio" multiple>
+    <option value="MV preservado">MV preservado</option>
+    <option value="MV reduzido">MV reduzido</option>
+    <option value="Roncos">Roncos</option>
+    <option value="Sibilos">Sibilos</option>
+    <option value="Estertores crepitantes">Estertores crepitantes</option>
+    <option value="MV abolido">MV abolido</option>
+  </select>
 
-    <label>Exame Abdominal</label>
-    <textarea id="exameAbdominal" placeholder="Plano, flácido, doloroso, etc."></textarea>
-  </div>
+  <label for="exameAbdominal">Exame Abdominal</label>
+  <select id="exameAbdominal" multiple>
+    <option value="Plano">Plano</option>
+    <option value="Distendido">Distendido</option>
+    <option value="Flácido">Flácido</option>
+    <option value="Tenso">Tenso</option>
+    <option value="Doloroso à palpação">Doloroso à palpação</option>
+    <option value="Peristalse presente">Peristalse presente</option>
+    <option value="Peristalse ausente">Peristalse ausente</option>
+  </select>
+</div>
+
 
   <div class="section">
     <div class="small-title">Mobilidade / Escalas</div>
@@ -198,8 +214,9 @@
       const spo2 = document.getElementById("spo2").value;
       const temp = document.getElementById("temp").value;
 
-      const exameRespiratorio = document.getElementById("exameRespiratorio").value;
-      const exameAbdominal = document.getElementById("exameAbdominal").value;
+      const exameRespiratorio = Array.from(document.getElementById("exameRespiratorio").selectedOptions).map(opt => opt.value).join(", ");
+      const exameAbdominal = Array.from(document.getElementById("exameAbdominal").selectedOptions).map(opt => opt.value).join(", ");
+
 
       const ims = document.getElementById("ims").value;
       const mrc = document.getElementById("mrc").value;
