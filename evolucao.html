@@ -218,14 +218,34 @@
 </div>
 
   <!-- Condutas -->
-  <label>Condutas realizadas:</label>
-  <div class="checkbox-group" id="condutaGrupo">
-    <label><input type="checkbox" class="conduta" value="realizada avaliação fisioterapêutica"> Avaliação fisioterapêutica</label>
-    <label><input type="checkbox" class="conduta" value="aplicadas técnicas de higiene brônquica"> Higiene brônquica</label>
-    <label><input type="checkbox" class="conduta" value="realizadas orientações posturais"> Orientações posturais</label>
-    <label><input type="checkbox" class="conduta" value="realizadas medidas de prevenção de complicações"> Prevenção de complicações</label>
-    <label><input type="checkbox" class="conduta" value="mobilização ativa ou assistida no leito"> Mobilização ativa/assistida</label>
-  </div>
+  <label for="condutas">Condutas Fisioterapêuticas:</label>
+<select id="condutas" multiple size="6" class="w-full rounded border p-2">
+  <optgroup label="Mobilização">
+    <option value="mobilização passiva">Mobilização passiva</option>
+    <option value="mobilização ativa assistida">Mobilização ativa assistida</option>
+    <option value="sedestação assistida">Sedestação assistida</option>
+    <option value="ortostatismo">Ortostatismo</option>
+    <option value="marcha com auxílio">Marcha com auxílio</option>
+  </optgroup>
+  <optgroup label="Ventilação Mecânica / Desmame">
+    <option value="manobra de hiperinsuflação">Manobra de hiperinsuflação</option>
+    <option value="aspiração traqueal">Aspiração traqueal</option>
+    <option value="ajuste de parâmetros">Ajuste de parâmetros ventilatórios</option>
+    <option value="protocolo de desmame">Protocolo de desmame</option>
+    <option value="testes de respiração espontânea">Testes de respiração espontânea</option>
+  </optgroup>
+  <optgroup label="Reabilitação Respiratória">
+    <option value="exercícios ventilatórios">Exercícios ventilatórios</option>
+    <option value="treino muscular inspiratório">Treino muscular inspiratório</option>
+    <option value="controle de tosse">Treino de tosse eficaz</option>
+    <option value="espirometria de incentivo">Espirometria de incentivo</option>
+  </optgroup>
+  <optgroup label="Funcionalidade">
+    <option value="estimulação funcional">Estimulação funcional</option>
+    <option value="reeducação neuromuscular">Reeducação neuromuscular</option>
+    <option value="treino de equilíbrio">Treino de equilíbrio</option>
+  </optgroup>
+</select>
 
 
   <!-- Botão e Resultado -->
@@ -277,7 +297,14 @@ if (conscienciaArray.includes("sedado(a)") && rass) {
   sedacaoTexto += ` Escala de sedação RASS: ${rass}.`;
 }
 
-      const condutaTexto = condutas.length > 0 ? `Conduta: ${condutas}.` : "Conduta: sem intervenções específicas neste turno.";
+const condutasSelect = document.getElementById("condutas");
+
+function gerarCondutasTexto() {
+  const selecionadas = Array.from(condutasSelect.selectedOptions).map(opt => opt.value);
+  return selecionadas.length
+    ? `Condutas realizadas: ${selecionadas.join(", ")}.`
+    : "";
+}
 
       const texto = 
 `Paciente em leito de UTI, ${estadoGeral}. Apresenta-se ${consciencia}.${sedacaoTexto}
