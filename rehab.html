@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Triagem de Exclusões — Pré-reabilitação (PREHAB)</title>
+<style>
+  :root{--bg:#0f1724;--card:#0b1220;--muted:#9fb0c8;--text:#eaf2ff;--accent:#6aa5ff;--danger:#ff6b6b;--ok:#4cd964}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#071020,#0b142a);color:var(--text);display:flex;align-items:flex-start;justify-content:center;padding:28px}
+  .app{width:min(980px,100%);max-width:980px}
+  header{margin-bottom:12px}
+  h1{margin:0;font-size:20px}
+  p.lead{margin:6px 0 0;color:var(--muted);font-size:13px}
+  .grid{display:grid;gap:12px;margin-top:14px}
+  @media(min-width:900px){.grid{grid-template-columns:1fr 360px}}
+  .card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));border:1px solid rgba(255,255,255,.04);border-radius:12px;padding:14px;box-shadow:0 8px 24px rgba(2,6,23,.6)}
+  .card h2{margin:0 0 8px;font-size:16px}
+  .hint{color:var(--muted);font-size:13px;margin-bottom:8px}
+  .checks{display:grid;gap:8px}
+  label.check{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:8px;background:rgba(255,255,255,.01);border:1px solid rgba(255,255,255,.02);cursor:pointer}
+  label.check input{margin-top:3px}
+  .actions{display:flex;gap:8px;flex-wrap:wrap}
+  button{background:var(--card);color:var(--text);border:1px solid rgba(255,255,255,.04);padding:8px 12px;border-radius:10px;cursor:pointer}
+  .result{padding:12px;border-radius:10px;margin-top:8px}
+  .high{background:linear-gradient(90deg,rgba(255,107,107,.12),rgba(255,107,107,.06));border:1px solid rgba(255,107,107,.14);color:var(--danger)}
+  .safe{background:linear-gradient(90deg,rgba(76,217,100,.10),rgba(76,217,100,.04));border:1px solid rgba(76,217,100,.10);color:var(--ok)}
+  textarea{width:100%;min-height:80px;border-radius:8px;border:1px solid rgba(255,255,255,.04);background:transparent;color:var(--text);padding:10px}
+  .small{font-size:12px;color:var(--muted)}
+  footer.small{margin-top:10px;color:var(--muted);font-size:12px}
+</style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <h1>Triagem — Exclusões para Programa de Pré-reabilitação</h1>
+      <p class="lead">Baseado nos critérios de exclusão do estudo PREHAB (BMJ Open e007250). Marque as condições presentes no paciente.</p>
+    </header>
+
+    <div class="grid">
+      <section class="card" aria-labelledby="titulo">
+        <h2 id="titulo">Critérios de Exclusão (marcar se presente)</h2>
+        <p class="hint">Se qualquer item abaixo estiver presente → <b>alto risco / não elegível</b> (siga avaliação médica/adiamento).</p>
+
+        <div class="checks">
+          <label class="check"><input type="checkbox" id="ex1"> <div><strong>Instabilidade cardíaca recente/ativa</strong><div class="small">p.ex. ICC descompensada, síndrome coronariana aguda recente (hospitalização/ACVC nos últimos 6 semanas), angina instável, NYHA IV ou CCS IV.</div></div></label>
+
+          <label class="check"><input type="checkbox" id="ex2"> <div><strong>Doença do tronco coronariano crítico</strong><div class="small">lesão de tronco esquerdo clinicamente significativa.</div></div></label>
+
+          <label class="check"><input type="checkbox" id="ex3"> <div><strong>Estenose valvar grave</strong><div class="small">ex.: estenose aórtica severa (área &lt; 1,0 cm² ou gradiente médio elevado) ou estenose mitral grave.</div></div></label>
+
+          <label class="check"><input type="checkbox" id="ex4"> <div><strong>Obstrução dinâmica da via de saída do VE</strong><div class="small">hipertrofia ou SAM com obstrução dinâmica documentada.</div></div></label>
+
+          <label class="check"><input type="checkbox" id="ex5"> <div><strong>Arritmias ventriculares induzidas por exercício</strong><div class="small">TV/VF documentada durante esforço ou arritmias ventriculares clinicamente significativas.</div></div></label>
+
+          <label class="check"><input type="checkbox" id="ex6"> <div><strong>Déficit cognitivo que impeça reabilitação</strong><div class="small">incapacidade de compreender/seguir instruções, diminuir segurança.</div></div></label>
+
+          <label class="check"><input type="checkbox" id="ex7"> <div><strong>Limitações físicas que impeçam a participação</strong><div class="small">mobilidade muito reduzida, amputação bilateral que impede exercício proposto, ou condição ortopédica instável.</div></div></label>
+
+          <label class="check"><input type="checkbox" id="ex8"> <div><strong>Incapacidade logística ou incapacidade de comparecer</strong><div class="small">barreiras que tornam inviável participação regular (transporte, comunicação).</div></div></label>
+
+          <label class="check"><input type="checkbox" id="ex9"> <div><strong>Cirurgia emergente/urgente (tempo insuficiente)</strong><div class="small">procedimentos não eletivos / janela pré-operatória muito curta</div></div></label>
+        </div>
+
+        <div style="margin-top:12px" class="small">
+          Fonte: PREHAB protocol (BMJ Open e007250) — exclusões implementadas conforme seção <i>Exclusion criteria</i>. :contentReference[oaicite:1]{index=1}
+        </div>
+      </section>
+
+      <aside class="card" aria-labelledby="res">
+        <h2 id="res">Resultado</h2>
+        <div id="out" class="result small">Preencha e clique em <b>Avaliar</b>.</div>
+
+        <div style="margin-top:12px" class="actions">
+          <button id="btnEval">Avaliar</button>
+          <button id="btnClear">Limpar</button>
+          <button id="btnCopy">Copiar resumo</button>
+          <button id="btnPrint">Imprimir/PDF</button>
+        </div>
+
+        <div style="margin-top:12px">
+          <label class="small">Observações (opcional)</label>
+          <textarea id="notes" placeholder="Ex.: último ECG, ECO com gradiente, data da hospitalização por arritmia..."></textarea>
+        </div>
+      </aside>
+    </div>
+
+    <footer class="small">
+      Observação: este triage **não substitui** avaliação médica. Para casos positivos, discutir com cardiologia/cirurgia antes de iniciar exercício. Referência: PREHAB BMJ Open (doi:10.1136/bmjopen-2014-007250). :contentReference[oaicite:2]{index=2}
+    </footer>
+  </main>
+
+<script>
+  const ids = ['ex1','ex2','ex3','ex4','ex5','ex6','ex7','ex8','ex9'];
+  function avaliar(){
+    const marcadas = ids.filter(id => document.getElementById(id).checked);
+    const out = document.getElementById('out');
+    if(marcadas.length>0){
+      out.className = 'result high small';
+      out.innerHTML = "<strong>⚠️ Alto risco / NÃO elegível para pré-reabilitação (exclusões presentes)</strong><br><span style='font-size:13px'>Itens marcados: "+marcadas.join(', ')+"</span>";
+    } else {
+      out.className = 'result safe small';
+      out.innerHTML = "<strong>✅ Sem exclusões identificadas — considerar elegibilidade</strong><br><span style='font-size:13px'>Confirmar avaliação médica e logística.</span>";
+    }
+  }
+
+  document.getElementById('btnEval').addEventListener('click', avaliar);
+
+  document.getElementById('btnClear').addEventListener('click', ()=>{
+    ids.forEach(id=>document.getElementById(id).checked=false);
+    document.getElementById('notes').value='';
+    document.getElementById('out').className='result small';
+    document.getElementById('out').textContent='Preencha e clique em Avaliar.';
+  });
+
+  document.getElementById('btnCopy').addEventListener('click', async ()=>{
+    const marcadas = ids.filter(id => document.getElementById(id).checked);
+    const notes = document.getElementById('notes').value.trim();
+    const txt = [
+      'Triagem PREHAB - Exclusões:',
+      'Exclusões marcadas: '+(marcadas.length?marcadas.join(', '):'nenhuma'),
+      notes?('Obs.: '+notes):''
+    ].filter(Boolean).join('\\n');
+    try{
+      await navigator.clipboard.writeText(txt);
+      alert('Resumo copiado para a área de transferência.');
+    }catch(e){
+      const ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta); alert('Resumo copiado.');
+    }
+  });
+
+  document.getElementById('btnPrint').addEventListener('click', ()=>window.print());
+</script>
+</body>
+</html>
