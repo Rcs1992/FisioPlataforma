@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Escala de Coma de Glasgow (GCS)</title>
+  <style>
+    :root {
+      --bg: #0b1020;          /* fundo escuro elegante */
+      --card: #111831;        /* cartões */
+      --muted: #8792a3;       /* texto secundário */
+      --text: #ecf2ff;        /* texto principal */
+      --brand: #6aa5ff;       /* azul */
+      --ok: #2ecc71;          /* leve */
+      --warn: #f1c40f;        /* moderado */
+      --danger: #e74c3c;      /* grave */
+      --chip: #1a2347;        /* chips */
+      --border: #22305b;      /* bordas */
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; background: linear-gradient(180deg, #0b1020, #0b142a 50%, #0c1833);
+      color: var(--text); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      display: flex; justify-content: center; padding: 20px;
+    }
+    .app { width: min(900px, 100%); }
+    header {
+      display: grid; gap: 8px; margin-bottom: 16px;
+    }
+    h1 { font-size: clamp(22px, 4vw, 32px); margin: 0; letter-spacing: .4px; }
+    .subtitle { color: var(--muted); font-size: 14px; }
+
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px;
+    }
+    select, button, .pill {
+      background: var(--chip); color: var(--text); border: 1px solid var(--border);
+      border-radius: 14px; padding: 10px 14px; font-size: 14px;
+    }
+    select { appearance: none; }
+    button { cursor: pointer; transition: transform .05s ease; }
+    button:active { transform: translateY(1px); }
+
+    .grid {
+      display: grid; gap: 14px; grid-template-columns: 1fr; margin-top: 12px;
+    }
+    @media (min-width: 840px) { .grid { grid-template-columns: 1fr 1fr 1fr; } }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border: 1px solid var(--border); border-radius: 18px; padding: 14px; box-shadow: var(--shadow);
+    }
+    .card h2 { margin: 0 0 8px; font-size: 18px; letter-spacing: .3px; }
+    .hint { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+
+    .option {
+      display: flex; gap: 10px; align-items: flex-start; padding: 10px; border-radius: 12px; border: 1px solid transparent;
+    }
+    .option:hover { background: rgba(255,255,255,.03); border-color: var(--border); }
+    .option label { display: grid; gap: 2px; cursor: pointer; }
+    .score-badge {
+      margin-left: auto; background: var(--chip); border: 1px solid var(--border);
+      padding: 4px 8px; border-radius: 999px; font-size: 12px; color: var(--muted);
+    }
+
+    .section-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border); padding-top: 10px; margin-top: 10px; }
+    .section-score { font-weight: 600; color: var(--brand); }
+
+    .stack { display: grid; gap: 10px; margin-top: 14px; }
+
+    .total-card { display: grid; gap: 10px; padding: 14px; background: linear-gradient(180deg, rgba(106,165,255,.15), rgba(106,165,255,.03)); border: 1px solid var(--border); border-radius: 16px; }
+    .total-line { display: flex; align-items: baseline; gap: 10px; }
+    .total-value { font-size: clamp(28px, 5vw, 40px); font-weight: 800; letter-spacing: 1px; }
+    .band { padding: 3px 10px; border-radius: 999px; font-size: 12px; border: 1px solid var(--border); }
+    .band.mild { background: rgba(46,204,113,.15); color: var(--ok); }
+    .band.moderate { background: rgba(241,196,15,.15); color: var(--warn); }
+    .band.severe { background: rgba(231,76,60,.15); color: var(--danger); }
+
+    details {
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border: 1px solid var(--border);
+      border-radius: 14px; padding: 10px 14px; box-shadow: var(--shadow);
+    }
+    summary { cursor: pointer; font-weight: 600; }
+    .notes { width: 100%; min-height: 80px; border-radius: 12px; border: 1px solid var(--border); background: #0d1430; color: var(--text); padding: 10px; }
+    .muted { color: var(--muted); font-size: 12px; }
+
+    .footer { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center; margin: 14px 0 30px; }
+    .footer .left { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .tag { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      padding: 2px 8px; border-radius: 999px; background: var(--chip); border: 1px solid var(--border); color: var(--muted); font-size: 12px; }
+    .small { font-size: 12px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Escala de Coma de Glasgow</h1>
+      <div class="subtitle">Selecione as melhores respostas observadas. O total é calculado automaticamente e a interpretação é exibida abaixo.</div>
+      <div class="toolbar">
+        <label class="pill">
+          Versão:
+          <select id="version">
+            <option value="adult">Adulto</option>
+            <option value="pediatric">Pediátrica (≤ 5 anos)</option>
+          </select>
+        </label>
+        <label class="pill">
+          Qualificador Verbal:
+          <select id="verbalQualifier">
+            <option value="">Nenhum</option>
+            <option value="T">Intubado/Traqueostomia (T)</option>
+            <option value="A">Afasia (A)</option>
+            <option value="S">Semiesclusa/Barreira de fala (S)</option>
+          </select>
+        </label>
+        <button id="clearBtn" title="Limpar todas as seleções">Limpar</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- Abertura Ocular -->
+      <section class="card" id="sec-eye">
+        <h2>Abertura Ocular (E)</h2>
+        <div class="hint">Pontue a melhor resposta ocular observada.</div>
+        <div class="options" id="eyeOptions"></div>
+        <div class="section-footer"><span class="muted">Parcial (E):</span><span class="section-score" id="eyeScore">0</span></div>
+      </section>
+
+      <!-- Resposta Verbal -->
+      <section class="card" id="sec-verbal">
+        <h2>Resposta Verbal (V)</h2>
+        <div class="hint">
+          Se não testável (ex.: intubado), registre o qualificador e atribua V=1* para o total (ex.: <span class="tag">10T</span>).
+        </div>
+        <div class="options" id="verbalOptions"></div>
+        <div class="section-footer"><span class="muted">Parcial (V):</span><span class="section-score" id="verbalScore">0</span></div>
+      </section>
+
+      <!-- Resposta Motora -->
+      <section class="card" id="sec-motor">
+        <h2>Resposta Motora (M)</h2>
+        <div class="hint">Pontue a melhor resposta motora observada.</div>
+        <div class="options" id="motorOptions"></div>
+        <div class="section-footer"><span class="muted">Parcial (M):</span><span class="section-score" id="motorScore">0</span></div>
+      </section>
+    </div>
+
+    <div class="stack">
+      <div class="total-card">
+        <div class="total-line">
+          <div class="total-value" id="totalDisplay">GCS —</div>
+          <span class="band" id="band">—</span>
+        </div>
+        <div class="small" id="formula">E— + V— + M—</div>
+      </div>
+
+      <details>
+        <summary>Dicas rápidas & equivalências</summary>
+        <ul>
+          <li><b>Gravidade:</b> leve <span class="tag">13–15</span>, moderada <span class="tag">9–12</span>, grave <span class="tag">3–8</span>.</li>
+          <li><b>Verbal não testável:</b> some como 1 e anote o qualificador (ex.: <span class="tag">T</span> → <span class="tag">10T</span>).</li>
+          <li><b>Melhor resposta:</b> sempre registre a melhor resposta observada para cada domínio.</li>
+          <li><b>Pediátrica (≤5 anos):</b> descritores verbais adaptados ao desenvolvimento.</li>
+        </ul>
+      </details>
+
+      <section class="card">
+        <h2>Observações</h2>
+        <textarea id="notes" class="notes" placeholder="Ex.: estímulo doloroso usado, lateralidade, sedação, bloqueador neuromuscular, intoxicação, etc."></textarea>
+        <div class="footer">
+          <div class="left">
+            <button id="copyBtn">Copiar resumo</button>
+            <button id="printBtn">Imprimir/PDF</button>
+          </div>
+          <div class="small">Formato do resumo: <span class="tag">GCS E# V# M# = total[qualificador]</span></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // Tabelas de opções
+    const DATA = {
+      eye: [
+        { v: 4, label: 'Espontânea', desc: 'Olhos abrem espontaneamente.' },
+        { v: 3, label: 'Ao chamado', desc: 'Abre aos comandos verbais.' },
+        { v: 2, label: 'À dor', desc: 'Abre apenas ao estímulo doloroso.' },
+        { v: 1, label: 'Nenhuma', desc: 'Sem abertura ocular.' },
+      ],
+      verbalAdult: [
+        { v: 5, label: 'Orientado', desc: 'Responde coerente, orientado no tempo/espaço.' },
+        { v: 4, label: 'Confuso', desc: 'Frases, porém desorientado/confuso.' },
+        { v: 3, label: 'Palavras inapropriadas', desc: 'Palavras isoladas, inadequadas.' },
+        { v: 2, label: 'Sons incompreensíveis', desc: 'Gemidos/sons sem palavras.' },
+        { v: 1, label: 'Nenhuma', desc: 'Sem resposta verbal.' },
+      ],
+      verbalPed: [
+        { v: 5, label: 'Adequado ao desenvolvimento', desc: 'Sorri/balbucia interage apropriadamente.' },
+        { v: 4, label: 'Chora mas consolável', desc: 'Choro/irritado porém acalma ao consolo.' },
+        { v: 3, label: 'Choro persistente', desc: 'Choro inconsolável ou palavras inapropriadas.' },
+        { v: 2, label: 'Gemidos/sons', desc: 'Gemidos, grunhidos, agitação sem palavras.' },
+        { v: 1, label: 'Nenhuma', desc: 'Sem resposta vocal.' },
+      ],
+      motor: [
+        { v: 6, label: 'Obedece comandos', desc: 'Executa comandos simples.' },
+        { v: 5, label: 'Localiza a dor', desc: 'Dirige-se ao local do estímulo doloroso.' },
+        { v: 4, label: 'Retirada à dor', desc: 'Retira o membro ao estímulo doloroso.' },
+        { v: 3, label: 'Flexão anormal', desc: 'Padrão de decorticação.' },
+        { v: 2, label: 'Extensão', desc: 'Padrão de descerebração.' },
+        { v: 1, label: 'Nenhuma', desc: 'Sem resposta motora.' },
+      ],
+    };
+
+    // Estado atual
+    const state = {
+      version: 'adult',
+      eye: null,
+      verbal: null,
+      motor: null,
+      qualifier: '', // T, A, S
+    };
+
+    // Utilidades DOM
+    const $ = (sel) => document.querySelector(sel);
+    const eyeBox = $('#eyeOptions');
+    const verbalBox = $('#verbalOptions');
+    const motorBox = $('#motorOptions');
+
+    function makeOptions(box, name, list) {
+      box.innerHTML = list.map((opt, idx) => `
+        <div class="option">
+          <input type="radio" name="${name}" id="${name}-${idx}" value="${opt.v}" />
+          <label for="${name}-${idx}">
+            <span><b>${opt.label}</b></span>
+            <span class="muted">${opt.desc}</span>
+          </label>
+          <span class="score-badge">${opt.v} pts</span>
+        </div>`).join('');
+    }
+
+    function render() {
+      // Render ocular e motora (fixos)
+      makeOptions(eyeBox, 'eye', DATA.eye);
+      makeOptions(motorBox, 'motor', DATA.motor);
+      // Verbal depende da versão
+      const vList = (state.version === 'adult') ? DATA.verbalAdult : DATA.verbalPed;
+      makeOptions(verbalBox, 'verbal', vList);
+
+      // Restaura seleções se existirem
+      if (state.eye) document.querySelector(`input[name="eye"][value="${state.eye}"]`)?.setAttribute('checked', true);
+      if (state.motor) document.querySelector(`input[name="motor"][value="${state.motor}"]`)?.setAttribute('checked', true);
+      if (state.verbal) document.querySelector(`input[name="verbal"][value="${state.verbal}"]`)?.setAttribute('checked', true);
+
+      bindInputs();
+      updateScores();
+    }
+
+    function bindInputs() {
+      document.querySelectorAll('input[name="eye"]').forEach(el => el.addEventListener('change', () => { state.eye = +el.value; updateScores(); }));
+      document.querySelectorAll('input[name="verbal"]').forEach(el => el.addEventListener('change', () => { state.verbal = +el.value; updateScores(); }));
+      document.querySelectorAll('input[name="motor"]').forEach(el => el.addEventListener('change', () => { state.motor = +el.value; updateScores(); }));
+    }
+
+    function bandFromTotal(t) {
+      if (t >= 13) return { text: 'Leve (13–15)', cls: 'mild' };
+      if (t >= 9) return { text: 'Moderada (9–12)', cls: 'moderate' };
+      if (t >= 3) return { text: 'Grave (3–8)', cls: 'severe' };
+      return { text: '—', cls: '' };
+    }
+
+    function updateScores() {
+      // Parciais
+      $('#eyeScore').textContent = state.eye ?? 0;
+      $('#verbalScore').textContent = state.verbal ?? 0;
+      $('#motorScore').textContent = state.motor ?? 0;
+
+      const e = state.eye ?? 0;
+      const v = (state.verbal ?? 0) || 0;
+      const m = state.motor ?? 0;
+
+      let total = e + m + (v || 0);
+
+      // Qualificador verbal: se preenchido e verbal não selecionado, força V=1 para o total
+      if (state.qualifier && !state.verbal) {
+        total = e + m + 1;
+        $('#verbalScore').textContent = 1;
+      }
+
+      const band = bandFromTotal(total);
+      const q = state.qualifier ? state.qualifier : '';
+
+      $('#totalDisplay').textContent = total > 0 ? `GCS ${total}${q ? q : ''}` : 'GCS —';
+      $('#band').textContent = band.text; $('#band').className = `band ${band.cls}`;
+      $('#formula').textContent = `E${e || '—'} + V${(state.verbal || (state.qualifier ? 1 : '—'))} + M${m || '—'}`;
+    }
+
+    // Eventos UI
+    $('#version').addEventListener('change', (e) => {
+      state.version = e.target.value;
+      state.verbal = null; // limpar seleção verbal ao trocar versão
+      render();
+    });
+
+    $('#verbalQualifier').addEventListener('change', (e) => {
+      state.qualifier = e.target.value;
+      updateScores();
+    });
+
+    $('#clearBtn').addEventListener('click', () => {
+      state.eye = state.verbal = state.motor = null; state.qualifier = '';
+      $('#verbalQualifier').value = '';
+      render();
+    });
+
+    $('#copyBtn').addEventListener('click', async () => {
+      const e = state.eye ? `E${state.eye}` : 'E—';
+      const vShown = (state.verbal || (state.qualifier ? 1 : '—'));
+      const v = `V${vShown}`;
+      const m = state.motor ? `M${state.motor}` : 'M—';
+      const total = (state.eye || 0) + (state.motor || 0) + ((state.verbal || (state.qualifier ? 1 : 0)));
+      const q = state.qualifier || '';
+      const notes = ($('#notes').value || '').trim();
+      const summary = `GCS ${e} ${v} ${m} = ${total}${q}${notes ? `\nObs.: ${notes}` : ''}`;
+      try {
+        await navigator.clipboard.writeText(summary);
+        alert('Resumo copiado para a área de transferência!');
+      } catch {
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = summary; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+        alert('Resumo copiado!');
+      }
+    });
+
+    $('#printBtn').addEventListener('click', () => window.print());
+
+    // Inicialização
+    render();
+  </script>
+</body>
+</html>
