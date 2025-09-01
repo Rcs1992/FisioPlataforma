@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Calculadora: Estatura pela Tíbia — VT protetora</title>
+  <style>
+    :root{
+      --bg:#f6fbfc;
+      --card:#ffffff;
+      --primary:#007b9e;
+      --accent:#ff6f00;
+      --muted:#6b7a80;
+      --radius:14px;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    body{background:linear-gradient(180deg, #eef9fb 0%, var(--bg) 100%); margin:0; padding:16px; color:#08303a}
+    .container{max-width:980px;margin:0 auto}
+    header{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+    .logo{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--primary),#0aa3b6);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;box-shadow:0 6px 16px rgba(3,46,53,0.1)}
+    h1{font-size:1.15rem;margin:0}
+    p.subtitle{margin:4px 0 0;color:var(--muted);font-size:0.9rem}
+
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
+    .card{background:var(--card);padding:18px;border-radius:var(--radius);box-shadow:0 4px 14px rgba(3,46,53,0.06)}
+
+    label{display:block;font-size:0.85rem;color:var(--muted);margin-bottom:6px}
+    input[type=number],select{width:100%;padding:12px;border:1px solid #e0e6e8;border-radius:10px;font-size:1rem}
+    .row{display:flex;gap:12px}
+    .row > *{flex:1}
+
+    .btn{display:inline-block;padding:12px 16px;border-radius:12px;border:0;background:var(--primary);color:#fff;font-weight:600;cursor:pointer;font-size:0.95rem}
+    .btn.secondary{background:transparent;color:var(--primary);border:1px solid rgba(0,123,158,0.2)}
+    .result{background:linear-gradient(180deg, rgba(0,123,158,0.03), rgba(255,255,255,0.02));padding:14px;border-radius:12px;margin-top:12px}
+    .muted{color:var(--muted);font-size:0.9rem}
+    table{width:100%;border-collapse:collapse;margin-top:8px;font-size:0.9rem}
+    td,th{padding:8px;text-align:left;border-bottom:1px dashed #eef6f7}
+    th{color:var(--muted);font-weight:600}
+    .small{font-size:0.85rem}
+
+    footer{margin-top:16px;color:var(--muted);font-size:0.85rem}
+
+    @media (max-width:880px){
+      .grid{grid-template-columns:1fr;}
+      body{padding:12px}
+      header{flex-direction:row;justify-content:flex-start}
+    }
+
+    @media (max-width:480px){
+      h1{font-size:1rem}
+      .btn{width:100%;text-align:center}
+      .row{flex-direction:column}
+      input, select{font-size:0.95rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">FP</div>
+      <div>
+        <h1>Calculadora: Estatura por Tíbia + VT protetora</h1>
+        <p class="subtitle">Estimativa de estatura a partir da tíbia e cálculo do VT.</p>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <form id="calcForm" onsubmit="event.preventDefault(); calcular();">
+          <label for="tibia">Comprimento da tíbia (cm)</label>
+          <input id="tibia" type="number" step="0.1" min="0" required />
+
+          <div class="row" style="margin-top:12px;">
+            <div>
+              <label for="sex">Sexo</label>
+              <select id="sex">
+                <option value="male">Masculino</option>
+                <option value="female">Feminino</option>
+              </select>
+            </div>
+            <div>
+              <label for="race">População</label>
+              <select id="race">
+                <option value="white">"Branca"</option>
+                <option value="black">"Negra"</option>
+                <option value="other">Outra / Média</option>
+                <option value="custom">Personalizado</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="customCoeffs" style="margin-top:12px;display:none">
+            <label>Coeficientes personalizados (H = a + b * T)</label>
+            <div class="row">
+              <input id="coefA" type="number" step="0.001" placeholder="a" />
+              <input id="coefB" type="number" step="0.001" placeholder="b" />
+            </div>
+            <p class="muted small">Se escolher 'Personalizado', insira a e b.</p>
+          </div>
+
+          <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <button class="btn" type="submit">Calcular</button>
+            <button class="btn secondary" type="button" onclick="resetForm()">Limpar</button>
+            <div class="muted small" style="flex:1;text-align:right">dH/dT exibida no resultado</div>
+          </div>
+
+          <div class="result" id="output">
+            <div class="muted">Resultados aparecerão aqui após calcular.</div>
+          </div>
+        </form>
+
+        <footer>
+          <div>PBW (Predicted Body Weight):</div>
+          <div class="muted small">Homens: 50 + 0.91 × (altura − 152.4)</div>
+          <div class="muted small">Mulheres: 45.5 + 0.91 × (altura − 152.4)</div>
+        </footer>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0">Referências</h3>
+        <p class="muted small">Equações (H em cm; T em cm):</p>
+        <table>
+          <thead><tr><th>População</th><th>Equação</th></tr></thead>
+          <tbody>
+            <tr><td>Homens (brancos)</td><td>H = 92.766 + 2.178 × T</td></tr>
+            <tr><td>Mulheres (brancas)</td><td>H = 71.652 + 2.635 × T</td></tr>
+            <tr><td>Homens (negros)</td><td>H = 72.123 + 2.614 × T</td></tr>
+            <tr><td>Mulheres (negras)</td><td>H = 72.391 + 2.521 × T</td></tr>
+            <tr><td>Outra / média</td><td>H = 80 + 2.40 × T</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const coeffs = {
+      'male_white': {a:92.766, b:2.178},
+      'female_white': {a:71.652, b:2.635},
+      'male_black': {a:72.123, b:2.614},
+      'female_black': {a:72.391, b:2.521},
+      'other': {a:80, b:2.4}
+    };
+
+    const raceEl = document.getElementById('race');
+    const customBox = document.getElementById('customCoeffs');
+    raceEl.addEventListener('change', ()=>{
+      customBox.style.display = (raceEl.value === 'custom') ? 'block' : 'none';
+    });
+
+    function calcular(){
+      const tibia = parseFloat(document.getElementById('tibia').value);
+      const sex = document.getElementById('sex').value;
+      const race = document.getElementById('race').value;
+
+      let a,b;
+      if(race === 'custom'){
+        a = parseFloat(document.getElementById('coefA').value);
+        b = parseFloat(document.getElementById('coefB').value);
+        if(isNaN(a) || isNaN(b)){
+          alert('Insira coeficientes válidos.');
+          return;
+        }
+      } else {
+        if(sex === 'male'){
+          a = (race === 'white')? coeffs.male_white.a : (race === 'black')? coeffs.male_black.a : coeffs.other.a;
+          b = (race === 'white')? coeffs.male_white.b : (race === 'black')? coeffs.male_black.b : coeffs.other.b;
+        } else {
+          a = (race === 'white')? coeffs.female_white.a : (race === 'black')? coeffs.female_black.a : coeffs.other.a;
+          b = (race === 'white')? coeffs.female_white.b : (race === 'black')? coeffs.female_black.b : coeffs.other.b;
+        }
+      }
+
+      const H = a + b * tibia;
+      const deriv = b;
+      const pbw = (sex === 'male') ? (50 + 0.91 * (H - 152.4)) : (45.5 + 0.91 * (H - 152.4));
+      const pbwRounded = Math.max(30, Math.round(pbw*10)/10);
+      const vts = [5,6,7,8].map(v => Math.round((v * pbwRounded) * 10)/10);
+
+      const out = document.getElementById('output');
+      out.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+          <div>
+            <div style="font-size:1rem;font-weight:700">Estatura: ${H.toFixed(1)} cm</div>
+            <div class="muted small">Equação: H = ${a} + ${b} × T</div>
+          </div>
+          <div style="text-align:right;font-size:0.9rem">
+            <div style="font-weight:700;color:var(--primary)">${deriv.toFixed(3)} cm/cm</div>
+            <div class="muted small">dH/dT</div>
+          </div>
+        </div>
+        <hr style="margin:10px 0;border:none;border-top:1px dashed #eef6f7" />
+        <div class="small">PBW: <strong>${pbwRounded.toFixed(1)} kg</strong></div>
+        <table>
+          <thead><tr><th>VT (mL/kg)</th><th>VT (mL)</th></tr></thead>
+          <tbody>
+            <tr><td>5</td><td><strong>${vts[0].toFixed(1)}</strong></td></tr>
+            <tr><td>6</td><td><strong>${vts[1].toFixed(1)}</strong></td></tr>
+            <tr><td>7</td><td><strong>${vts[2].toFixed(1)}</strong></td></tr>
+            <tr><td>8</td><td><strong>${vts[3].toFixed(1)}</strong></td></tr>
+          </tbody>
+        </table>
+      `;
+    }
+
+    function resetForm(){
+      document.getElementById('tibia').value = '';
+      document.getElementById('coefA').value = '';
+      document.getElementById('coefB').value = '';
+      document.getElementById('output').innerHTML = '<div class="muted">Resultados aparecerão aqui após calcular.</div>';
+    }
+  </script>
+</body>
+</html>
