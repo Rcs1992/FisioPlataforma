@@ -2,87 +2,29 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Avaliação Fisioterapêutica</title>
   <style>
-    body {
-      font-family: sans-serif;
-      margin: 8px;
-      font-size: 14px;
-      background: #f9f9f9;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 4px;
-      font-weight: bold;
-    }
-
-    select, input[type="text"], input[type="number"], textarea {
-      width: 100%;
-      padding: 4px;
-      margin-bottom: 8px;
-      font-size: 14px;
-    }
-
-    textarea {
-      height: 100px;
-    }
-
-    .row {
-      display: flex;
-      gap: 6px;
-    }
-
-    .row > * {
-      flex: 1;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .checkbox-group label {
-      font-weight: normal;
-      margin-right: 8px;
-    }
-
-    button {
-      width: 100%;
-      padding: 10px;
-      font-size: 14px;
-      background: #0066cc;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      margin-top: 10px;
-    }
-
-    .output {
-      white-space: pre-wrap;
-      background: #fff;
-      border: 1px solid #ccc;
-      padding: 10px;
-      margin-top: 12px;
-      border-radius: 5px;
-    }
-
-    .section {
-      margin-bottom: 10px;
-    }
-
-    .small-title {
-      margin: 6px 0 2px;
-      font-weight: bold;
-      font-size: 13px;
-    }
+    body { font-family: sans-serif; margin: 8px; font-size: 14px; background: #f9f9f9; }
+    label { display: block; margin-bottom: 4px; font-weight: bold; }
+    select, input[type="text"], input[type="number"], textarea { width: 100%; padding: 4px; margin-bottom: 8px; font-size: 14px; }
+    textarea { height: 100px; }
+    .row { display: flex; gap: 6px; }
+    .row > * { flex: 1; }
+    .hidden { display: none; }
+    .checkbox-group label { font-weight: normal; margin-right: 8px; }
+    button { width: 100%; padding: 10px; font-size: 14px; background: #0066cc; color: white; border: none; border-radius: 4px; margin-top: 10px; }
+    .output { white-space: pre-wrap; background: #fff; border: 1px solid #ccc; padding: 10px; margin-top: 12px; border-radius: 5px; }
+    .section { margin-bottom: 10px; }
+    .small-title { margin: 6px 0 2px; font-weight: bold; font-size: 13px; }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .full { grid-column: 1 / -1; }
   </style>
 </head>
 <body>
   <label for="leito">Leito:</label>
-<input type="text" id="leito" name="leito" placeholder="Ex: 12" />
-<br>
-  
+  <input type="text" id="leito" name="leito" placeholder="Ex: 12" />
+
   <div class="section">
     <label for="estadoGeral">Estado Geral</label>
     <select id="estadoGeral">
@@ -122,52 +64,49 @@
   </div>
 
   <!-- Estado Geral (em menu suspenso) -->
-<label for="estadoGeralSelect">Avalição Física:</label>
-<select id="estadoGeralSelect" multiple>
-  <option value="afebril">Afebril</option>
-  <option value="febril">Febril</option>
-  <option value="normocorado(a)">Normocorado(a)</option>
-  <option value="hipocorado(a)">Hipocorado(a)</option>
-  <option value="acianótico(a)">Acianótico(a)</option>
-  <option value="cianótico(a)">Cianótico(a)</option>
-  <option value="hidratado(a)">Hidratado(a)</option>
-  <option value="desidratado(a)">Desidratado(a)</option>
-  <option value="anictérico(a)">Anictérico(a)</option>
-  <option value="ictérico(a)">Ictérico(a)</option>
-  <option value="extremidades quentes e perfundidas">Extremidades quentes e perfundidas</option>
-  <option value="extremidades frias e hipoperfundidas">Extremidades frias e hipoperfundidas</option>
-</select>
-
-<!-- Detalhes de Sedação (em menu suspenso com campo de dose abaixo) -->
-<label for="sedacaoSelect">Medicações sedativas utilizadas:</label>
-<select id="sedacaoSelect" multiple>
-  <option value="Fentanil">Fentanil</option>
-  <option value="Midazolam">Midazolam</option>
-  <option value="Ketamina">Ketamina</option>
-  <option value="Propofol">Propofol</option>
-  <option value="Precedex">Precedex</option>
-  <option value="Morfina">Morfina</option>
-</select>
-<label for="doseSedativos">Doses ou observações:</label>
-<input type="text" id="doseSedativos" placeholder="Ex: Fentanil 100mcg/h, Propofol 20ml/h">
-
-<label><input type="checkbox" id="usaDVA"> Uso de drogas</label>
-<div id="dvaGrupo" style="display: none; margin-top: 10px;">
-
-  <label for="drogaVasoativa">Drogas (selecione todas que estiver usando):</label>
-  <select id="drogaVasoativa" multiple size="5">
-    <option value="Noradrenalina">Noradrenalina</option>
-    <option value="Vasopressina">Vasopressina</option>
-    <option value="Dobutamina">Dobutamina</option>
-    <option value="Adrenalina">Adrenalina</option>
-    <option value="Nipride">Nipride</option>
-    <option value="Tridil">Tridil</option>
+  <label for="estadoGeralSelect">Avaliação Física:</label>
+  <select id="estadoGeralSelect" multiple>
+    <option value="afebril">Afebril</option>
+    <option value="febril">Febril</option>
+    <option value="normocorado(a)">Normocorado(a)</option>
+    <option value="hipocorado(a)">Hipocorado(a)</option>
+    <option value="acianótico(a)">Acianótico(a)</option>
+    <option value="cianótico(a)">Cianótico(a)</option>
+    <option value="hidratado(a)">Hidratado(a)</option>
+    <option value="desidratado(a)">Desidratado(a)</option>
+    <option value="anictérico(a)">Anictérico(a)</option>
+    <option value="ictérico(a)">Ictérico(a)</option>
+    <option value="extremidades quentes e perfundidas">Extremidades quentes e perfundidas</option>
+    <option value="extremidades frias e hipoperfundidas">Extremidades frias e hipoperfundidas</option>
   </select>
 
-  <label for="doseDVA">Dose e observações (ex: Noradrenalina 0,1 mcg/kg/min; Vasopressina 0,04 UI/min):</label>
-  <textarea id="doseDVA" rows="3" placeholder="Descreva as doses e observações aqui..."></textarea>
-</div>
+  <label for="sedacaoSelect">Medicações sedativas utilizadas:</label>
+  <select id="sedacaoSelect" multiple>
+    <option value="Fentanil">Fentanil</option>
+    <option value="Midazolam">Midazolam</option>
+    <option value="Ketamina">Ketamina</option>
+    <option value="Propofol">Propofol</option>
+    <option value="Precedex">Precedex</option>
+    <option value="Morfina">Morfina</option>
+  </select>
+  <label for="doseSedativos">Doses ou observações:</label>
+  <input type="text" id="doseSedativos" placeholder="Ex: Fentanil 100mcg/h, Propofol 20ml/h">
 
+  <label><input type="checkbox" id="usaDVA"> Uso de drogas vasoativas</label>
+  <div id="dvaGrupo" style="display: none; margin-top: 10px;">
+    <label for="drogaVasoativa">Drogas (selecione todas que estiver usando):</label>
+    <select id="drogaVasoativa" multiple size="5">
+      <option value="Noradrenalina">Noradrenalina</option>
+      <option value="Vasopressina">Vasopressina</option>
+      <option value="Dobutamina">Dobutamina</option>
+      <option value="Adrenalina">Adrenalina</option>
+      <option value="Nipride">Nipride</option>
+      <option value="Tridil">Tridil</option>
+    </select>
+
+    <label for="doseDVA">Dose e observações (ex: Noradrenalina 0,1 mcg/kg/min; Vasopressina 0,04 UI/min):</label>
+    <textarea id="doseDVA" rows="3" placeholder="Descreva as doses e observações aqui..."></textarea>
+  </div>
 
   <div class="section">
     <label for="ventilacao">Ventilação</label>
@@ -179,23 +118,53 @@
 
     <input type="text" id="oxigenioDetalhe" placeholder="Detalhe: cateter, máscara, VM..." />
   </div>
+
   <div id="vmDetalhes" class="row hidden" style="margin-top: 6px;">
-  <select id="modoVM">
-    <option value="">Modo</option>
-    <option value="PCV">PCV</option>
-    <option value="PRVC">PRVC</option>
-    <option value="VCV">VCV</option>
-    <option value="PSV">PSV</option>
-    <option value="PAV">PAV</option>
-    <option value="APRV">APRV</option>
-    <option value="SIMV">SIMV</option>
-  </select>
-  <input type="text" id="pinsp" placeholder="Pinsp/PS" />
-  <input type="text" id="peep" placeholder="PEEP" />
-  <input type="text" id="fio2" placeholder="FiO₂ %" />
-  <input type="text" id="vc" placeholder="VC" />
-  <input type="text" id="frVM" placeholder="FR VM" />
-</div>
+    <select id="modoVM">
+      <option value="">Modo</option>
+      <option value="PCV">PCV</option>
+      <option value="PRVC">PRVC</option>
+      <option value="VCV">VCV</option>
+      <option value="PSV">PSV</option>
+      <option value="PAV">PAV</option>
+      <option value="APRV">APRV</option>
+      <option value="SIMV">SIMV</option>
+    </select>
+    <input type="text" id="pinsp" placeholder="Pinsp/PS" />
+    <input type="text" id="peep" placeholder="PEEP" />
+    <input type="text" id="fio2" placeholder="FiO₂ %" />
+    <input type="text" id="vc" placeholder="VT (mL)" />
+    <input type="text" id="frVM" placeholder="FR VM" />
+  </div>
+
+  <!-- Novos campos para VM: altura, sexo, pressão de platô -->
+  <div id="vmCalc" class="section hidden">
+    <div class="grid">
+      <div>
+        <label for="sexo">Sexo:</label>
+        <select id="sexo">
+          <option value="">-- selecione --</option>
+          <option value="M">Masculino</option>
+          <option value="F">Feminino</option>
+        </select>
+      </div>
+      <div>
+        <label for="altura">Altura (cm):</label>
+        <input type="number" id="altura" placeholder="Ex: 170" />
+      </div>
+      <div>
+        <label for="peso">Peso atual (kg) — opcional:</label>
+        <input type="number" id="peso" placeholder="Ex: 70" />
+      </div>
+      <div>
+        <label for="plat">Pressão de Platô (cmH₂O):</label>
+        <input type="number" id="plat" placeholder="Ex: 24" />
+      </div>
+      <div class="full">
+        <small>Obs: PBW (Peso Predito) calculado por sexo/altura. VT informado em mL — será convertido para mL/kg de PBW.</small>
+      </div>
+    </div>
+  </div>
 
   <div class="section">
     <div class="row">
@@ -207,37 +176,35 @@
     </div>
   </div>
 
-<div class="section">
-  <label for="exameRespiratorio">Exame Respiratório</label>
-  <select id="exameRespiratorio" multiple>
-    <option value="MV preservado sem ruídos adventícios">MV preservado sem ruídos adventícios</option>
-    <option value="MV com presença de">MV com presença de</option>
-    <option value="MV reduzido">MV reduzido</option>
-    <option value="roncos">roncos</option>
-    <option value="sibilos">sibilos</option>
-    <option value="estertores crepitantes">estertores crepitantes</option>
-    <option value="MV abolido">MV abolido</option>
-    <option value="globalmente">globalmente</option>
-    <option value="em base direita">em base direita</option>
-    <option value="em base esquerda">em base esquerda</option>
-    <option value="em ápice direito">em ápice direito</option>
-    <option value="em ápice esquerdo">em ápice esquerdo</option>
-    <option value="à Direita">em HTX D</option>
-    <option value="à esquerda">em HTX E</option>
-    
-  </select>
+  <div class="section">
+    <label for="exameRespiratorio">Exame Respiratório</label>
+    <select id="exameRespiratorio" multiple>
+      <option value="MV preservado sem ruídos adventícios">MV preservado sem ruídos adventícios</option>
+      <option value="MV com presença de">MV com presença de</option>
+      <option value="MV reduzido">MV reduzido</option>
+      <option value="roncos">roncos</option>
+      <option value="sibilos">sibilos</option>
+      <option value="estertores crepitantes">estertores crepitantes</option>
+      <option value="MV abolido">MV abolido</option>
+      <option value="globalmente">globalmente</option>
+      <option value="em base direita">em base direita</option>
+      <option value="em base esquerda">em base esquerda</option>
+      <option value="em ápice direito">em ápice direito</option>
+      <option value="em ápice esquerdo">em ápice esquerdo</option>
+      <option value="à Direita">em HTX D</option>
+      <option value="à esquerda">em HTX E</option>
+    </select>
 
-  <label for="exameAbdominal">Exame Abdominal</label>
-  <select id="exameAbdominal" multiple>
-    <option value="Plano">Plano</option>
-    <option value="Distendido">Distendido</option>
-    <option value="Flácido">Flácido</option>
-    <option value="Tenso">Tenso</option>
-    <option value="Doloroso à palpação">Doloroso à palpação</option>
-    <option value="Sem dor à palpação">Sem presença de dor</option>
-  </select>
-</div>
-
+    <label for="exameAbdominal">Exame Abdominal</label>
+    <select id="exameAbdominal" multiple>
+      <option value="Plano">Plano</option>
+      <option value="Distendido">Distendido</option>
+      <option value="Flácido">Flácido</option>
+      <option value="Tenso">Tenso</option>
+      <option value="Doloroso à palpação">Doloroso à palpação</option>
+      <option value="Sem dor à palpação">Sem presença de dor</option>
+    </select>
+  </div>
 
   <div class="section">
     <div class="small-title">Mobilidade / Escalas</div>
@@ -254,39 +221,121 @@
       <option>Ventilação não invasiva</option>
       <option>Avaliação para decanulação</option>
       <option>Recusou atendimento</option>
-<option>Sem atendimento</option>
-<option>Adequação postural</option>
-<option>Ajustes ventilatórios</option>
-<option>Alongamento</option>
-<option>Cicloergômetro em MMSS</option>
-<option>Cicloergômetro em MMII</option>
-<option>Deambulação com auxílio</option>
-<option>Deambulação sob supervisão</option>
-<option>Desmame ventilatório</option>
-<option>Drenagem postural</option>
-<option>Eletroterapia</option>
-<option>Extubação</option>
-<option>Fortalecimento de MMSS</option>
-<option>Fortalecimento de MMII</option>
-<option>Incentivadores inspiratórios</option>
-<option>Monitorização dos sinais vitais</option>
-<option>Padrões ventilatórios</option>
-<option>Sedestação à beira do leito</option>
-<option>Sedestação na poltrona</option>
-<option>Suporte VNI</option>
-<option>Treinamento muscular respiratório</option>
-<option>Treino de controle de tronco</option>
-<option>Treino de equilíbrio</option>
-<option>Treino de marcha</option>
-<option>Treino de marcha de andador</option>
-<option>Treino de marcha de muleta</option>
-<option>Treino de ortostase</option>
-
+      <option>Sem atendimento</option>
+      <option>Adequação postural</option>
+      <option>Ajustes ventilatórios</option>
+      <option>Alongamento</option>
+      <option>Cicloergômetro em MMSS</option>
+      <option>Cicloergômetro em MMII</option>
+      <option>Deambulação com auxílio</option>
+      <option>Deambulação sob supervisão</option>
+      <option>Desmame ventilatório</option>
+      <option>Drenagem postural</option>
+      <option>Eletroterapia</option>
+      <option>Extubação</option>
+      <option>Fortalecimento de MMSS</option>
+      <option>Fortalecimento de MMII</option>
+      <option>Incentivadores inspiratórios</option>
+      <option>Monitorização dos sinais vitais</option>
+      <option>Padrões ventilatórios</option>
+      <option>Sedestação à beira do leito</option>
+      <option>Sedestação na poltrona</option>
+      <option>Suporte VNI</option>
+      <option>Treinamento muscular respiratório</option>
+      <option>Treino de controle de tronco</option>
+      <option>Treino de equilíbrio</option>
+      <option>Treino de marcha</option>
+      <option>Treino de marcha de andador</option>
+      <option>Treino de marcha de muleta</option>
+      <option>Treino de ortostase</option>
     </select>
   </div>
-  
-<label for="obsFinais">Observações Finais:</label>
-<textarea id="obsFinais" rows="3" placeholder="Digite aqui..."></textarea>
+
+  <label for="obsFinais">Observações Finais:</label>
+  <textarea id="obsFinais" rows="3" placeholder="Digite aqui..."></textarea>
+
+  <!-- ---- NOVA SEÇÃO: EXAMES LABORATORIAIS E GASOMETRIA ---- -->
+  <div class="section">
+    <h3>Exames laboratoriais</h3>
+    <div class="grid">
+      <div>
+        <label for="hb">Hemoglobina (g/dL)</label>
+        <input type="number" step="0.1" id="hb" placeholder="Ex: 9.8" />
+      </div>
+      <div>
+        <label for="plaquetas">Plaquetas (x10³/uL)</label>
+        <input type="number" id="plaquetas" placeholder="Ex: 150" />
+      </div>
+      <div>
+        <label for="bastoes">Bastões (%)</label>
+        <input type="number" step="0.1" id="bastoes" placeholder="Ex: 3" />
+      </div>
+      <div>
+        <label for="leucograma">Leucograma (obs/texto)</label>
+        <input type="text" id="leucograma" placeholder="Ex: Leucocitose à direita, neutrofilia" />
+      </div>
+      <div>
+        <label for="lactato">Lactato (mmol/L)</label>
+        <input type="number" step="0.1" id="lactato" placeholder="Ex: 1.2" />
+      </div>
+      <div>
+        <label for="creatinina">Creatinina (mg/dL)</label>
+        <input type="number" step="0.1" id="creatinina" placeholder="Ex: 1.2" />
+      </div>
+      <div>
+        <label for="ureia">Ureia (mg/dL)</label>
+        <input type="number" step="0.1" id="ureia" placeholder="Ex: 45" />
+      </div>
+      <div>
+        <label for="sodio">Sódio (mEq/L)</label>
+        <input type="number" step="0.1" id="sodio" placeholder="Ex: 140" />
+      </div>
+      <div>
+        <label for="potassio">Potássio (mEq/L)</label>
+        <input type="number" step="0.1" id="potassio" placeholder="Ex: 4.2" />
+      </div>
+      <div class="full">
+        <label for="examesTexto">Lista textual completa de exames (copiar/colar resultados)</label>
+        <textarea id="examesTexto" rows="4" placeholder="Cole aqui o laudo ou lista completa de exames"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Gasometria arterial / venosa</h3>
+    <div class="grid">
+      <div>
+        <label for="amostra">Amostra</label>
+        <select id="amostra">
+          <option value="arterial">Arterial</option>
+          <option value="venosa">Venosa</option>
+        </select>
+      </div>
+      <div>
+        <label for="ph">pH</label>
+        <input type="number" step="0.01" id="ph" placeholder="Ex: 7.38" />
+      </div>
+      <div>
+        <label for="paco2">PaCO₂ (mmHg)</label>
+        <input type="number" step="0.1" id="paco2" placeholder="Ex: 40" />
+      </div>
+      <div>
+        <label for="pao2">PaO₂ (mmHg)</label>
+        <input type="number" step="0.1" id="pao2" placeholder="Ex: 80" />
+      </div>
+      <div>
+        <label for="hco3">HCO₃⁻ (mEq/L) [se disponível]</label>
+        <input type="number" step="0.1" id="hco3" placeholder="Ex: 24" />
+      </div>
+      <div>
+        <label for="saturacao">Sat (quando disponível) %</label>
+        <input type="number" step="0.1" id="saturacao" placeholder="Ex: 95" />
+      </div>
+      <div class="full">
+        <small>Informe FiO₂ no painel de VM (ou texto de O₂ suplementar) para cálculo de PaO₂/FiO₂.</small>
+      </div>
+    </div>
+  </div>
 
   <button onclick="gerarEvolucao()">Gerar Evolução</button>
 
@@ -295,37 +344,36 @@
   <button onclick="copiarEvolucao()" style="margin-top: 10px;">📋 Copiar Evolução</button>
 
   <script>
+    // listeners visibilidade
     document.getElementById("sedado").addEventListener("change", function () {
       document.getElementById("sedacaoDetalhes").classList.toggle("hidden", !this.checked);
     });
     document.getElementById("ventilacao").addEventListener("change", function () {
-  const vmDetalhes = document.getElementById("vmDetalhes");
-  vmDetalhes.classList.toggle("hidden", this.value !== "em ventilação mecânica");
-});
+      const vmDetalhes = document.getElementById("vmDetalhes");
+      const vmCalc = document.getElementById("vmCalc");
+      vmDetalhes.classList.toggle("hidden", this.value !== "em ventilação mecânica");
+      vmCalc.classList.toggle("hidden", this.value !== "em ventilação mecânica");
+    });
 
-document.getElementById("usaDVA").addEventListener("change", function () {
-  document.getElementById("dvaGrupo").style.display = this.checked ? "block" : "none";
-});
+    document.getElementById("usaDVA").addEventListener("change", function () {
+      document.getElementById("dvaGrupo").style.display = this.checked ? "block" : "none";
+    });
 
     function copiarEvolucao() {
-  const output = document.getElementById("output");
-  const texto = output.innerText || output.textContent;
-
-  if (texto.trim() === "") {
-    alert("Nada para copiar.");
-    return;
-  }
-
-  // Cria um elemento temporário
-  const temp = document.createElement("textarea");
-  temp.value = texto;
-  document.body.appendChild(temp);
-  temp.select();
-  document.execCommand("copy");
-  document.body.removeChild(temp);
-
-  alert("Evolução copiada para a área de transferência!");
-}
+      const output = document.getElementById("output");
+      const texto = output.innerText || output.textContent;
+      if (texto.trim() === "") {
+        alert("Nada para copiar.");
+        return;
+      }
+      const temp = document.createElement("textarea");
+      temp.value = texto;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand("copy");
+      document.body.removeChild(temp);
+      alert("Evolução copiada para a área de transferência!");
+    }
 
     function gerarCondutasTexto() {
       const select = document.getElementById("condutas");
@@ -333,107 +381,343 @@ document.getElementById("usaDVA").addEventListener("change", function () {
       return condutas.length ? `Condutas realizadas: ${condutas.join(", ")}.` : "";
     }
 
-function gerarEvolucao() {
-  const estadoGeral = document.getElementById("estadoGeral").value;
-  const consciencia = document.getElementById("nivelConsciencia").value;
-  const sedado = document.getElementById("sedado").checked;
-  const rass = document.getElementById("rass").value;
-  const sedacaoTexto = sedado ? ` Paciente sedado, RASS: ${rass}.` : "";
+    // --- Funções de interpretação ---
+    function interpretarLabs(vals) {
+      // vals: object com hb, plaquetas, bastoes, leucograma, lactato, creatinina, ureia, sodio, potassio
+      const out = [];
+      const hb = vals.hb;
+      if (!isNaN(hb)) {
+        if (hb < 7) out.push(`Hemoglobina ${hb} g/dL — anemia grave (avaliar transfusão conforme conduta clínica).`);
+        else if (hb < 9) out.push(`Hemoglobina ${hb} g/dL — anemia moderada.`);
+        else if (hb < 12) out.push(`Hemoglobina ${hb} g/dL — leve redução.`);
+        else out.push(`Hemoglobina ${hb} g/dL — valor dentro do intervalo esperado.`);
+      }
+      const plaq = vals.plaquetas;
+      if (!isNaN(plaq)) {
+        if (plaq < 20) out.push(`Plaquetas ${plaq} x10³ — trombocitopenia muito grave (alto risco hemorrágico).`);
+        else if (plaq < 50) out.push(`Plaquetas ${plaq} x10³ — trombocitopenia grave.`);
+        else if (plaq < 150) out.push(`Plaquetas ${plaq} x10³ — trombocitopenia moderada.`);
+        else out.push(`Plaquetas ${plaq} x10³ — contagem dentro do esperado.`);
+      }
+      const bast = vals.bastoes;
+      if (!isNaN(bast)) {
+        if (bast > 10) out.push(`Bastões ${bast}% — importante desvio à esquerda (sugere resposta inflamatória/aguda).`);
+        else if (bast > 3) out.push(`Bastões ${bast}% — leve desvio à esquerda.`);
+        else out.push(`Bastões ${bast}% — sem desvio significativo.`);
+      }
+      const leuc = vals.leucograma && vals.leucograma.trim();
+      if (leuc) out.push(`Leucograma: ${leuc}.`);
+      const lac = vals.lactato;
+      if (!isNaN(lac)) {
+        if (lac >= 4) out.push(`Lactato ${lac} mmol/L — hiperlactatemia marcada (alto risco / hipoperfusão).`);
+        else if (lac > 2) out.push(`Lactato ${lac} mmol/L — lactato elevado (sugere hipoperfusão/estrés metabólico).`);
+        else out.push(`Lactato ${lac} mmol/L — dentro do esperado.`);
+      }
+      const cr = vals.creatinina;
+     if (!isNaN(cr)) {
+     if (cr > 2.0) out.push(`Creatinina ${cr} mg/dL — elevação acentuada, sugestiva de lesão renal aguda ou crônica descompensada; avaliar débito urinário, medicamentos nefrotóxicos e conduta nefrológica.`);
+     else if (cr > 1.3) out.push(`Creatinina ${cr} mg/dL — elevação discreta a moderada, possível disfunção renal; correlacionar com ureia, tendência temporal e quadro clínico.`);
+    else out.push(`Creatinina ${cr} mg/dL — dentro do intervalo esperado.`);
+    }
+      const ure = vals.ureia;
+      if (!isNaN(ure)) {
+        if (ure > 80) out.push(`Ureia ${ure} mg/dL — azotemia elevada (sugere insuficiência renal/prerenal).`);
+        else if (ure > 40) out.push(`Ureia ${ure} mg/dL — aumento moderado da ureia.`);
+        else out.push(`Ureia ${ure} mg/dL — dentro do esperado.`);
+      }
+      const na = vals.sodio;
+      if (!isNaN(na)) {
+        if (na < 130) out.push(`Sódio ${na} mEq/L — hiponatremia.`);
+        else if (na > 150) out.push(`Sódio ${na} mEq/L — hipernatremia.`);
+        else out.push(`Sódio ${na} mEq/L — dentro do intervalo esperado.`);
+      }
+      const k = vals.potassio;
+      if (!isNaN(k)) {
+        if (k < 3.0) out.push(`Potássio ${k} mEq/L — risco de hipocalemia (verificar ECG e reposição conforme protocolo).`);
+        else if (k > 5.5) out.push(`Potássio ${k} mEq/L — risco de hipercalemia (verificar ECG e medidas).`);
+        else out.push(`Potássio ${k} mEq/L — dentro do intervalo esperado.`);
+      }
+      return out.join(" ");
+    }
 
-  const estadoGeralnovo = Array.from(document.getElementById("estadoGeralSelect").selectedOptions).map(option => option.value);
-  const sedativos = Array.from(document.getElementById("sedacaoSelect").selectedOptions).map(option => option.value);
-  const doseSedativos = document.getElementById("doseSedativos").value;
+    function interpretarGasometria(gas, fio2Pct, ventilado, vmParams, pbw) {
+      // gas: {ph, paco2, pao2, hco3, saturacao, amostra}
+      const out = [];
+      const ph = gas.ph;
+      const paco2 = gas.paco2;
+      const hco3 = gas.hco3;
+      const pao2 = gas.pao2;
+      const sat = gas.saturacao;
+      const amostra = gas.amostra;
 
-  const ventilacao = document.getElementById("ventilacao").value;
-  const oxigenioDetalhe = document.getElementById("oxigenioDetalhe").value;
+      if (!isNaN(ph)) {
+        if (ph < 7.35) out.push(`Acidose (pH ${ph}).`);
+        else if (ph > 7.45) out.push(`Alcalose (pH ${ph}).`);
+        else out.push(`pH ${ph} dentro do normal.`);
+      }
 
-  // Parâmetros de ventilação mecânica
-  const modoVM = document.getElementById("modoVM").value;
-  const pinsp = document.getElementById("pinsp").value;
-  const peep = document.getElementById("peep").value;
-  const fio2 = document.getElementById("fio2").value;
-  const vc = document.getElementById("vc").value;
-  const frVM = document.getElementById("frVM").value;
+      if (!isNaN(paco2) && !isNaN(hco3)) {
+        // simples determinação primária
+        if (ph < 7.35) {
+          if (paco2 > 45 && hco3 >= 22) out.push(`Acidose predominantemente respiratória (PaCO₂ ${paco2} mmHg).`);
+          else if (hco3 < 22 && paco2 <= 45) out.push(`Acidose predominantemente metabólica (HCO₃ ${hco3}).`);
+          else out.push(`Acidose mista ou compensação presente (PaCO₂ ${paco2}, HCO₃ ${hco3}).`);
+        } else if (ph > 7.45) {
+          if (paco2 < 35 && hco3 <= 28) out.push(`Alcalose respiratória provável (PaCO₂ ${paco2} mmHg).`);
+          else if (hco3 > 28 && paco2 >= 35) out.push(`Alcalose metabólica provável (HCO₃ ${hco3}).`);
+          else out.push(`Alcalose mista ou compensação presente (PaCO₂ ${paco2}, HCO₃ ${hco3}).`);
+        } else {
+          out.push(`pH normal com PaCO₂ ${paco2} e HCO₃ ${hco3} — possível compensação.`);
+        }
+      } else if (!isNaN(paco2)) {
+        out.push(`PaCO₂ ${paco2} mmHg.`);
+      }
 
-  let parametrosVM = "";
-  if (ventilacao === "em ventilação mecânica") {
-    parametrosVM = " Parâmetros ventilatórios:";
-    if (modoVM) parametrosVM += ` modo ${modoVM},`;
-    if (pinsp) parametrosVM += ` Pinsp/PS ${pinsp},`;
-    if (peep) parametrosVM += ` PEEP ${peep},`;
-    if (fio2) parametrosVM += ` FiO₂ ${fio2}%,`;
-    if (vc) parametrosVM += ` VC ${vc},`;
-    if (frVM) parametrosVM += ` FR ${frVM} irpm,`;
-    parametrosVM = parametrosVM.replace(/,+$/, "."); // remove vírgula final e adiciona ponto
-  }
+      // Hipoxemia e P/F
+      if (!isNaN(pao2)) {
+        if (!isNaN(fio2Pct) && fio2Pct > 0) {
+          const fio2 = fio2Pct / 100;
+          const pf = pao2 / fio2;
+          out.push(`PaO₂ ${pao2} mmHg. PaO₂/FiO₂ ≈ ${Math.round(pf)}.`);
+          if (pf <= 100) out.push(`Relação P/F ≤100: hipóxia grave (potencial SDRA grave).`);
+          else if (pf <= 200) out.push(`P/F 100–200: hipóxia moderada (SDRA moderado possível).`);
+          else if (pf <= 300) out.push(`P/F 200–300: hipoxemia leve (SDRA leve possível).`);
+          else out.push(`P/F >300: oxigenação aceitável para ambiente hospitalar.`);
+        } else {
+          out.push(`PaO₂ ${pao2} mmHg (FiO₂ não informada para cálculo P/F).`);
+        }
+      }
 
-  const fc = document.getElementById("fc").value;
-  const pa = document.getElementById("pa").value;
-  const fr = document.getElementById("fr").value;
-  const spo2 = document.getElementById("spo2").value;
-  const temp = document.getElementById("temp").value;
+      if (!isNaN(sat)) out.push(`Saturação ${sat}%.`);
 
-  const exameRespiratorio = Array.from(document.getElementById("exameRespiratorio").selectedOptions).map(opt => opt.value).join(" ");
-  const exameAbdominal = Array.from(document.getElementById("exameAbdominal").selectedOptions).map(opt => opt.value).join(" ");
+      // Correlações com ventilação mecânica
+      if (ventilado) {
+        // avaliar PaCO2 e VT/kg
+        if (!isNaN(paco2)) {
+          if (paco2 > 50) out.push(`PaCO₂ elevado (${paco2} mmHg) — hipoventilação relativa (avaliar Vt, FR e sincronia).`);
+          else if (paco2 < 30) out.push(`PaCO₂ baixo (${paco2} mmHg) — hiperventilação (avaliar sedação, suporte ventilatório).`);
+        }
+        // VT/kg via vmParams.vt (mL) e pbw
+        const vt = vmParams.vt; // mL
+        if (!isNaN(vt) && !isNaN(pbw) && pbw > 0) {
+          const vtkg = vt / pbw;
+          out.push(`VT informado ${vt} mL — corresponde a ${vtkg.toFixed(2)} mL/kg de PBW (${pbw.toFixed(1)} kg).`);
+          if (vtkg > 8) out.push(`VT >8 mL/kg — acima do alvo de ventilação protetora; sugerir reduzir para 6–8 mL/kg se compatível com quadro clínico.`);
+          else if (vtkg < 6) out.push(`VT <6 mL/kg — abaixo do alvo (atenção se hipoventilação/hipercapnia).`);
+          else out.push(`VT dentro do alvo protetor (6–8 mL/kg).`);
+        } else {
+          out.push(`VT ou PBW indisponíveis para cálculo de VT/kg.`);
+        }
+        // pressão de platô
+        const plat = vmParams.plat;
+        if (!isNaN(plat)) {
+          out.push(`Pressão de Platô ${plat} cmH₂O.`);
+          if (plat > 30) out.push(`Pplat >30 cmH₂O — risco de volutrauma/lesão pulmonar ventilatório-associada (avaliar redução de VT).`);
+        }
+      }
 
-  const ims = document.getElementById("ims").value;
-  const mrc = document.getElementById("mrc").value;
+      return out.join(" ");
+    }
 
-  const mobilidadeTexto = (ims || mrc) 
-    ? `Mobilidade: IMS ${ims || "-"}, MRC ${mrc || "-"}.` 
-    : "";
+    function calcularPBW(sexo, alturaCm) {
+      // PBW formulas: male: 50 + 0.91*(height_cm - 152.4); female: 45.5 + 0.91*(height_cm - 152.4)
+      if (!alturaCm || alturaCm <= 0 || (sexo !== "M" && sexo !== "F")) return NaN;
+      const pbw = (sexo === "M")
+        ? 50 + 0.91 * (alturaCm - 152.4)
+        : 45.5 + 0.91 * (alturaCm - 152.4);
+      return pbw;
+    }
 
-  const condutaTexto = gerarCondutasTexto();
-  
-  const leito = document.getElementById("leito").value || "não informado";
+    // função principal de geração
+    function gerarEvolucao() {
+      const estadoGeral = document.getElementById("estadoGeral").value;
+      const consciencia = document.getElementById("nivelConsciencia").value;
+      const sedado = document.getElementById("sedado").checked;
+      const rass = document.getElementById("rass").value;
+      const sedacaoTexto = sedado ? ` Paciente sedado, RASS: ${rass}.` : "";
 
+      const estadoGeralnovo = Array.from(document.getElementById("estadoGeralSelect").selectedOptions).map(option => option.value);
+      const sedativos = Array.from(document.getElementById("sedacaoSelect").selectedOptions).map(option => option.value);
+      const doseSedativos = document.getElementById("doseSedativos").value;
 
-  // ✅ Começa a montar o texto
-  let texto = `Paciente internado na UTI, leito ${leito}, ${estadoGeral}. Apresenta-se ${consciencia}.${sedacaoTexto}\n`;
+      const ventilacao = document.getElementById("ventilacao").value;
+      const oxigenioDetalhe = document.getElementById("oxigenioDetalhe").value;
 
-  if (estadoGeralnovo.length > 0) {
-    texto += `Avaliação física: ${estadoGeralnovo.join(', ')}.\n`;
-  }
+      // VM params
+      const modoVM = document.getElementById("modoVM").value;
+      const pinsp = document.getElementById("pinsp").value;
+      const peep = document.getElementById("peep").value;
+      const fio2 = parseFloat(document.getElementById("fio2").value);
+      const vc = parseFloat(document.getElementById("vc").value); // interpretado como VT (mL)
+      const frVM = document.getElementById("frVM").value;
+      const plat = parseFloat(document.getElementById("plat").value);
+      const sexo = document.getElementById("sexo").value;
+      const altura = parseFloat(document.getElementById("altura").value);
+      const peso = parseFloat(document.getElementById("peso").value);
 
-  if (sedativos.length > 0 || doseSedativos) {
-    texto += `Sedação: ${sedativos.join(', ')}.`;
-    if (doseSedativos) texto += ` Observações: ${doseSedativos}.`;
-    texto += `\n`;
-  }
-  
-  if (document.getElementById("usaDVA").checked) {
-  const drogas = Array.from(document.getElementById("drogaVasoativa").selectedOptions).map(opt => opt.value);
-  const doseObs = document.getElementById("doseDVA").value.trim();
+      let parametrosVM = "";
+      if (ventilacao === "em ventilação mecânica") {
+        parametrosVM = "Parâmetros ventilatórios:";
+        if (modoVM) parametrosVM += ` modo ${modoVM},`;
+        if (pinsp) parametrosVM += ` Pinsp/PS ${pinsp},`;
+        if (peep) parametrosVM += ` PEEP ${peep},`;
+        if (!isNaN(fio2)) parametrosVM += ` FiO₂ ${fio2}%,`;
+        if (!isNaN(vc)) parametrosVM += ` VT ${vc} mL,`;
+        if (frVM) parametrosVM += ` FR ${frVM} irpm,`;
+        if (!isNaN(plat)) parametrosVM += ` Pplat ${plat} cmH₂O,`;
+        parametrosVM = parametrosVM.replace(/,+$/, "."); // remove vírgula final e adiciona ponto
+      }
 
-  if (drogas.length > 0) {
-    texto += `Com necessidade de: ${drogas.join(", ")}.`;
-    if (doseObs) texto += ` Doses/observações: ${doseObs}.`;
-    texto += `\n`;
-  } else {
-    texto += `Uso de drogas vasoativas informado, porém nenhuma droga selecionada.\n`;
-  }
-}
+      const fc = document.getElementById("fc").value;
+      const pa = document.getElementById("pa").value;
+      const fr = document.getElementById("fr").value;
+      const spo2 = document.getElementById("spo2").value;
+      const temp = document.getElementById("temp").value;
 
-  texto += `Encontra-se ${ventilacao}${oxigenioDetalhe ? ", utilizando: " + oxigenioDetalhe : ""}.\n`;
-  if (parametrosVM) texto += parametrosVM + "\n";
+      const exameRespiratorio = Array.from(document.getElementById("exameRespiratorio").selectedOptions).map(opt => opt.value).join(" ");
+      const exameAbdominal = Array.from(document.getElementById("exameAbdominal").selectedOptions).map(opt => opt.value).join(" ");
 
-  texto += `Sinais vitais: FC ${fc} bpm, PA ${pa}, FR ${fr} irpm, SpO₂ ${spo2}%, Tº ${temp}°C.\n`;
-  texto += `Exame respiratório: ${exameRespiratorio || "sem alterações relevantes"}.\n`;
-  texto += `Exame abdominal: ${exameAbdominal || "sem alterações relevantes"}.\n`;
+      const ims = document.getElementById("ims").value;
+      const mrc = document.getElementById("mrc").value;
 
-  if (mobilidadeTexto) texto += mobilidadeTexto + '\n';
-  if (condutaTexto) texto += condutaTexto + '\n';
+      const mobilidadeTexto = (ims || mrc)
+        ? `Mobilidade: IMS ${ims || "-"}, MRC ${mrc || "-"}.`
+        : "";
 
-  // ✅ Observações finais (agora no lugar certo)
-  const obsFinais = document.getElementById("obsFinais").value;
-  if (obsFinais.trim() !== "") {
-    texto += `Obs.: ${obsFinais}\n`;
-  }
+      const condutaTexto = gerarCondutasTexto();
 
-  // ✅ Exibe na tela
-  document.getElementById("output").innerText = texto;
-}
+      const leito = document.getElementById("leito").value || "não informado";
 
+      // --- Exames laboratoriais e gasometria (ler campos)
+      const hb = parseFloat(document.getElementById("hb").value);
+      const plaquetas = parseFloat(document.getElementById("plaquetas").value);
+      const bastoes = parseFloat(document.getElementById("bastoes").value);
+      const leucograma = document.getElementById("leucograma").value;
+      const lactato = parseFloat(document.getElementById("lactato").value);
+      const creatinina = parseFloat(document.getElementById("creatinina").value);
+      const ureia = parseFloat(document.getElementById("ureia").value);
+      const sodio = parseFloat(document.getElementById("sodio").value);
+      const potassio = parseFloat(document.getElementById("potassio").value);
+      const examesTexto = document.getElementById("examesTexto").value;
+
+      const amostra = document.getElementById("amostra").value;
+      const ph = parseFloat(document.getElementById("ph").value);
+      const paco2 = parseFloat(document.getElementById("paco2").value);
+      const pao2 = parseFloat(document.getElementById("pao2").value);
+      const hco3 = parseFloat(document.getElementById("hco3").value);
+      const saturacao = parseFloat(document.getElementById("saturacao").value);
+
+      // calcular PBW
+      const pbw = calcularPBW(sexo, altura);
+
+      // montar texto base
+      let texto = `Paciente internado na UTI, leito ${leito}, ${estadoGeral}. Apresenta-se ${consciencia}.${sedacaoTexto}\n`;
+
+      if (estadoGeralnovo.length > 0) {
+        texto += `Avaliação física: ${estadoGeralnovo.join(', ')}.\n`;
+      }
+
+      if (sedativos.length > 0 || doseSedativos) {
+        texto += `Sedação: ${sedativos.join(', ')}.`;
+        if (doseSedativos) texto += ` Observações: ${doseSedativos}.`;
+        texto += `\n`;
+      }
+
+      if (document.getElementById("usaDVA").checked) {
+        const drogas = Array.from(document.getElementById("drogaVasoativa").selectedOptions).map(opt => opt.value);
+        const doseObs = document.getElementById("doseDVA").value.trim();
+        if (drogas.length > 0) {
+          texto += `Com necessidade de: ${drogas.join(", ")}.`;
+          if (doseObs) texto += ` Doses/observações: ${doseObs}.`;
+          texto += `\n`;
+        } else {
+          texto += `Uso de drogas vasoativas informado, porém nenhuma droga selecionada.\n`;
+        }
+      }
+
+      texto += `Encontra-se ${ventilacao}${oxigenioDetalhe ? ", utilizando: " + oxigenioDetalhe : ""}.\n`;
+      if (parametrosVM) texto += parametrosVM + "\n";
+
+      texto += `Sinais vitais: FC ${fc} bpm, PA ${pa}, FR ${fr} irpm, SpO₂ ${spo2}%, Tº ${temp}°C.\n`;
+      texto += `Exame respiratório: ${exameRespiratorio || "sem alterações relevantes"}.\n`;
+      texto += `Exame abdominal: ${exameAbdominal || "sem alterações relevantes"}.\n`;
+
+      if (mobilidadeTexto) texto += mobilidadeTexto + '\n';
+      if (condutaTexto) texto += condutaTexto + '\n';
+
+      // --- seção de exames textual
+      texto += `\n--- Exames laboratoriais (principais) ---\n`;
+      if (!isNaN(hb)) texto += `Hb: ${hb} g/dL. `;
+      if (!isNaN(plaquetas)) texto += `Plaquetas: ${plaquetas} x10³. `;
+      if (!isNaN(bastoes)) texto += `Bastões: ${bastoes}%. `;
+      if (leucograma) texto += `Leucograma: ${leucograma}. `;
+      if (!isNaN(lactato)) texto += `Lactato: ${lactato} mmol/L. `;
+      if (!isNaN(creatinina)) texto += `Creatinina: ${creatinina} mg/dL. `;
+      if (!isNaN(ureia)) texto += `Ureia: ${ureia} mg/dL. `;
+      if (!isNaN(sodio)) texto += `Na⁺: ${sodio} mEq/L. `;
+      if (!isNaN(potassio)) texto += `K⁺: ${potassio} mEq/L. `;
+      if (examesTexto && examesTexto.trim() !== "") {
+        texto += `\nObservações/Laudo: ${examesTexto}\n`;
+      } else {
+        texto += `\n`;
+      }
+
+      // interpretação laboratorial (apenas para os itens solicitados)
+      texto += `\n--- Interpretação laboratorial (automática) ---\n`;
+      const labsInterpret = interpretarLabs({
+        hb: hb, plaquetas: plaquetas, bastoes: bastoes, leucograma: leucograma,
+        lactato: lactato, creatinina: creatinina, ureia: ureia, sodio: sodio, potassio: potassio
+      });
+      texto += labsInterpret + "\n";
+
+      // interpretação gasometria
+      texto += `\n--- Gasometria (${amostra}) ---\n`;
+      const gasInterpret = interpretarGasometria({
+        ph: ph, paco2: paco2, pao2: pao2, hco3: hco3, saturacao: saturacao, amostra: amostra
+      }, fio2, ventilacao === "em ventilação mecânica", { vt: isNaN(vc) ? NaN : vc, plat: isNaN(plat) ? NaN : plat }, pbw);
+      texto += gasInterpret + "\n";
+
+      // recomendações e correlações com VM
+      texto += `\n--- Correlações e recomendações (VM) ---\n`;
+      if (ventilacao === "em ventilação mecânica") {
+        if (isNaN(pbw)) {
+          texto += `PBW: não calculado (sexo/altura ausentes). Informe sexo e altura para avaliação de VT/kg.\n`;
+        } else {
+          texto += `PBW calculado: ${pbw.toFixed(1)} kg.\n`;
+        }
+        if (!isNaN(vc) && !isNaN(pbw) && pbw > 0) {
+          const vtkg = vc / pbw;
+          texto += `VT atual: ${vc} mL → ${vtkg.toFixed(2)} mL/kg PBW.\n`;
+          if (vtkg > 8) texto += `Sugerido: reduzir VT para intervalo protetor (6–8 mL/kg PBW) se clinicamente possível.\n`;
+          else texto += `VT dentro do alvo protetor (6–8 mL/kg) ou próximo.\n`;
+        } else {
+          texto += `VT ou PBW não disponíveis para cálculo exato de VT/kg.\n`;
+        }
+        if (!isNaN(plat)) {
+          texto += `Pplat: ${plat} cmH₂O.`;
+          if (plat > 30) texto += ` Atenção: Pplat >30 cmH₂O — considerar ajustes (redução de VT) para evitar volutrauma.\n`;
+          else texto += ` Pplat dentro do alvo (≤30 cmH₂O).\n`;
+        } else {
+          texto += `Pplat não informado.\n`;
+        }
+        if (!isNaN(paco2)) {
+          if (paco2 > 50) texto += `PaCO₂ elevado — revisar ventilação (aumentar FR/VT se essencial) e avaliar causa (dead space, hipoventilação, sedação).`;
+          else if (paco2 < 30) texto += `PaCO₂ baixo — avaliar possibilidade de hiperventilação (sedação, modo ventilatório).`;
+        }
+        texto += `\n`;
+      } else {
+        texto += `Paciente não em ventilação mecânica — correlações com VM não aplicáveis.\n`;
+      }
+
+      // Observações finais
+      const obsFinais = document.getElementById("obsFinais").value;
+      if (obsFinais.trim() !== "") {
+        texto += `\nObs.: ${obsFinais}\n`;
+      }
+
+      // exibe
+      document.getElementById("output").innerText = texto;
+    }
   </script>
 </body>
 </html>
