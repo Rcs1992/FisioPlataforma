@@ -427,6 +427,10 @@
     import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
     import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-functions.js";
+    import {
+  getFirestore, collection, addDoc, serverTimestamp,
+  query, where, orderBy, limit, getDocs, doc, getDoc
+} from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -678,7 +682,146 @@
       texto += `\nRegistro gerado em: ${new Date().toLocaleString('pt-BR')}\n--- Fim ---\n`;
       return texto;
     }
+// --- Busca / carregamento de evoluções ---
+const btnSearch = document.getElementById('btnSearch');
+const btnClearSearch = document.getElementById('btnClearSearch');
+const resultsEl = document.getElementById('searchResults');
 
+btnSearch.addEventListener('click', () => searchEvolucoes());
+btnClearSearch.addEventListener('click', () => {
+  document.getElementById('searchProntuario').value = '';
+  document.getElementById('searchLeito').value = '';
+  resultsEl.innerHTML = '';
+});
+
+async function searchEvolucoes() {
+  const pront = document.getElementById('searchProntuario').value.trim();
+  const leito = document.getElementById('searchLeito').value.trim();
+  if (!pront && !leito) { alert('Informe prontuário ou leito para buscar'); return; }
+  if (!auth.currentUser) { alert('Faça login para buscar evoluções'); return; }
+
+  resultsEl.innerHTML = 'Buscando...';
+  try {
+    const col = collection(db, 'evolucoes');
+    let q;
+    const MAX_RESULTS = 50;
+
+    if (pront) {
+      // buscar pelo campo `prontuario` (igual)
+      q = query(col, where('prontuario', '==', pront), orderBy('createdAt', 'desc'), limit(MAX_RESULTS));
+    } else {
+      // buscar por leito
+      q = query(col, where('leito', '==', leito), orderBy('createdAt', 'desc'), limit(MAX_RESULTS));
+    }
+
+    const snap = await getDocs(q);
+    renderResults(snap);
+    // registra no log minimal a busca (sem conteúdo clínico)
+    await logAudit('BUSCAR_EVOLUCOES', { prontuario: pront || null, leito: leito || null, hits: snap.size });
+  } catch (err) {
+    console.error('Erro busca:', err);
+    resultsEl.innerHTML = `<div style="color:#a33">Erro ao buscar: ${err.message || err}</div>`;
+  }
+}
+
+function renderResults(querySnapshot) {
+  if (!querySnapshot || querySnapshot.size === 0) {
+    resultsEl.innerHTML = '<div class="muted">Nenhuma evolução encontrada.</div>';
+    return;
+  }
+  // montar lista
+  const list = document.createElement('div');
+  querySnapshot.forEach(docSnap => {
+    const d = docSnap.data();
+    // createdAt pode ser Timestamp
+    let when = '-';
+    if (d.createdAt && typeof d.createdAt.toDate === 'function') {
+      when = d.createdAt.toDate().toLocaleString('pt-BR');
+    } else if (d.createdAt) {
+      when = String(d.createdAt);
+    }
+    const item = document.createElement('div');
+    item.style.borderBottom = '1px solid #efefef';
+    item.style.padding = '6px 4px';
+    item.innerHTML = `
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+        <div style="flex:1">
+          <div style="font-weight:600">${d.prontuario || '(sem prontuário)'} — Leito ${d.leito || '-'} <span style="color:#666;font-weight:400"> (${when})</span></div>
+          <div style="color:#444;font-size:13px;margin-top:4px">${(d.texto || '').slice(0,200).replace(/\\n/g,' ')}${(d.texto && d.texto.length>200)?'...':''}</div>
+          <div style="color:#666;font-size:12px;margin-top:4px">por: ${d.createdByEmail || d.createdBy || 'desconhecido'}</div>
+        </div>
+        <div style="width:110px;text-align:right">
+          <button data-id="${docSnap.id}" class="btn-load" style="padding:6px 8px;margin-bottom:6px;background:#0b74de;border-radius:6px;color:#fff;border:none;cursor:pointer">Carregar</button>
+          <button data-id="${docSnap.id}" class="btn-open" style="padding:6px 8px;background:#4CAF50;border-radius:6px;color:#fff;border:none;cursor:pointer">Abrir</button>
+        </div>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+  // substituir resultados
+  resultsEl.innerHTML = '';
+  resultsEl.appendChild(list);
+
+  // attach listeners aos botões carregados
+  Array.from(resultsEl.querySelectorAll('.btn-load')).forEach(b => {
+    b.addEventListener('click', async (ev) => {
+      const id = ev.currentTarget.getAttribute('data-id');
+      await loadEvolution(id, { populateForm: true });
+    });
+  });
+  Array.from(resultsEl.querySelectorAll('.btn-open')).forEach(b => {
+    b.addEventListener('click', async (ev) => {
+      const id = ev.currentTarget.getAttribute('data-id');
+      await loadEvolution(id, { populateForm: false, openOnly: true });
+    });
+  });
+}
+
+// carrega a evolução selecionada do Firestore
+async function loadEvolution(id, opts = { populateForm: true, openOnly:false }) {
+  if (!id) return;
+  try {
+    const ref = doc(db, 'evolucoes', id);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) { alert('Evolução não encontrada'); return; }
+    const d = snap.data();
+    // mostrar texto no output
+    document.getElementById('output').innerText = d.texto || '';
+    // opcional: preencher alguns campos do formulário (somente os armazenados)
+    if (opts.populateForm) {
+      if (d.leito) document.getElementById('leito').value = d.leito;
+      if (d.prontuario && document.getElementById('prontuario')) document.getElementById('prontuario').value = d.prontuario;
+      // você pode mapear mais campos se armazenar estrutura detalhada
+    }
+    // se apenas abrir, destacar
+    if (opts.openOnly) {
+      // rolar até output
+      document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+    }
+    // log do carregamento (minimal)
+    await logAudit('CARREGAR_EVOLUCAO', { evolutionId: id, leito: d.leito || null, prontuario: d.prontuario || null });
+  } catch (err) {
+    console.error('loadEvolution err', err);
+    alert('Erro ao carregar evolução: ' + (err.message || err));
+  }
+}
+
+    
+<!-- === Painel de Busca de Evoluções === -->
+<div class="section" style="margin-bottom:12px;">
+  <label>Buscar evoluções (prontuário / leito)</label>
+  <div class="row" style="margin-bottom:6px;">
+    <input id="searchProntuario" placeholder="Prontuário (ex: 12345)" />
+    <input id="searchLeito" placeholder="Leito (ex: 12)" />
+  </div>
+  <div class="row" style="margin-bottom:6px;">
+    <button id="btnSearch" style="flex:1">🔎 Buscar</button>
+    <button id="btnClearSearch" class="tertiary" style="flex:1">✖ Limpar</button>
+  </div>
+  <div id="searchResults" style="max-height:260px;overflow:auto;background:#fff;border:1px solid #e6e6e6;padding:8px;border-radius:6px"></div>
+</div>
+<!-- === fim painel busca === -->
+    
     // Eventos dos botões (Gerar / Copiar / Download / PDF / Salvar)
     document.getElementById('btnGerar').addEventListener('click', () => {
       const txt = montarEvolucaoTexto();
