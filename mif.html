@@ -417,6 +417,7 @@
       <button id="btnCopy" class="tertiary" style="flex:1">📋 Copiar</button>
       <button id="btnDownload" class="" style="flex:1">⬇️ Baixar (.txt)</button>
       <button id="btnPdf" style="flex:1">📄 Gerar PDF</button>
+      <button id="btnClearForm" class="tertiary" style="flex:1">🧹 Limpar formulário</button>
     </div>
 
     <div id="output" class="output" aria-live="polite"></div>
@@ -871,6 +872,83 @@
         alert('Erro ao gerar PDF: ' + e);
       }
     });
+
+    // Botão para limpar todo o formulário
+document.getElementById('btnClearForm').addEventListener('click', () => {
+  // Confirmação (remova se quiser limpar sem perguntar)
+  if (!confirm('Confirma limpar todo o formulário? A ação não pode ser desfeita.')) return;
+
+  const form = document.getElementById('formContainer');
+
+  // Limpar todos inputs e textareas
+  form.querySelectorAll('input, textarea, select').forEach(el => {
+    if (el.tagName === 'INPUT') {
+      const t = el.type.toLowerCase();
+      if (t === 'checkbox' || t === 'radio') {
+        el.checked = false;
+      } else {
+        el.value = '';
+      }
+    } else if (el.tagName === 'TEXTAREA') {
+      el.value = '';
+    } else if (el.tagName === 'SELECT') {
+      if (el.multiple) {
+        // desselciona todas as options
+        Array.from(el.options).forEach(opt => opt.selected = false);
+      } else {
+        // voltar para a primeira opção (índice 0)
+        el.selectedIndex = 0;
+      }
+    }
+  });
+
+  // Campos específicos que queremos um valor padrão diferente:
+  const ventilacaoEl = document.getElementById('ventilacao');
+  if (ventilacaoEl) {
+    ventilacaoEl.value = 'em ar ambiente';
+  }
+  // limpar output / resultados / busca
+  const outputEl = document.getElementById('output');
+  if (outputEl) outputEl.innerText = '';
+
+  const resultsEl = document.getElementById('searchResults');
+  if (resultsEl) resultsEl.innerHTML = '';
+
+  const sp = document.getElementById('searchProntuario');
+  const sl = document.getElementById('searchLeito');
+  if (sp) sp.value = '';
+  if (sl) sl.value = '';
+
+  // Resetar visibilidades dependentes (mesmo comportamento dos listeners)
+  const sedadoChk = document.getElementById('sedado');
+  const sedacaoDetalhes = document.getElementById('sedacaoDetalhes');
+  if (sedadoChk && sedacaoDetalhes) {
+    sedadoChk.checked = false;
+    sedacaoDetalhes.classList.add('hidden');
+  }
+
+  const usaDVA = document.getElementById('usaDVA');
+  const dvaGrupo = document.getElementById('dvaGrupo');
+  if (usaDVA && dvaGrupo) {
+    usaDVA.checked = false;
+    dvaGrupo.style.display = 'none';
+  }
+
+  const vmDetalhes = document.getElementById('vmDetalhes');
+  const vmCalc = document.getElementById('vmCalc');
+  if (vmDetalhes) vmDetalhes.classList.add('hidden');
+  if (vmCalc) vmCalc.classList.add('hidden');
+
+  // Disparar eventos de change para que UI sincronize corretamente (opcional)
+  if (ventilacaoEl) ventilacaoEl.dispatchEvent(new Event('change'));
+  if (sedadoChk) sedadoChk.dispatchEvent(new Event('change'));
+  if (usaDVA) usaDVA.dispatchEvent(new Event('change'));
+
+  // foco no campo leito
+  const leito = document.getElementById('leito');
+  if (leito) leito.focus();
+});
+
 
     // Salva a evolução completa no Firestore (coleção "evolucoes")
     document.getElementById('btnSalvarFirestore').addEventListener('click', async () => {
