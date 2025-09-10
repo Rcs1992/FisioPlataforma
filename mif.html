@@ -1,161 +1,781 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MIF – Medida de Independência Funcional</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Avaliação Fisioterapêutica — Integrado Firebase</title>
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f4f7fb;
-      color: #333;
-      padding: 20px;
-      max-width: 800px;
-      margin: auto;
-    }
-    h1 {
-      text-align: center;
-      color: #2a5d8f;
-    }
-    h2 {
-      color: #444;
-      margin-top: 30px;
-    }
-    label {
-      font-weight: bold;
-      margin-top: 10px;
-      display: block;
-    }
-    select {
-      width: 100%;
-      padding: 6px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-      margin-bottom: 5px;
-    }
-    .descricao {
-      font-size: 12px;
-      color: #777;
-      margin-bottom: 12px;
-    }
-    button {
-      background: #2a5d8f;
-      color: white;
-      border: none;
-      padding: 12px;
-      font-size: 16px;
-      border-radius: 10px;
-      margin-top: 20px;
-      width: 100%;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #1f456a;
-    }
-    .resultado {
-      background: #e3f2fd;
-      border-left: 5px solid #2a5d8f;
-      padding: 15px;
-      margin-top: 20px;
-      border-radius: 8px;
-    }
+    body { font-family: sans-serif; margin: 8px; font-size: 14px; background: #f9f9f9; color:#222; }
+    label { display: block; margin-bottom: 4px; font-weight: bold; }
+    select, input[type="text"], input[type="number"], input[type="email"], input[type="password"], textarea { width: 100%; padding: 6px; margin-bottom: 8px; font-size: 14px; box-sizing: border-box; }
+    textarea { height: 100px; }
+    .row { display: flex; gap: 6px; }
+    .row > * { flex: 1; }
+    .hidden { display: none; }
+    .checkbox-group label { font-weight: normal; margin-right: 8px; }
+    button { width: 100%; padding: 10px; font-size: 14px; background: #0066cc; color: white; border: none; border-radius: 4px; margin-top: 10px; cursor: pointer; }
+    button.secondary { background: #4CAF50; }
+    button.tertiary { background: #777; }
+    .output { white-space: pre-wrap; background: #fff; border: 1px solid #ccc; padding: 10px; margin-top: 12px; border-radius: 5px; max-height: 520px; overflow: auto; }
+    .section { margin-bottom: 10px; }
+    .small-title { margin: 6px 0 2px; font-weight: bold; font-size: 13px; }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .full { grid-column: 1 / -1; }
+    header { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:8px; }
+    .userbox { font-size:13px; color:#fff; background:#2c3e50; padding:6px 8px; border-radius:6px; }
+    .login-card { background: #fff; padding:12px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.06); margin-bottom:10px; }
+    .muted { color:#666; font-size:13px; }
   </style>
 </head>
 <body>
-  <h1>🧮 MIF – Medida de Independência Funcional</h1>
+  <header>
+    <div>
+      <h2 style="margin:0 0 6px 0">Avaliação Fisioterapêutica</h2>
+      <div class="muted">Formulário otimizado — salve direto no Firestore e registre logs.</div>
+    </div>
+    <div style="text-align:right">
+      <div id="userInfo" class="userbox">Não logado</div>
+      <div style="margin-top:6px">
+        <button id="btnShowLogin" style="width:auto;padding:6px 10px;background:#0b74de">Login</button>
+        <button id="btnLogout" style="display:none;width:auto;padding:6px 10px;background:#d9534f">Logout</button>
+      </div>
+    </div>
+  </header>
 
-  <form id="formMIF">
-    <h2>Domínio Motor</h2>
-    <div id="motor"></div>
+  <!-- LOGIN MODAL -->
+  <div id="modalLogin" class="hidden" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.4);">
+    <div class="login-card" style="width:360px;">
+      <h3 style="margin-top:0">Entrar</h3>
+      <label>Email:
+        <input id="loginEmail" type="email" placeholder="seu@exemplo.com" />
+      </label>
+      <label>Senha:
+        <input id="loginPassword" type="password" placeholder="Senha" />
+      </label>
+      <div style="display:flex;gap:8px">
+        <button id="btnLoginConfirm" style="flex:1;background:#2c3e50">Entrar</button>
+        <button id="btnCloseLogin" style="flex:1;background:#777">Fechar</button>
+      </div>
+      <p class="muted" style="margin-top:8px">Se ainda não tem usuário, crie via Console Firebase → Authentication → Add user</p>
+    </div>
+  </div>
 
-    <h2>Domínio Cognitivo</h2>
-    <div id="cognitivo"></div>
+  <!-- AVISO: somente visível se não logado -->
+  <div id="notAuthNotice" class="login-card" style="display:none;">
+    <strong>Atenção:</strong> você precisa estar logado para salvar evoluções e gerar PDFs arquiváveis.
+  </div>
 
-    <button type="button" onclick="calcularMIF()">Calcular MIF</button>
-  </form>
+  <!-- === INÍCIO DO FORMULÁRIO (mantive a estrutura completa que você forneceu) === -->
+  <div id="formContainer" style="display:none;">
+    <!-- Copiei e mantive todos os campos do seu HTML original (compactado) -->
+    <label for="leito">Leito:</label>
+    <input type="text" id="leito" name="leito" placeholder="Ex: 12" />
 
-  <div id="resultado" class="resultado" style="display:none;"></div>
+    <div class="section">
+      <label for="estadoGeral">Estado Geral</label>
+      <select id="estadoGeral">
+        <option value="acordado(a) e responsivo(a)">Acordado(a) e responsivo(a)</option>
+        <option value="sonolento(a), mas responsivo(a) ao chamado">Sonolento(a), mas responsivo(a)</option>
+        <option value="rebaixado(a), mas responde à dor">Rebaixado(a), mas responde à dor</option>
+        <option value="não responsivo(a) a nenhum estímulo">Sem resposta a estímulos</option>
+      </select>
+    </div>
 
-  <script>
-    const niveis = [
-      { valor: 7, texto: "7 - Independente: realiza sozinho, com segurança e tempo adequado" },
-      { valor: 6, texto: "6 - Independente modificado: com dispositivo auxiliar ou tempo prolongado" },
-      { valor: 5, texto: "5 - Supervisão: precisa apenas de orientação ou supervisão" },
-      { valor: 4, texto: "4 - Assistência mínima: realiza ≥75% da tarefa" },
-      { valor: 3, texto: "3 - Assistência moderada: realiza 50–74% da tarefa" },
-      { valor: 2, texto: "2 - Assistência máxima: realiza 25–49% da tarefa" },
-      { valor: 1, texto: "1 - Dependente total: realiza <25% ou requer 2 pessoas" }
-    ];
+    <div class="section">
+      <label for="nivelConsciencia">Nível de Consciência</label>
+      <select id="nivelConsciencia">
+        <option value="consciente e orientado(a)">Consciente e orientado(a)</option>
+        <option value="confuso(a)">Confuso(a)</option>
+        <option value="agitado(a)">Agitado(a)</option>
+        <option value="rebaixado(a)">Rebaixado(a)</option>
+        <option value="comatoso(a)">Comatoso(a)</option>
+      </select>
 
-    const itensMotor = [
-      "Alimentação", "Higiene pessoal", "Banho", "Vestir parte superior", "Vestir parte inferior",
-      "Uso do vaso sanitário", "Controle da bexiga", "Controle intestinal",
-      "Transferência: leito ↔ cadeira", "Transferência: vaso sanitário", "Transferência: chuveiro",
-      "Deambulação", "Subir escadas"
-    ];
+      <label style="margin-top:8px;"><input type="checkbox" id="sedado" /> Paciente sedado</label>
+      <div id="sedacaoDetalhes" class="hidden">
+        <label for="rass">RASS</label>
+        <select id="rass">
+          <option value="-5">-5: Não desperta</option>
+          <option value="-4">-4: Movimenta-se a estímulo</option>
+          <option value="-3">-3: Movimento ocular a estímulo</option>
+          <option value="-2">-2: Leve sedação</option>
+          <option value="-1">-1: Sonolento</option>
+          <option value="0">0: Alerta e calmo</option>
+          <option value="+1">+1: Inquieto</option>
+          <option value="+2">+2: Agitado</option>
+          <option value="+3">+3: Muito agitado</option>
+          <option value="+4">+4: Combativo</option>
+        </select>
+      </div>
+    </div>
 
-    const itensCognitivo = [
-      "Compreensão", "Expressão", "Interação social", "Resolução de problemas", "Memória"
-    ];
+    <label for="estadoGeralSelect">Avaliação Física:</label>
+    <select id="estadoGeralSelect" multiple>
+      <option value="afebril">Afebril</option>
+      <option value="febril">Febril</option>
+      <option value="normocorado(a)">Normocorado(a)</option>
+      <option value="hipocorado(a)">Hipocorado(a)</option>
+      <option value="acianótico(a)">Acianótico(a)</option>
+      <option value="cianótico(a)">Cianótico(a)</option>
+      <option value="hidratado(a)">Hidratado(a)</option>
+      <option value="desidratado(a)">Desidratado(a)</option>
+      <option value="anictérico(a)">Anictérico(a)</option>
+      <option value="ictérico(a)">Ictérico(a)</option>
+      <option value="extremidades quentes e perfundidas">Extremidades quentes e perfundidas</option>
+      <option value="extremidades frias e hipoperfundidas">Extremidades frias e hipoperfundidas</option>
+    </select>
 
-    function criarCampo(nome, grupo) {
-      const container = document.createElement("div");
+    <label for="sedacaoSelect">Medicações sedativas utilizadas:</label>
+    <select id="sedacaoSelect" multiple>
+      <option value="Fentanil">Fentanil</option>
+      <option value="Midazolam">Midazolam</option>
+      <option value="Ketamina">Ketamina</option>
+      <option value="Propofol">Propofol</option>
+      <option value="Precedex">Precedex</option>
+      <option value="Morfina">Morfina</option>
+    </select>
+    <label for="doseSedativos">Doses ou observações:</label>
+    <input type="text" id="doseSedativos" placeholder="Ex: Fentanil 100mcg/h, Propofol 20ml/h">
 
-      const label = document.createElement("label");
-      label.innerText = nome;
-      container.appendChild(label);
+    <label style="margin-top:8px;"><input type="checkbox" id="usaDVA"> Uso de drogas vasoativas</label>
+    <div id="dvaGrupo" style="display: none; margin-top: 10px;">
+      <label for="drogaVasoativa">Drogas (selecione todas que estiver usando):</label>
+      <select id="drogaVasoativa" multiple size="5">
+        <option value="Noradrenalina">Noradrenalina</option>
+        <option value="Vasopressina">Vasopressina</option>
+        <option value="Dobutamina">Dobutamina</option>
+        <option value="Adrenalina">Adrenalina</option>
+        <option value="Nipride">Nipride</option>
+        <option value="Tridil">Tridil</option>
+      </select>
 
-      const select = document.createElement("select");
-      select.name = grupo;
-      niveis.forEach(n => {
-        const opt = document.createElement("option");
-        opt.value = n.valor;
-        opt.title = n.texto;
-        opt.text = `${n.valor} - ${n.texto.split(":")[1]}`;
-        select.appendChild(opt);
-      });
-      container.appendChild(select);
+      <label for="doseDVA">Dose e observações (ex: Noradrenalina 0,1 mcg/kg/min; Vasopressina 0,04 UI/min):</label>
+      <textarea id="doseDVA" rows="3" placeholder="Descreva as doses e observações aqui..."></textarea>
+    </div>
 
-      const descricao = document.createElement("div");
-      descricao.className = "descricao";
-      descricao.innerText = "1: dependente total | 7: totalmente independente";
-      container.appendChild(descricao);
+    <div class="section">
+      <label for="ventilacao">Ventilação</label>
+      <select id="ventilacao">
+        <option value="em ar ambiente">Ar ambiente</option>
+        <option value="em O2 suplementar">O2 suplementar</option>
+        <option value="em ventilação mecânica">Ventilação mecânica</option>
+      </select>
 
-      return container;
+      <input type="text" id="oxigenioDetalhe" placeholder="Detalhe: cateter, máscara, VM..." />
+    </div>
+
+    <div id="vmDetalhes" class="row hidden" style="margin-top: 6px;">
+      <select id="modoVM">
+        <option value="">Modo</option>
+        <option value="PCV">PCV</option>
+        <option value="PRVC">PRVC</option>
+        <option value="VCV">VCV</option>
+        <option value="PSV">PSV</option>
+        <option value="PAV">PAV</option>
+        <option value="APRV">APRV</option>
+        <option value="SIMV">SIMV</option>
+      </select>
+      <input type="text" id="pinsp" placeholder="Pinsp/PS" />
+      <input type="text" id="peep" placeholder="PEEP" />
+      <input type="text" id="fio2" placeholder="FiO₂ %" />
+      <input type="text" id="vc" placeholder="VT (mL)" />
+      <input type="text" id="frVM" placeholder="FR VM" />
+    </div>
+
+    <div id="vmCalc" class="section hidden">
+      <div class="grid">
+        <div>
+          <label for="sexo">Sexo:</label>
+          <select id="sexo">
+            <option value="">-- selecione --</option>
+            <option value="M">Masculino</option>
+            <option value="F">Feminino</option>
+          </select>
+        </div>
+        <div>
+          <label for="altura">Altura (cm):</label>
+          <input type="number" id="altura" placeholder="Ex: 170" />
+        </div>
+        <div>
+          <label for="peso">Peso atual (kg) — opcional:</label>
+          <input type="number" id="peso" placeholder="Ex: 70" />
+        </div>
+        <div>
+          <label for="plat">Pressão de Platô (cmH₂O):</label>
+          <input type="number" id="plat" placeholder="Ex: 24" />
+        </div>
+        <div class="full">
+          <small>Obs: PBW (Peso Predito) calculado por sexo/altura. VT informado em mL — será convertido para mL/kg de PBW.</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="row">
+        <input type="number" id="fc" placeholder="FC bpm" />
+        <input type="text" id="pa" placeholder="PA mmHg" />
+        <input type="number" id="fr" placeholder="FR irpm" />
+        <input type="number" id="spo2" placeholder="SpO₂ %" />
+        <input type="number" id="temp" placeholder="Temp °C" />
+      </div>
+    </div>
+
+    <div class="section">
+      <label for="exameRespiratorio">Exame Respiratório</label>
+      <select id="exameRespiratorio" multiple>
+        <option value="MV preservado sem ruídos adventícios">MV preservado sem ruídos adventícios</option>
+        <option value="MV com presença de">MV com presença de</option>
+        <option value="MV reduzido">MV reduzido</option>
+        <option value="roncos">roncos</option>
+        <option value="sibilos">sibilos</option>
+        <option value="estertores crepitantes">estertores crepitantes</option>
+        <option value="MV abolido">MV abolido</option>
+        <option value="globalmente">globalmente</option>
+        <option value="em base direita">em base direita</option>
+        <option value="em base esquerda">em base esquerda</option>
+        <option value="em ápice direito">em ápice direito</option>
+        <option value="em ápice esquerdo">em ápice esquerdo</option>
+        <option value="em HTX D">em HTX D</option>
+        <option value="em HTX E">em HTX E</option>
+      </select>
+
+      <label for="exameAbdominal">Exame Abdominal</label>
+      <select id="exameAbdominal" multiple>
+        <option value="Plano">Plano</option>
+        <option value="Distendido">Distendido</option>
+        <option value="Flácido">Flácido</option>
+        <option value="Tenso">Tenso</option>
+        <option value="Doloroso à palpação">Doloroso à palpação</option>
+        <option value="Sem dor à palpação">Sem presença de dor</option>
+      </select>
+    </div>
+
+    <div class="section">
+      <div class="small-title">Mobilidade / Escalas</div>
+      <input type="text" id="ims" placeholder="IMS (ex: 0 a 10)" />
+      <input type="text" id="mrc" placeholder="MRC (ex: 0 a 60)" />
+    </div>
+
+    <div class="section">
+      <label for="condutas">Condutas fisioterapêuticas</label>
+      <select id="condutas" multiple size="6">
+        <option>Desobstrução brônquica</option>
+        <option>Reexpansão pulmonar</option>
+        <option>Treino muscular respiratório</option>
+        <option>Ventilação não invasiva</option>
+        <option>Avaliação para decanulação</option>
+        <option>Recusou atendimento</option>
+        <option>Sem atendimento</option>
+        <option>Adequação postural</option>
+        <option>Ajustes ventilatórios</option>
+        <option>Alongamento</option>
+        <option>Cicloergômetro em MMSS</option>
+        <option>Cicloergômetro em MMII</option>
+        <option>Deambulação com auxílio</option>
+        <option>Deambulação sob supervisão</option>
+        <option>Desmame ventilatório</option>
+        <option>Drenagem postural</option>
+        <option>Eletroterapia</option>
+        <option>Extubação</option>
+        <option>Fortalecimento de MMSS</option>
+        <option>Fortalecimento de MMII</option>
+        <option>Incentivadores inspiratórios</option>
+        <option>Monitorização dos sinais vitais</option>
+        <option>Padrões ventilatórios</option>
+        <option>Sedestação à beira do leito</option>
+        <option>Sedestação na poltrona</option>
+        <option>Suporte VNI</option>
+        <option>Treinamento muscular respiratório</option>
+        <option>Treino de controle de tronco</option>
+        <option>Treino de equilíbrio</option>
+        <option>Treino de marcha</option>
+        <option>Treino de marcha de andador</option>
+        <option>Treino de marcha de muleta</option>
+        <option>Treino de ortostase</option>
+      </select>
+    </div>
+
+    <label for="obsFinais">Observações Finais:</label>
+    <textarea id="obsFinais" rows="3" placeholder="Digite aqui..."></textarea>
+
+    <!-- Exames laboratoriais -->
+    <div class="section">
+      <h3>Exames laboratoriais</h3>
+      <div class="grid">
+        <div>
+          <label for="hb">Hemoglobina (g/dL)</label>
+          <input type="number" step="0.1" id="hb" placeholder="Ex: 9.8" />
+        </div>
+        <div>
+          <label for="plaquetas">Plaquetas (x10³/uL)</label>
+          <input type="number" id="plaquetas" placeholder="Ex: 150" />
+        </div>
+        <div>
+          <label for="bastoes">Bastões (%)</label>
+          <input type="number" step="0.1" id="bastoes" placeholder="Ex: 3" />
+        </div>
+        <div>
+          <label for="leucograma">Leucograma (obs/texto)</label>
+          <input type="text" id="leucograma" placeholder="Ex: Leucocitose à direita, neutrofilia" />
+        </div>
+        <div>
+          <label for="lactato">Lactato (mmol/L)</label>
+          <input type="number" step="0.1" id="lactato" placeholder="Ex: 1.2" />
+        </div>
+        <div>
+          <label for="creatinina">Creatinina (mg/dL)</label>
+          <input type="number" step="0.1" id="creatinina" placeholder="Ex: 1.2" />
+        </div>
+        <div>
+          <label for="ureia">Ureia (mg/dL)</label>
+          <input type="number" step="0.1" id="ureia" placeholder="Ex: 45" />
+        </div>
+        <div>
+          <label for="sodio">Sódio (mEq/L)</label>
+          <input type="number" step="0.1" id="sodio" placeholder="Ex: 140" />
+        </div>
+        <div>
+          <label for="potassio">Potássio (mEq/L)</label>
+          <input type="number" step="0.1" id="potassio" placeholder="Ex: 4.2" />
+        </div>
+        <div class="full">
+          <label for="examesTexto">Lista textual completa de exames (copiar/colar resultados)</label>
+          <textarea id="examesTexto" rows="4" placeholder="Cole aqui o laudo ou lista completa de exames"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>Gasometria arterial / venosa</h3>
+      <div class="grid">
+        <div>
+          <label for="amostra">Amostra</label>
+          <select id="amostra">
+            <option value="arterial">Arterial</option>
+            <option value="venosa">Venosa</option>
+          </select>
+        </div>
+        <div>
+          <label for="ph">pH</label>
+          <input type="number" step="0.01" id="ph" placeholder="Ex: 7.38" />
+        </div>
+        <div>
+          <label for="paco2">PaCO₂ (mmHg)</label>
+          <input type="number" step="0.1" id="paco2" placeholder="Ex: 40" />
+        </div>
+        <div>
+          <label for="pao2">PaO₂ (mmHg)</label>
+          <input type="number" step="0.1" id="pao2" placeholder="Ex: 80" />
+        </div>
+        <div>
+          <label for="hco3">HCO₃⁻ (mEq/L) [se disponível]</label>
+          <input type="number" step="0.1" id="hco3" placeholder="Ex: 24" />
+        </div>
+        <div>
+          <label for="saturacao">Sat (quando disponível) %</label>
+          <input type="number" step="0.1" id="saturacao" placeholder="Ex: 95" />
+        </div>
+        <div class="full">
+          <small>Informe FiO₂ no painel de VM (ou texto de O₂ suplementar) para cálculo de PaO₂/FiO₂.</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- botões de ação -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button id="btnGerar" style="flex:2">Gerar Evolução</button>
+      <button id="btnSalvarFirestore" class="secondary" style="flex:1">💾 Salvar no servidor</button>
+      <button id="btnCopy" class="tertiary" style="flex:1">📋 Copiar</button>
+      <button id="btnDownload" class="" style="flex:1">⬇️ Baixar (.txt)</button>
+      <button id="btnPdf" style="flex:1">📄 Gerar PDF</button>
+    </div>
+
+    <div id="output" class="output" aria-live="polite"></div>
+  </div>
+  <!-- === FIM DO FORMULÁRIO === -->
+
+  <!-- html2pdf (bundle) - usado para gerar PDF client-side -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+  <!-- Firebase SDKs (modular) -->
+  <script type="module">
+    // -------------------------
+    // Substitua este objeto com seu firebaseConfig (Project settings)
+    // -------------------------
+    const firebaseConfig = {
+  apiKey: "AIzaSyBrv6X7sDqOMHUmnu577sHgaKcD37rra-E",
+  authDomain: "prontuario2025-9ee26.firebaseapp.com",
+  projectId: "prontuario2025-9ee26",
+  storageBucket: "prontuario2025-9ee26.firebasestorage.app",
+  messagingSenderId: "930528690484",
+  appId: "1:930528690484:web:d2ce841ce2da0940136561"
+};
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-functions.js";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const functions = getFunctions(app);
+
+    // Expor função de log via callable
+    async function logAudit(action, details = {}) {
+      try {
+        const fn = httpsCallable(functions, 'logAudit');
+        // enviar clientInfo com UA (o servidor vai usar serverTimestamp)
+        const payload = { action, details, clientInfo: { ua: navigator.userAgent } };
+        const res = await fn(payload);
+        return res.data;
+      } catch (err) {
+        console.warn('logAudit falhou:', err);
+        return { success: false, error: String(err) };
+      }
     }
 
-    window.onload = () => {
-      const divMotor = document.getElementById("motor");
-      itensMotor.forEach(i => divMotor.appendChild(criarCampo(i, "mifMotor")));
+    // --- DOM hooks e comportamento ---
+    const btnShowLogin = document.getElementById('btnShowLogin');
+    const modalLogin = document.getElementById('modalLogin');
+    const btnCloseLogin = document.getElementById('btnCloseLogin');
+    const btnLoginConfirm = document.getElementById('btnLoginConfirm');
+    const btnLogout = document.getElementById('btnLogout');
+    const userInfo = document.getElementById('userInfo');
+    const notAuthNotice = document.getElementById('notAuthNotice');
+    const formContainer = document.getElementById('formContainer');
 
-      const divCognitivo = document.getElementById("cognitivo");
-      itensCognitivo.forEach(i => divCognitivo.appendChild(criarCampo(i, "mifCognitivo")));
+    btnShowLogin.addEventListener('click', () => modalLogin.classList.remove('hidden'));
+    btnCloseLogin.addEventListener('click', () => modalLogin.classList.add('hidden'));
+    btnLogout.addEventListener('click', async () => {
+      await signOut(auth);
+    });
+
+    btnLoginConfirm.addEventListener('click', async () => {
+      const email = document.getElementById('loginEmail').value.trim();
+      const pass = document.getElementById('loginPassword').value;
+      if (!email || !pass) { alert('Preencha email e senha'); return; }
+      try {
+        await signInWithEmailAndPassword(auth, email, pass);
+        modalLogin.classList.add('hidden');
+      } catch (err) {
+        alert('Erro ao logar: ' + err.message);
+      }
+    });
+
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        userInfo.innerText = `${user.email || user.uid}`;
+        btnShowLogin.style.display = 'none';
+        btnLogout.style.display = '';
+        notAuthNotice.style.display = 'none';
+        formContainer.style.display = '';
+      } else {
+        userInfo.innerText = 'Não logado';
+        btnShowLogin.style.display = '';
+        btnLogout.style.display = 'none';
+        notAuthNotice.style.display = '';
+        formContainer.style.display = 'none';
+      }
+    });
+
+    // --- Reutiliza a sua lógica de gerarEvolucao/cálculos (compactada e otimizada aqui) ---
+    // (mantive suas funções de interpretação, PBW etc, levemente adaptadas)
+    function calcularPBW(sexo, alturaCm) {
+      if (!alturaCm || alturaCm <= 0 || (sexo !== "M" && sexo !== "F")) return NaN;
+      return (sexo === "M") ? 50 + 0.91 * (alturaCm - 152.4) : 45.5 + 0.91 * (alturaCm - 152.4);
     }
 
-    function calcularMIF() {
-      const motor = document.getElementsByName('mifMotor');
-      const cognitivo = document.getElementsByName('mifCognitivo');
-
-      let somaMotor = 0, somaCognitivo = 0;
-
-      for (let i = 0; i < motor.length; i++) somaMotor += parseInt(motor[i].value);
-      for (let i = 0; i < cognitivo.length; i++) somaCognitivo += parseInt(cognitivo[i].value);
-
-      const total = somaMotor + somaCognitivo;
-
-      let interpretacao = "";
-      if (total >= 108) interpretacao = "🟢 Independência Funcional Alta";
-      else if (total >= 85) interpretacao = "🟡 Independência Moderada";
-      else interpretacao = "🔴 Dependência Funcional";
-
-      const resultado = document.getElementById("resultado");
-      resultado.style.display = "block";
-      resultado.innerHTML = `<strong>Domínio Motor:</strong> ${somaMotor}/91<br/>
-                             <strong>Domínio Cognitivo:</strong> ${somaCognitivo}/35<br/>
-                             <strong>Pontuação Total:</strong> ${total}/126<br/>
-                             <strong>Classificação:</strong> ${interpretacao}`;
+    function interpretarLabs(vals) {
+      const out = [];
+      const hb = vals.hb;
+      if (!isNaN(hb)) {
+        if (hb < 7) out.push(`Hb ${hb} g/dL — anemia grave.`);
+        else if (hb < 9) out.push(`Hb ${hb} g/dL — anemia moderada.`);
+        else if (hb < 12) out.push(`Hb ${hb} g/dL — leve redução.`);
+        else out.push(`Hb ${hb} g/dL — dentro do esperado.`);
+      }
+      const plaq = vals.plaquetas;
+      if (!isNaN(plaq)) {
+        if (plaq < 50) out.push(`Plaq ${plaq} — trombocitopenia relevante.`);
+        else out.push(`Plaq ${plaq} — ok.`);
+      }
+      const lac = vals.lactato;
+      if (!isNaN(lac)) {
+        if (lac >= 4) out.push(`Lactato ${lac} mmol/L — hiperlactatemia marcada.`);
+        else if (lac > 2) out.push(`Lactato ${lac} mmol/L — elevado.`);
+        else out.push(`Lactato ${lac} mmol/L — normal.`);
+      }
+      return out.join(' ');
     }
+
+    function interpretarGasometria(gas, fio2Pct, ventilado, vmParams, pbw) {
+      const out = [];
+      const ph = gas.ph, paco2 = gas.paco2, hco3 = gas.hco3, pao2 = gas.pao2, sat = gas.saturacao;
+      if (!isNaN(ph)) {
+        if (ph < 7.35) out.push(`Acidose (pH ${ph}).`);
+        else if (ph > 7.45) out.push(`Alcalose (pH ${ph}).`);
+        else out.push(`pH ${ph} normal.`);
+      }
+      if (!isNaN(paco2) && !isNaN(hco3) && !isNaN(ph)) {
+        if (ph < 7.35) {
+          if (paco2 > 45) out.push(`Predominantemente respiratória (PaCO₂ ${paco2}).`);
+          else if (hco3 < 22) out.push(`Predominantemente metabólica (HCO₃ ${hco3}).`);
+        } else if (ph > 7.45) {
+          if (paco2 < 35) out.push(`Provavelmente respiratória (PaCO₂ ${paco2}).`);
+          else if (hco3 > 28) out.push(`Provavelmente metabólica (HCO₃ ${hco3}).`);
+        }
+      }
+      if (!isNaN(pao2)) {
+        if (!isNaN(fio2Pct) && fio2Pct > 0) {
+          const fio2 = fio2Pct / 100;
+          const pf = pao2 / fio2;
+          out.push(`PaO₂ ${pao2} mmHg — P/F ≈ ${Math.round(pf)}.`);
+        } else out.push(`PaO₂ ${pao2} mmHg (FiO₂ ausente).`);
+      }
+      if (!isNaN(sat)) out.push(`Sat ${sat}%.`);
+      if (ventilado) {
+        const vt = vmParams.vt;
+        if (!isNaN(vt) && !isNaN(pbw) && pbw > 0) {
+          const vtkg = vt / pbw;
+          out.push(`VT ${vt} mL → ${vtkg.toFixed(2)} mL/kg PBW (${pbw.toFixed(1)} kg).`);
+          if (vtkg > 8) out.push('VT >8 mL/kg — considerar reduzir.');
+        }
+        if (!isNaN(vmParams.plat)) {
+          out.push(`Pplat ${vmParams.plat} cmH₂O.`);
+        }
+      }
+      return out.join(' ');
+    }
+
+    // --- função que monta o texto (baseada no seu gerarEvolucao original) ---
+    function montarEvolucaoTexto() {
+      const leito = document.getElementById('leito').value || 'não informado';
+      const estadoGeral = document.getElementById('estadoGeral').value;
+      const consciencia = document.getElementById('nivelConsciencia').value;
+      const sedado = document.getElementById('sedado').checked;
+      const rass = document.getElementById('rass').value;
+      const sedacaoTexto = sedado ? `Paciente sedado, RASS: ${rass}.` : '';
+
+      const estadoGeralnovo = Array.from(document.getElementById('estadoGeralSelect').selectedOptions).map(o => o.value);
+      const sedativos = Array.from(document.getElementById('sedacaoSelect').selectedOptions).map(o => o.value);
+      const doseSedativos = document.getElementById('doseSedativos').value;
+
+      const ventilacao = document.getElementById('ventilacao').value;
+      const oxigenioDetalhe = document.getElementById('oxigenioDetalhe').value;
+
+      const modoVM = document.getElementById('modoVM').value;
+      const pinsp = document.getElementById('pinsp').value;
+      const peep = document.getElementById('peep').value;
+      const fio2 = parseFloat(document.getElementById('fio2').value);
+      const vc = parseFloat(document.getElementById('vc').value);
+      const frVM = document.getElementById('frVM').value;
+      const plat = parseFloat(document.getElementById('plat').value);
+      const sexo = document.getElementById('sexo').value;
+      const altura = parseFloat(document.getElementById('altura').value);
+
+      const fc = document.getElementById('fc').value;
+      const pa = document.getElementById('pa').value;
+      const fr = document.getElementById('fr').value;
+      const spo2 = document.getElementById('spo2').value;
+      const temp = document.getElementById('temp').value;
+      const exameRespiratorio = Array.from(document.getElementById('exameRespiratorio').selectedOptions).map(o => o.value).join('; ');
+      const exameAbdominal = Array.from(document.getElementById('exameAbdominal').selectedOptions).map(o => o.value).join('; ');
+      const ims = document.getElementById('ims').value;
+      const mrc = document.getElementById('mrc').value;
+      const mobilidadeTexto = (ims || mrc) ? `Mobilidade: IMS ${ims || '-'}, MRC ${mrc || '-'}.` : '';
+      const condutaTexto = Array.from(document.getElementById('condutas').selectedOptions).map(o => o.value).join(', ');
+
+      // labs
+      const hb = parseFloat(document.getElementById('hb').value);
+      const plaquetas = parseFloat(document.getElementById('plaquetas').value);
+      const bastoes = parseFloat(document.getElementById('bastoes').value);
+      const leucograma = document.getElementById('leucograma').value;
+      const lactato = parseFloat(document.getElementById('lactato').value);
+      const creatinina = parseFloat(document.getElementById('creatinina').value);
+      const ureia = parseFloat(document.getElementById('ureia').value);
+      const sodio = parseFloat(document.getElementById('sodio').value);
+      const potassio = parseFloat(document.getElementById('potassio').value);
+      const examesTexto = document.getElementById('examesTexto').value;
+
+      // gaso
+      const amostra = document.getElementById('amostra').value;
+      const ph = parseFloat(document.getElementById('ph').value);
+      const paco2 = parseFloat(document.getElementById('paco2').value);
+      const pao2 = parseFloat(document.getElementById('pao2').value);
+      const hco3 = parseFloat(document.getElementById('hco3').value);
+      const saturacao = parseFloat(document.getElementById('saturacao').value);
+
+      const pbw = calcularPBW(sexo, altura);
+
+      let texto = `--- EVOLUÇÃO FISIOTERÁPICA — Leito ${leito} ---\n\n`;
+      texto += `Estado geral: ${estadoGeral}. Nível de consciência: ${consciencia}. ${sedacaoTexto}\n`;
+      if (estadoGeralnovo.length) texto += `Avaliação física: ${estadoGeralnovo.join('; ')}.\n`;
+      if (sedativos.length || doseSedativos) {
+        texto += `Sedação: ${sedativos.join(', ') || '-'}${doseSedativos ? ' — ' + doseSedativos : ''}.\n`;
+      }
+      if (document.getElementById('usaDVA').checked) {
+        const drogas = Array.from(document.getElementById('drogaVasoativa').selectedOptions).map(o => o.value);
+        const doseObs = document.getElementById('doseDVA').value;
+        texto += `Drogas vasoativas: ${drogas.join(', ') || 'não especificado'}. ${doseObs ? 'Observações: ' + doseObs + '.' : ''}\n`;
+      }
+      texto += `Oxigenação/ventilação: ${ventilacao}${oxigenioDetalhe ? ', ' + oxigenioDetalhe : ''}.\n`;
+      if (ventilacao === 'em ventilação mecânica') {
+        texto += `Parâmetros: ${modoVM ? 'modo ' + modoVM + ', ' : ''}${pinsp ? 'Pinsp/PS ' + pinsp + ', ' : ''}${peep ? 'PEEP ' + peep + ', ' : ''}${!isNaN(fio2) ? 'FiO₂ ' + fio2 + '%, ' : ''}${!isNaN(vc) ? 'VT ' + vc + ' mL, ' : ''}${frVM ? 'FR ' + frVM + ', ' : ''}${!isNaN(plat) ? 'Pplat ' + plat + ' cmH₂O, ' : ''}`.replace(/,\s*$/, '.') + '\n';
+      }
+
+      texto += `Sinais vitais: FC ${fc || '-'} bpm, PA ${pa || '-'}, FR ${fr || '-'} irpm, SpO₂ ${spo2 || '-'}%, Tº ${temp || '-'}°C.\n`;
+      texto += `Exame respiratório: ${exameRespiratorio || 'sem alterações relevantes'}.\n`;
+      texto += `Exame abdominal: ${exameAbdominal || 'sem alterações relevantes'}.\n`;
+      if (mobilidadeTexto) texto += mobilidadeTexto + '\n';
+      if (condutaTexto) texto += `Condutas realizadas: ${condutaTexto}.\n`;
+
+      texto += `\n--- Exames laboratoriais (principais) ---\n`;
+      if (!isNaN(hb)) texto += `Hb: ${hb} g/dL. `;
+      if (!isNaN(plaquetas)) texto += `Plaq: ${plaquetas} x10³. `;
+      if (!isNaN(bastoes)) texto += `Bastões: ${bastoes}%. `;
+      if (leucograma) texto += `Leucograma: ${leucograma}. `;
+      if (!isNaN(lactato)) texto += `Lactato: ${lactato} mmol/L. `;
+      if (!isNaN(creatinina)) texto += `Creatinina: ${creatinina} mg/dL. `;
+      if (!isNaN(ureia)) texto += `Ureia: ${ureia} mg/dL. `;
+      if (!isNaN(sodio)) texto += `Na⁺: ${sodio} mEq/L. `;
+      if (!isNaN(potassio)) texto += `K⁺: ${potassio} mEq/L. `;
+      if (examesTexto && examesTexto.trim()) texto += `\nObservações/Laudo: ${examesTexto}\n`;
+
+      texto += `\n--- Interpretação laboratorial (automática) ---\n`;
+      texto += interpretarLabs({ hb, plaquetas, bastoes, leucograma, lactato, creatinina, ureia, sodio, potassio }) + '\n';
+
+      texto += `\n--- Gasometria (${amostra}) ---\n`;
+      texto += interpretarGasometria({ ph, paco2, pao2, hco3, saturacao, amostra }, fio2, ventilacao === 'em ventilação mecânica', { vt: isNaN(vc) ? NaN : vc, plat: isNaN(plat) ? NaN : plat }, pbw) + '\n';
+
+      texto += `\n--- Correlações / Recomendações (VM) ---\n`;
+      if (ventilacao === 'em ventilação mecânica') {
+        if (isNaN(pbw)) texto += `PBW: não calculado (sexo/altura ausentes).\n`; else texto += `PBW: ${pbw.toFixed(1)} kg.\n`;
+        if (!isNaN(vc) && !isNaN(pbw) && pbw > 0) {
+          const vtkg = vc / pbw;
+          texto += `VT: ${vc} mL → ${vtkg.toFixed(2)} mL/kg PBW. ${vtkg > 8 ? 'Sugerir reduzir VT para 6–8 mL/kg.' : ''}\n`;
+        }
+        if (!isNaN(plat)) texto += `Pplat: ${plat} cmH₂O. ${plat > 30 ? 'Atenção: Pplat >30.' : ''}\n`;
+      } else {
+        texto += `Paciente não em VM — correlações VM não aplicáveis.\n`;
+      }
+
+      const obsFinais = document.getElementById('obsFinais').value;
+      if (obsFinais && obsFinais.trim()) texto += `\nObservações finais: ${obsFinais}\n`;
+
+      texto += `\nRegistro gerado em: ${new Date().toLocaleString('pt-BR')}\n--- Fim ---\n`;
+      return texto;
+    }
+
+    // Eventos dos botões (Gerar / Copiar / Download / PDF / Salvar)
+    document.getElementById('btnGerar').addEventListener('click', () => {
+      const txt = montarEvolucaoTexto();
+      document.getElementById('output').innerText = txt;
+      // log local (opcional)
+    });
+
+    document.getElementById('btnCopy').addEventListener('click', async () => {
+      const txt = document.getElementById('output').innerText;
+      if (!txt.trim()) { alert('Nada para copiar'); return; }
+      try {
+        await navigator.clipboard.writeText(txt);
+        alert('Evolução copiada!');
+        // log minimal
+        await logAudit('COPIAR_EVOLUCAO', { leito: document.getElementById('leito').value || null });
+      } catch (e) {
+        alert('Erro ao copiar: ' + e);
+      }
+    });
+
+    document.getElementById('btnDownload').addEventListener('click', () => {
+      const txt = document.getElementById('output').innerText;
+      if (!txt.trim()) { alert('Nada para baixar'); return; }
+      const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const leito = (document.getElementById('leito').value || 'NA').replace(/\s+/g, '_');
+      const now = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+      a.href = url; a.download = `evolucao_leito_${leito}_${now}.txt`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      logAudit('DOWNLOAD_TXT', { leito: document.getElementById('leito').value || null });
+    });
+
+    document.getElementById('btnPdf').addEventListener('click', async () => {
+      const outputEl = document.getElementById('output');
+      const txt = outputEl.innerText;
+      if (!txt.trim()) { alert('Gere a evolução antes de criar PDF'); return; }
+      // Gerar PDF a partir do conteúdo textual (ou do formulário inteiro)
+      // Vamos gerar a partir do output (layout simples)
+      const opt = {
+        margin:       10,
+        filename:     `evolucao_${(document.getElementById('leito').value || 'NA').replace(/\s+/g,'_')}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      try {
+        // Criar um container temporário para PDF com estilo legível
+        const temp = document.createElement('div');
+        temp.style.padding = '12px';
+        temp.style.fontSize = '12px';
+        temp.style.whiteSpace = 'pre-wrap';
+        temp.innerText = txt;
+        document.body.appendChild(temp);
+        await html2pdf().set(opt).from(temp).save();
+        document.body.removeChild(temp);
+        await logAudit('DOWNLOAD_PDF', { leito: document.getElementById('leito').value || null });
+      } catch (e) {
+        alert('Erro ao gerar PDF: ' + e);
+      }
+    });
+
+    // Salva a evolução completa no Firestore (coleção "evolucoes")
+    document.getElementById('btnSalvarFirestore').addEventListener('click', async () => {
+      const txt = document.getElementById('output').innerText.trim() || montarEvolucaoTexto();
+      if (!txt.trim()) { alert('Gere a evolução antes de salvar'); return; }
+      const user = auth.currentUser;
+      if (!user) { alert('Faça login para salvar'); return; }
+
+      try {
+        // grava documento com addDoc (multiplicidade por paciente)
+        const docRef = await addDoc(collection(db, 'evolucoes'), {
+          leito: document.getElementById('leito').value || null,
+          prontuario: null, // se quiser pegar prontuário adicione campo
+          texto: txt,
+          createdAt: serverTimestamp(),
+          createdBy: user.uid,
+          createdByEmail: user.email || null
+        });
+        alert('Evolução salva (id: ' + docRef.id + ')');
+        // registrar log (minimal — sem conteúdo clínico)
+        await logAudit('GERAR_EVOLUCAO', { leito: document.getElementById('leito').value || null, evolutionId: docRef.id });
+      } catch (err) {
+        console.error(err);
+        alert('Erro ao salvar: ' + err.message);
+      }
+    });
+
+    // Listeners UI adicionais (visibilidade)
+    document.getElementById('sedado').addEventListener('change', function () {
+      document.getElementById('sedacaoDetalhes').classList.toggle('hidden', !this.checked);
+    });
+    document.getElementById('ventilacao').addEventListener('change', function () {
+      const vmDetalhes = document.getElementById('vmDetalhes');
+      const vmCalc = document.getElementById('vmCalc');
+      const isVM = this.value === 'em ventilação mecânica';
+      vmDetalhes.classList.toggle('hidden', !isVM);
+      vmCalc.classList.toggle('hidden', !isVM);
+    });
+    document.getElementById('usaDVA').addEventListener('change', function () {
+      document.getElementById('dvaGrupo').style.display = this.checked ? 'block' : 'none';
+    });
+
+    // Small UX improvement: prevent accidental form submit via Enter
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) {
+        // allow multiline textarea enters
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') e.preventDefault();
+      }
+    });
   </script>
 </body>
 </html>
