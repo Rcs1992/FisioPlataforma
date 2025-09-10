@@ -25,18 +25,17 @@
     .userbox { font-size:13px; color:#fff; background:#2c3e50; padding:6px 8px; border-radius:6px; }
     .login-card { background: #fff; padding:12px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.06); margin-bottom:10px; }
     .muted { color:#666; font-size:13px; }
-  /* adicione no seu <style> existente */
-  .modal {
-    position: fixed;
-    inset: 0;
-    display: flex;               /* controlado por classe, não inline */
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,0,0,0.4);
-    z-index: 9999;
-  }
-  .hidden { display: none !important; } /* mantém seu comportamento */
-    
+    /* modal CSS */
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.4);
+      z-index: 9999;
+    }
+    .hidden { display: none !important; } /* garante que o modal suma */
   </style>
 </head>
 <body>
@@ -55,8 +54,8 @@
   </header>
 
   <!-- LOGIN MODAL -->
-  <div id="modalLogin" class="modal hidden">
-  <div class="login-card" style="width:360px;">
+  <div id="modalLogin" class="modal hidden" aria-hidden="true">
+    <div class="login-card" style="width:360px;">
       <h3 style="margin-top:0">Entrar</h3>
       <label>Email:
         <input id="loginEmail" type="email" placeholder="seu@exemplo.com" />
@@ -79,7 +78,10 @@
 
   <!-- === INÍCIO DO FORMULÁRIO (mantive a estrutura completa que você forneceu) === -->
   <div id="formContainer" style="display:none;">
-    <!-- Copiei e mantive todos os campos do seu HTML original (compactado) -->
+    <!-- Adicionei campo prontuário (necessário para busca) -->
+    <label for="prontuario">Prontuário:</label>
+    <input type="text" id="prontuario" name="prontuario" placeholder="Ex: 12345" />
+
     <label for="leito">Leito:</label>
     <input type="text" id="leito" name="leito" placeholder="Ex: 12" />
 
@@ -393,6 +395,21 @@
       </div>
     </div>
 
+    <!-- === Painel de Busca (prontuário / leito) === -->
+    <div class="section" style="margin-bottom:12px;">
+      <label>Buscar evoluções (prontuário / leito)</label>
+      <div class="row" style="margin-bottom:6px;">
+        <input id="searchProntuario" placeholder="Prontuário (ex: 12345)" />
+        <input id="searchLeito" placeholder="Leito (ex: 12)" />
+      </div>
+      <div class="row" style="margin-bottom:6px;">
+        <button id="btnSearch" style="flex:1">🔎 Buscar</button>
+        <button id="btnClearSearch" class="tertiary" style="flex:1">✖ Limpar</button>
+      </div>
+      <div id="searchResults" style="max-height:260px;overflow:auto;background:#fff;border:1px solid #e6e6e6;padding:8px;border-radius:6px"></div>
+    </div>
+    <!-- === fim painel busca === -->
+
     <!-- botões de ação -->
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button id="btnGerar" style="flex:2">Gerar Evolução</button>
@@ -412,25 +429,24 @@
   <!-- Firebase SDKs (modular) -->
   <script type="module">
     // -------------------------
-    // Substitua este objeto com seu firebaseConfig (Project settings)
+    // Seu firebaseConfig (já preenchido)
     // -------------------------
     const firebaseConfig = {
-  apiKey: "AIzaSyBrv6X7sDqOMHUmnu577sHgaKcD37rra-E",
-  authDomain: "prontuario2025-9ee26.firebaseapp.com",
-  projectId: "prontuario2025-9ee26",
-  storageBucket: "prontuario2025-9ee26.firebasestorage.app",
-  messagingSenderId: "930528690484",
-  appId: "1:930528690484:web:d2ce841ce2da0940136561"
-};
+      apiKey: "AIzaSyBrv6X7sDqOMHUmnu577sHgaKcD37rra-E",
+      authDomain: "prontuario2025-9ee26.firebaseapp.com",
+      projectId: "prontuario2025-9ee26",
+      storageBucket: "prontuario2025-9ee26.firebasestorage.app",
+      messagingSenderId: "930528690484",
+      appId: "1:930528690484:web:d2ce841ce2da0940136561"
+    };
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-functions.js";
     import {
-  getFirestore, collection, addDoc, serverTimestamp,
-  query, where, orderBy, limit, getDocs, doc, getDoc
-} from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+      getFirestore, collection, addDoc, serverTimestamp,
+      query, where, orderBy, limit, getDocs, doc, getDoc
+    } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-functions.js";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -441,7 +457,6 @@
     async function logAudit(action, details = {}) {
       try {
         const fn = httpsCallable(functions, 'logAudit');
-        // enviar clientInfo com UA (o servidor vai usar serverTimestamp)
         const payload = { action, details, clientInfo: { ua: navigator.userAgent } };
         const res = await fn(payload);
         return res.data;
@@ -461,8 +476,14 @@
     const notAuthNotice = document.getElementById('notAuthNotice');
     const formContainer = document.getElementById('formContainer');
 
-    btnShowLogin.addEventListener('click', () => modalLogin.classList.remove('hidden'));
-    btnCloseLogin.addEventListener('click', () => modalLogin.classList.add('hidden'));
+    btnShowLogin.addEventListener('click', () => {
+      modalLogin.classList.remove('hidden');
+      modalLogin.setAttribute('aria-hidden', 'false');
+    });
+    btnCloseLogin.addEventListener('click', () => {
+      modalLogin.classList.add('hidden');
+      modalLogin.setAttribute('aria-hidden', 'true');
+    });
     btnLogout.addEventListener('click', async () => {
       await signOut(auth);
     });
@@ -474,6 +495,7 @@
       try {
         await signInWithEmailAndPassword(auth, email, pass);
         modalLogin.classList.add('hidden');
+        modalLogin.setAttribute('aria-hidden', 'true');
       } catch (err) {
         alert('Erro ao logar: ' + err.message);
       }
@@ -495,8 +517,7 @@
       }
     });
 
-    // --- Reutiliza a sua lógica de gerarEvolucao/cálculos (compactada e otimizada aqui) ---
-    // (mantive suas funções de interpretação, PBW etc, levemente adaptadas)
+    // --- Funções utilitárias / interpretações ---
     function calcularPBW(sexo, alturaCm) {
       if (!alturaCm || alturaCm <= 0 || (sexo !== "M" && sexo !== "F")) return NaN;
       return (sexo === "M") ? 50 + 0.91 * (alturaCm - 152.4) : 45.5 + 0.91 * (alturaCm - 152.4);
@@ -564,7 +585,7 @@
       return out.join(' ');
     }
 
-    // --- função que monta o texto (baseada no seu gerarEvolucao original) ---
+    // --- Monta o texto da evolução (mesma lógica que você forneceu) ---
     function montarEvolucaoTexto() {
       const leito = document.getElementById('leito').value || 'não informado';
       const estadoGeral = document.getElementById('estadoGeral').value;
@@ -682,151 +703,123 @@
       texto += `\nRegistro gerado em: ${new Date().toLocaleString('pt-BR')}\n--- Fim ---\n`;
       return texto;
     }
-// --- Busca / carregamento de evoluções ---
-const btnSearch = document.getElementById('btnSearch');
-const btnClearSearch = document.getElementById('btnClearSearch');
-const resultsEl = document.getElementById('searchResults');
 
-btnSearch.addEventListener('click', () => searchEvolucoes());
-btnClearSearch.addEventListener('click', () => {
-  document.getElementById('searchProntuario').value = '';
-  document.getElementById('searchLeito').value = '';
-  resultsEl.innerHTML = '';
-});
+    // --- Busca / carregamento de evoluções ---
+    const btnSearch = document.getElementById('btnSearch');
+    const btnClearSearch = document.getElementById('btnClearSearch');
+    const resultsEl = document.getElementById('searchResults');
 
-async function searchEvolucoes() {
-  const pront = document.getElementById('searchProntuario').value.trim();
-  const leito = document.getElementById('searchLeito').value.trim();
-  if (!pront && !leito) { alert('Informe prontuário ou leito para buscar'); return; }
-  if (!auth.currentUser) { alert('Faça login para buscar evoluções'); return; }
-
-  resultsEl.innerHTML = 'Buscando...';
-  try {
-    const col = collection(db, 'evolucoes');
-    let q;
-    const MAX_RESULTS = 50;
-
-    if (pront) {
-      // buscar pelo campo `prontuario` (igual)
-      q = query(col, where('prontuario', '==', pront), orderBy('createdAt', 'desc'), limit(MAX_RESULTS));
-    } else {
-      // buscar por leito
-      q = query(col, where('leito', '==', leito), orderBy('createdAt', 'desc'), limit(MAX_RESULTS));
-    }
-
-    const snap = await getDocs(q);
-    renderResults(snap);
-    // registra no log minimal a busca (sem conteúdo clínico)
-    await logAudit('BUSCAR_EVOLUCOES', { prontuario: pront || null, leito: leito || null, hits: snap.size });
-  } catch (err) {
-    console.error('Erro busca:', err);
-    resultsEl.innerHTML = `<div style="color:#a33">Erro ao buscar: ${err.message || err}</div>`;
-  }
-}
-
-function renderResults(querySnapshot) {
-  if (!querySnapshot || querySnapshot.size === 0) {
-    resultsEl.innerHTML = '<div class="muted">Nenhuma evolução encontrada.</div>';
-    return;
-  }
-  // montar lista
-  const list = document.createElement('div');
-  querySnapshot.forEach(docSnap => {
-    const d = docSnap.data();
-    // createdAt pode ser Timestamp
-    let when = '-';
-    if (d.createdAt && typeof d.createdAt.toDate === 'function') {
-      when = d.createdAt.toDate().toLocaleString('pt-BR');
-    } else if (d.createdAt) {
-      when = String(d.createdAt);
-    }
-    const item = document.createElement('div');
-    item.style.borderBottom = '1px solid #efefef';
-    item.style.padding = '6px 4px';
-    item.innerHTML = `
-      <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
-        <div style="flex:1">
-          <div style="font-weight:600">${d.prontuario || '(sem prontuário)'} — Leito ${d.leito || '-'} <span style="color:#666;font-weight:400"> (${when})</span></div>
-          <div style="color:#444;font-size:13px;margin-top:4px">${(d.texto || '').slice(0,200).replace(/\\n/g,' ')}${(d.texto && d.texto.length>200)?'...':''}</div>
-          <div style="color:#666;font-size:12px;margin-top:4px">por: ${d.createdByEmail || d.createdBy || 'desconhecido'}</div>
-        </div>
-        <div style="width:110px;text-align:right">
-          <button data-id="${docSnap.id}" class="btn-load" style="padding:6px 8px;margin-bottom:6px;background:#0b74de;border-radius:6px;color:#fff;border:none;cursor:pointer">Carregar</button>
-          <button data-id="${docSnap.id}" class="btn-open" style="padding:6px 8px;background:#4CAF50;border-radius:6px;color:#fff;border:none;cursor:pointer">Abrir</button>
-        </div>
-      </div>
-    `;
-    list.appendChild(item);
-  });
-  // substituir resultados
-  resultsEl.innerHTML = '';
-  resultsEl.appendChild(list);
-
-  // attach listeners aos botões carregados
-  Array.from(resultsEl.querySelectorAll('.btn-load')).forEach(b => {
-    b.addEventListener('click', async (ev) => {
-      const id = ev.currentTarget.getAttribute('data-id');
-      await loadEvolution(id, { populateForm: true });
+    btnSearch.addEventListener('click', () => searchEvolucoes());
+    btnClearSearch.addEventListener('click', () => {
+      document.getElementById('searchProntuario').value = '';
+      document.getElementById('searchLeito').value = '';
+      resultsEl.innerHTML = '';
     });
-  });
-  Array.from(resultsEl.querySelectorAll('.btn-open')).forEach(b => {
-    b.addEventListener('click', async (ev) => {
-      const id = ev.currentTarget.getAttribute('data-id');
-      await loadEvolution(id, { populateForm: false, openOnly: true });
-    });
-  });
-}
 
-// carrega a evolução selecionada do Firestore
-async function loadEvolution(id, opts = { populateForm: true, openOnly:false }) {
-  if (!id) return;
-  try {
-    const ref = doc(db, 'evolucoes', id);
-    const snap = await getDoc(ref);
-    if (!snap.exists()) { alert('Evolução não encontrada'); return; }
-    const d = snap.data();
-    // mostrar texto no output
-    document.getElementById('output').innerText = d.texto || '';
-    // opcional: preencher alguns campos do formulário (somente os armazenados)
-    if (opts.populateForm) {
-      if (d.leito) document.getElementById('leito').value = d.leito;
-      if (d.prontuario && document.getElementById('prontuario')) document.getElementById('prontuario').value = d.prontuario;
-      // você pode mapear mais campos se armazenar estrutura detalhada
-    }
-    // se apenas abrir, destacar
-    if (opts.openOnly) {
-      // rolar até output
-      document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
-    }
-    // log do carregamento (minimal)
-    await logAudit('CARREGAR_EVOLUCAO', { evolutionId: id, leito: d.leito || null, prontuario: d.prontuario || null });
-  } catch (err) {
-    console.error('loadEvolution err', err);
-    alert('Erro ao carregar evolução: ' + (err.message || err));
-  }
-}
+    async function searchEvolucoes() {
+      const pront = document.getElementById('searchProntuario').value.trim();
+      const leito = document.getElementById('searchLeito').value.trim();
+      if (!pront && !leito) { alert('Informe prontuário ou leito para buscar'); return; }
+      if (!auth.currentUser) { alert('Faça login para buscar evoluções'); return; }
 
-    
-<!-- === Painel de Busca de Evoluções === -->
-<div class="section" style="margin-bottom:12px;">
-  <label>Buscar evoluções (prontuário / leito)</label>
-  <div class="row" style="margin-bottom:6px;">
-    <input id="searchProntuario" placeholder="Prontuário (ex: 12345)" />
-    <input id="searchLeito" placeholder="Leito (ex: 12)" />
-  </div>
-  <div class="row" style="margin-bottom:6px;">
-    <button id="btnSearch" style="flex:1">🔎 Buscar</button>
-    <button id="btnClearSearch" class="tertiary" style="flex:1">✖ Limpar</button>
-  </div>
-  <div id="searchResults" style="max-height:260px;overflow:auto;background:#fff;border:1px solid #e6e6e6;padding:8px;border-radius:6px"></div>
-</div>
-<!-- === fim painel busca === -->
-    
+      resultsEl.innerHTML = 'Buscando...';
+      try {
+        const col = collection(db, 'evolucoes');
+        let q;
+        const MAX_RESULTS = 50;
+
+        if (pront) {
+          q = query(col, where('prontuario', '==', pront), orderBy('createdAt', 'desc'), limit(MAX_RESULTS));
+        } else {
+          q = query(col, where('leito', '==', leito), orderBy('createdAt', 'desc'), limit(MAX_RESULTS));
+        }
+
+        const snap = await getDocs(q);
+        renderResults(snap);
+        await logAudit('BUSCAR_EVOLUCOES', { prontuario: pront || null, leito: leito || null, hits: snap.size });
+      } catch (err) {
+        console.error('Erro busca:', err);
+        resultsEl.innerHTML = `<div style="color:#a33">Erro ao buscar: ${err.message || err}</div>`;
+      }
+    }
+
+    function renderResults(querySnapshot) {
+      if (!querySnapshot || querySnapshot.size === 0) {
+        resultsEl.innerHTML = '<div class="muted">Nenhuma evolução encontrada.</div>';
+        return;
+      }
+      const list = document.createElement('div');
+      querySnapshot.forEach(docSnap => {
+        const d = docSnap.data();
+        let when = '-';
+        if (d.createdAt && typeof d.createdAt.toDate === 'function') {
+          when = d.createdAt.toDate().toLocaleString('pt-BR');
+        } else if (d.createdAt) {
+          when = String(d.createdAt);
+        }
+        const item = document.createElement('div');
+        item.style.borderBottom = '1px solid #efefef';
+        item.style.padding = '6px 4px';
+        item.innerHTML = `
+          <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+            <div style="flex:1">
+              <div style="font-weight:600">${d.prontuario || '(sem prontuário)'} — Leito ${d.leito || '-'} <span style="color:#666;font-weight:400"> (${when})</span></div>
+              <div style="color:#444;font-size:13px;margin-top:4px">${(d.texto || '').slice(0,200).replace(/\\n/g,' ')}${(d.texto && d.texto.length>200)?'...':''}</div>
+              <div style="color:#666;font-size:12px;margin-top:4px">por: ${d.createdByEmail || d.createdBy || 'desconhecido'}</div>
+            </div>
+            <div style="width:110px;text-align:right">
+              <button data-id="${docSnap.id}" class="btn-load" style="padding:6px 8px;margin-bottom:6px;background:#0b74de;border-radius:6px;color:#fff;border:none;cursor:pointer">Carregar</button>
+              <button data-id="${docSnap.id}" class="btn-open" style="padding:6px 8px;background:#4CAF50;border-radius:6px;color:#fff;border:none;cursor:pointer">Abrir</button>
+            </div>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+      resultsEl.innerHTML = '';
+      resultsEl.appendChild(list);
+
+      Array.from(resultsEl.querySelectorAll('.btn-load')).forEach(b => {
+        b.addEventListener('click', async (ev) => {
+          const id = ev.currentTarget.getAttribute('data-id');
+          await loadEvolution(id, { populateForm: true });
+        });
+      });
+      Array.from(resultsEl.querySelectorAll('.btn-open')).forEach(b => {
+        b.addEventListener('click', async (ev) => {
+          const id = ev.currentTarget.getAttribute('data-id');
+          await loadEvolution(id, { populateForm: false, openOnly: true });
+        });
+      });
+    }
+
+    // carrega a evolução selecionada do Firestore
+    async function loadEvolution(id, opts = { populateForm: true, openOnly:false }) {
+      if (!id) return;
+      try {
+        const ref = doc(db, 'evolucoes', id);
+        const snap = await getDoc(ref);
+        if (!snap.exists()) { alert('Evolução não encontrada'); return; }
+        const d = snap.data();
+        document.getElementById('output').innerText = d.texto || '';
+        if (opts.populateForm) {
+          if (d.leito) document.getElementById('leito').value = d.leito;
+          if (d.prontuario) document.getElementById('prontuario').value = d.prontuario;
+          // se você gravar objetos estruturados no documento, aqui é o lugar para popular todos os campos
+        }
+        if (opts.openOnly) {
+          document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+        }
+        await logAudit('CARREGAR_EVOLUCAO', { evolutionId: id, leito: d.leito || null, prontuario: d.prontuario || null });
+      } catch (err) {
+        console.error('loadEvolution err', err);
+        alert('Erro ao carregar evolução: ' + (err.message || err));
+      }
+    }
+
     // Eventos dos botões (Gerar / Copiar / Download / PDF / Salvar)
     document.getElementById('btnGerar').addEventListener('click', () => {
       const txt = montarEvolucaoTexto();
       document.getElementById('output').innerText = txt;
-      // log local (opcional)
     });
 
     document.getElementById('btnCopy').addEventListener('click', async () => {
@@ -835,7 +828,6 @@ async function loadEvolution(id, opts = { populateForm: true, openOnly:false }) 
       try {
         await navigator.clipboard.writeText(txt);
         alert('Evolução copiada!');
-        // log minimal
         await logAudit('COPIAR_EVOLUCAO', { leito: document.getElementById('leito').value || null });
       } catch (e) {
         alert('Erro ao copiar: ' + e);
@@ -858,8 +850,6 @@ async function loadEvolution(id, opts = { populateForm: true, openOnly:false }) 
       const outputEl = document.getElementById('output');
       const txt = outputEl.innerText;
       if (!txt.trim()) { alert('Gere a evolução antes de criar PDF'); return; }
-      // Gerar PDF a partir do conteúdo textual (ou do formulário inteiro)
-      // Vamos gerar a partir do output (layout simples)
       const opt = {
         margin:       10,
         filename:     `evolucao_${(document.getElementById('leito').value || 'NA').replace(/\s+/g,'_')}.pdf`,
@@ -868,7 +858,6 @@ async function loadEvolution(id, opts = { populateForm: true, openOnly:false }) 
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
       try {
-        // Criar um container temporário para PDF com estilo legível
         const temp = document.createElement('div');
         temp.style.padding = '12px';
         temp.style.fontSize = '12px';
@@ -891,18 +880,16 @@ async function loadEvolution(id, opts = { populateForm: true, openOnly:false }) 
       if (!user) { alert('Faça login para salvar'); return; }
 
       try {
-        // grava documento com addDoc (multiplicidade por paciente)
         const docRef = await addDoc(collection(db, 'evolucoes'), {
+          prontuario: document.getElementById('prontuario').value || null,
           leito: document.getElementById('leito').value || null,
-          prontuario: null, // se quiser pegar prontuário adicione campo
           texto: txt,
           createdAt: serverTimestamp(),
           createdBy: user.uid,
           createdByEmail: user.email || null
         });
         alert('Evolução salva (id: ' + docRef.id + ')');
-        // registrar log (minimal — sem conteúdo clínico)
-        await logAudit('GERAR_EVOLUCAO', { leito: document.getElementById('leito').value || null, evolutionId: docRef.id });
+        await logAudit('GERAR_EVOLUCAO', { leito: document.getElementById('leito').value || null, prontuario: document.getElementById('prontuario').value || null, evolutionId: docRef.id });
       } catch (err) {
         console.error(err);
         alert('Erro ao salvar: ' + err.message);
@@ -927,7 +914,6 @@ async function loadEvolution(id, opts = { populateForm: true, openOnly:false }) 
     // Small UX improvement: prevent accidental form submit via Enter
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) {
-        // allow multiline textarea enters
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') e.preventDefault();
       }
     });
