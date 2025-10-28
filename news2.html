@@ -1,202 +1,514 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Calculadora NEWS2 (MedCalc)</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NEWS2 — Faixas (dropdowns) + Response / O que fazer?</title>
   <style>
-    body {
-      background: linear-gradient(to right, #0d47a1, #1565c0);
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      padding: 2rem;
-      color: #fff;
-      display: flex;
-      justify-content: center;
+    :root{
+      --bg:#eaf2ff;
+      --card:#ffffff;
+      --primary:#1e56d7;
+      --primary-600:#1646b0;
+      --muted:#6b7a9a;
+      --accent:#cfe0ff;
+      --shadow: 0 8px 24px rgba(30,86,215,0.08);
+      --radius:12px;
+      --gap:12px;
     }
-
-    .card {
-      background: #1e2a38;
-      padding: 2rem;
-      border-radius: 12px;
-      max-width: 600px;
-      width: 100%;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    html,body{height:100%}
+    body{
+      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:linear-gradient(180deg,var(--bg),#f4f8ff);
+      margin:0;padding:18px;color:#0b1a33;
+      -webkit-font-smoothing:antialiased;
     }
-
-    h2 {
-      text-align: center;
-      color: #90caf9;
-      margin-bottom: 1.5rem;
-    }
-
-    label {
-      display: block;
-      margin-top: 1rem;
-      font-weight: 600;
-      color: #bbdefb;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 0.6rem;
-      margin-top: 0.4rem;
-      border-radius: 6px;
-      border: none;
-      background: #2e3e56;
-      color: #fff;
-    }
-
-    button {
-      margin-top: 2rem;
-      width: 100%;
-      padding: 0.8rem;
-      background: #1976d2;
-      color: white;
-      font-size: 1rem;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #0d47a1;
-    }
-
-    .resultado {
-      margin-top: 2rem;
-      background: #2e3e56;
-      padding: 1rem;
-      border-left: 5px solid #42a5f5;
-      border-radius: 8px;
+    .container{max-width:760px;margin:0 auto}
+    header{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+    .logo{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--primary-600));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:18px;box-shadow:var(--shadow)}
+    h1{font-size:18px;margin:0}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;margin-bottom:12px}
+    .grid{display:flex;flex-direction:column;gap:10px}
+    label{font-size:13px;font-weight:700;margin-bottom:6px;color:#0b2545}
+    select{width:100%;padding:10px;border-radius:10px;border:1px solid #e3eaf8;font-size:15px;background:#fbfdff;box-sizing:border-box}
+    .row{display:flex;gap:10px;align-items:center}
+    .col{flex:1;display:flex;flex-direction:column}
+    .small{font-size:12px;color:var(--muted)}
+    .presets{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+    .preset-btn{padding:8px 10px;border-radius:999px;border:1px solid rgba(30,86,215,0.12);background:linear-gradient(180deg,#fff,#f4f9ff);cursor:pointer;font-weight:700;font-size:13px;color:var(--primary);box-shadow:0 4px 10px rgba(30,86,215,0.04)}
+    .actions{display:flex;gap:8px;margin-top:10px}
+    button.primary{flex:1;background:linear-gradient(180deg,var(--primary),var(--primary-600));color:white;padding:12px;border-radius:10px;border:0;font-weight:800;cursor:pointer}
+    button.ghost{flex:1;background:transparent;border:1px solid rgba(30,86,215,0.12);padding:12px;border-radius:10px;color:var(--primary);font-weight:700;cursor:pointer}
+    .result{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:10px;background:linear-gradient(180deg,#f4f8ff,#ffffff);border:1px solid rgba(30,86,215,0.06)}
+    .scoreline{display:flex;justify-content:space-between;align-items:center;gap:8px}
+    .pill{background:linear-gradient(90deg,var(--primary),var(--primary-600));color:white;padding:10px 14px;border-radius:999px;font-weight:900;font-size:18px;box-shadow:0 8px 22px rgba(30,86,215,0.12)}
+    .param-list{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+    .param{display:flex;justify-content:space-between;align-items:center;font-weight:700;padding:8px;border-radius:8px;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid rgba(10,30,80,0.03)}
+    .interpret{padding:10px;border-radius:8px;font-weight:800}
+    .low{background:#eef8f5;border:1px solid #d5f0e7;color:#0a6b3f}
+    .lowmedium{background:#fffaf6;border:1px solid #ffe8d6;color:#6a4d00}
+    .med{background:#fffaf0;border:1px solid #ffeccf;color:#6a4d00}
+    .high{background:#fff5f5;border:1px solid #ffd6d6;color:#a61919}
+    .response-block{margin-top:12px;padding:12px;border-radius:10px;background:#ffffff;border:1px solid rgba(10,30,80,0.04)}
+    .response-title{font-weight:900;color:var(--primary);margin-bottom:8px}
+    .what-to-do{margin-top:8px;padding:10px;border-radius:8px;background:linear-gradient(180deg,#fbfdff,#f7fbff);border:1px solid rgba(30,86,215,0.06)}
+    footer{font-size:12px;color:var(--muted);margin-top:10px;text-align:center}
+    @media(min-width:720px){
+      .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+      .presets{grid-column:1/-1}
+      .actions{grid-column:1/-1}
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>🩺 Calculadora NEWS2</h2>
+  <div class="container">
+    <header>
+      <div class="logo">NEWS2</div>
+      <div>
+        <h1>Calculadora NEWS2 — Faixas (dropdowns)</h1>
+        <p class="lead">Escolha a faixa — corresponde ao chart oficial do NEWS2. Abaixo aparece o nível de resposta e <strong>O que fazer?</strong></p>
+      </div>
+    </header>
 
-    <label>Frequência respiratória (irpm):</label>
-    <input type="number" id="fr">
+    <div class="card" aria-live="polite">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong>Presets rápidos</strong>
+        <span class="small">Toque para aplicar</span>
+      </div>
 
-    <label>Saturação de O₂ (%):</label>
-    <input type="number" id="spo2">
+      <div class="presets" style="margin-top:8px">
+        <button class="preset-btn" data-preset="normal">Normal</button>
+        <button class="preset-btn" data-preset="hipoxia-leve">Hipóxia leve</button>
+        <button class="preset-btn" data-preset="hipoxia-grave">Hipóxia grave</button>
+        <button class="preset-btn" data-preset="instavel">Instável / Crítico</button>
+        <button class="preset-btn" data-preset="bradicardia">Bradicardia</button>
+        <button class="preset-btn" data-preset="febre">Febre alta</button>
+      </div>
 
-    <label>Oxigênio suplementar?</label>
-    <select id="o2">
-      <option value="0">Ar ambiente</option>
-      <option value="2">Com oxigênio</option>
-    </select>
+      <hr style="border:none;border-top:1px solid rgba(20,40,90,0.04);margin:12px 0">
 
-    <label>Paciente com insuficiência respiratória hipercápnica?</label>
-    <select id="hipercapnia">
-      <option value="nao">Não</option>
-      <option value="sim">Sim</option>
-    </select>
+      <form id="newsForm" onsubmit="return false;">
+        <div class="grid">
+          <!-- Respiratory rate -->
+          <div class="col">
+            <label for="rr">Frequência respiratória (irpm)</label>
+            <select id="rr">
+              <option value="3">≤ 8 — 3 pontos</option>
+              <option value="1">9-11 — 1 ponto</option>
+              <option value="0" selected>12-20 — 0 pontos</option>
+              <option value="2">21-24 — 2 pontos</option>
+              <option value="3">≥ 25 — 3 pontos</option>
+            </select>
+            <div class="small">Escolha a faixa correspondente</div>
+          </div>
 
-    <label>Temperatura (°C):</label>
-    <input type="number" step="0.1" id="temp">
+          <!-- SpO2 scale and oxygen source -->
+          <div class="col">
+            <label for="spO2Scale">Escala SpO₂</label>
+            <select id="spO2Scale">
+              <option value="1" selected>Escala 1 — paciente padrão</option>
+              <option value="2">Escala 2 — risco de hipercapnia</option>
+            </select>
+            <div class="small">Escolha a escala apropriada</div>
+          </div>
 
-    <label>Pressão arterial sistólica (mmHg):</label>
-    <input type="number" id="pas">
+          <div class="col">
+            <label for="oxygenSource">Ar ambiente ou O₂ suplementar?</label>
+            <select id="oxygenSource">
+              <option value="room" selected>Ar ambiente (Room air)</option>
+              <option value="supp">O₂ suplementar (Supplemental oxygen)</option>
+            </select>
+            <div class="small">Indique se há oxigênio suplementar</div>
+          </div>
 
-    <label>Frequência cardíaca (bpm):</label>
-    <input type="number" id="fc">
+          <!-- SpO2 categories: will be populated dynamically -->
+          <div class="col" style="grid-column:1/-1">
+            <label for="spO2">SpO₂ — escolha a faixa</label>
+            <select id="spO2">
+              <!-- options filled by JS -->
+            </select>
+            <div class="small" id="spO2Help">Selecione escala e fonte de O₂ para ver opções.</div>
+          </div>
 
-    <label>Estado de consciência (AVPU):</label>
-    <select id="avpu">
-      <option value="0">Alerta</option>
-      <option value="3">Nova confusão / Voz / Dor / Inconsciente</option>
-    </select>
+          <!-- Systolic BP -->
+          <div class="col">
+            <label for="sbp">PA sistólica (mmHg)</label>
+            <select id="sbp">
+              <option value="3">≤ 90 — 3 pontos</option>
+              <option value="2">91–100 — 2 pontos</option>
+              <option value="1">101–110 — 1 ponto</option>
+              <option value="0" selected>111–219 — 0 pontos</option>
+              <option value="3">≥ 220 — 3 pontos</option>
+            </select>
+          </div>
 
-    <button onclick="calcularNews2()">Calcular NEWS2</button>
+          <!-- Pulse -->
+          <div class="col">
+            <label for="hr">Pulso (bpm)</label>
+            <select id="hr">
+              <option value="3">≤ 40 — 3 pontos</option>
+              <option value="1">41–50 — 1 ponto</option>
+              <option value="0" selected>51–90 — 0 pontos</option>
+              <option value="1">91–110 — 1 ponto</option>
+              <option value="2">111–130 — 2 pontos</option>
+              <option value="3">≥ 131 — 3 pontos</option>
+            </select>
+          </div>
 
-    <div class="resultado" id="resultado"></div>
+          <!-- Consciousness -->
+          <div class="col">
+            <label for="conscious">Consciência</label>
+            <select id="conscious">
+              <option value="0" selected>Alerta — 0 pontos</option>
+              <option value="3">Nova confusão / responde a voz / dor / não responsivo — 3 pontos</option>
+            </select>
+          </div>
+
+          <!-- Temperature -->
+          <div class="col">
+            <label for="temp">Temperatura (°C)</label>
+            <select id="temp">
+              <option value="3">≤ 35.0 — 3 pontos</option>
+              <option value="1">35.1–36.0 — 1 ponto</option>
+              <option value="0" selected>36.1–38.0 — 0 pontos</option>
+              <option value="1">38.1–39.0 — 1 ponto</option>
+              <option value="2">≥ 39.1 — 2 pontos</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions" style="margin-top:12px">
+          <button class="primary" id="calcBtn">Calcular NEWS2</button>
+          <button class="ghost" id="clearBtn">Limpar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Resultado e Response -->
+    <div class="card result" id="output" hidden>
+      <div class="scoreline">
+        <div>
+          <div class="small">NEWS2 total</div>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
+            <div class="pill" id="totalScore">0</div>
+            <div class="small" id="scoreTag">—</div>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div class="small">Atualizado</div>
+          <div class="small" id="updatedAt"></div>
+        </div>
+      </div>
+
+      <div class="param-list" style="margin-top:8px">
+        <div class="param"><div class="label">Respiração</div><div id="score_rr" class="val">0</div></div>
+        <div class="param"><div class="label">SpO₂</div><div id="score_spO2" class="val">0</div></div>
+        <div class="param"><div class="label">PA sistólica</div><div id="score_sbp" class="val">0</div></div>
+        <div class="param"><div class="label">Pulso</div><div id="score_hr" class="val">0</div></div>
+        <div class="param"><div class="label">Consciência/confusão</div><div id="score_conscious" class="val">0</div></div>
+        <div class="param"><div class="label">Temperatura</div><div id="score_temp" class="val">0</div></div>
+        <div class="param"><div class="label">O₂ suplementar (uplift)</div><div id="score_o2uplift" class="val">0</div></div>
+      </div>
+
+      <div id="interpret" class="interpret low" style="margin-top:8px">Interpretação aqui</div>
+
+      <!-- Response section -->
+      <div id="responseArea" class="response-block" aria-live="polite" style="margin-top:12px">
+        <div class="response-title">O que fazer?</div>
+        <div id="responseContent">
+          <!-- content filled dynamically -->
+        </div>
+      </div>
+
+      <div class="small" style="margin-top:8px;color:var(--muted)">Use em conjunto com avaliação clínica. As faixas seguem NEWS2 (RCP).</div>
+    </div>
+
+    <footer>
+      Fonte: NEWS2 — Royal College of Physicians / MDCalc (implementação educativa). Verifique protocolos locais.
+    </footer>
   </div>
 
-  <script>
-    function calcularNews2() {
-      const fr = parseInt(document.getElementById('fr').value);
-      const spo2 = parseInt(document.getElementById('spo2').value);
-      const o2 = parseInt(document.getElementById('o2').value);
-      const hipercapnia = document.getElementById('hipercapnia').value;
-      const temp = parseFloat(document.getElementById('temp').value);
-      const pas = parseInt(document.getElementById('pas').value);
-      const fc = parseInt(document.getElementById('fc').value);
-      const avpu = parseInt(document.getElementById('avpu').value);
-      const resultadoDiv = document.getElementById("resultado");
+<script>
+  // Elements
+  const elems = {
+    rr: document.getElementById('rr'),
+    spO2: document.getElementById('spO2'),
+    spO2Scale: document.getElementById('spO2Scale'),
+    oxygenSource: document.getElementById('oxygenSource'),
+    sbp: document.getElementById('sbp'),
+    hr: document.getElementById('hr'),
+    conscious: document.getElementById('conscious'),
+    temp: document.getElementById('temp'),
+    calcBtn: document.getElementById('calcBtn'),
+    clearBtn: document.getElementById('clearBtn'),
+    output: document.getElementById('output'),
+    totalScore: document.getElementById('totalScore'),
+    score_rr: document.getElementById('score_rr'),
+    score_spO2: document.getElementById('score_spO2'),
+    score_sbp: document.getElementById('score_sbp'),
+    score_hr: document.getElementById('score_hr'),
+    score_conscious: document.getElementById('score_conscious'),
+    score_temp: document.getElementById('score_temp'),
+    score_o2uplift: document.getElementById('score_o2uplift'),
+    interpretEl: document.getElementById('interpret'),
+    scoreTag: document.getElementById('scoreTag'),
+    updatedAt: document.getElementById('updatedAt'),
+    spO2Help: document.getElementById('spO2Help'),
+    spO2Select: document.getElementById('spO2'),
+    responseContent: document.getElementById('responseContent')
+  };
 
-      if ([fr, spo2, o2, temp, pas, fc, avpu].some(isNaN)) {
-        resultadoDiv.innerHTML = "<strong>⚠️ Preencha todos os campos.</strong>";
-        return;
-      }
+  // SpO2 options sets (values are points)
+  const spO2Options = {
+    scale1: [
+      {v: '3', label: '≤ 91% — 3 pontos'},
+      {v: '2', label: '92–93% — 2 pontos'},
+      {v: '1', label: '94–95% — 1 ponto'},
+      {v: '0', label: '≥ 96% — 0 pontos'}
+    ],
+    scale2_room: [
+      {v: '3', label: '≤ 83% — 3 pontos'},
+      {v: '2', label: '84–85% — 2 pontos'},
+      {v: '1', label: '86–87% — 1 ponto'},
+      {v: '0', label: '88–92% — 0 pontos'},
+      {v: '3', label: '≥ 93% — 3 pontos (observação)'}
+    ],
+    scale2_supp: [
+      {v: '3', label: '≤ 83% — 3 pontos'},
+      {v: '2', label: '84–85% — 2 pontos'},
+      {v: '1', label: '86–87% — 1 ponto'},
+      {v: '0', label: '88–92% — 0 pontos'},
+      {v: '1', label: '93–94% em O₂ suplementar — 1 ponto'},
+      {v: '2', label: '95–96% em O₂ suplementar — 2 pontos'},
+      {v: '3', label: '≥ 97% em O₂ suplementar — 3 pontos'}
+    ]
+  };
 
-      let score = 0;
+  function populateSpO2Options() {
+    const scale = elems.spO2Scale.value;
+    const source = elems.oxygenSource.value;
+    const sel = elems.spO2Select;
+    sel.innerHTML = '';
+    let options = [];
+    if (scale === '1') options = spO2Options.scale1;
+    else options = (source === 'room' ? spO2Options.scale2_room : spO2Options.scale2_supp);
+    const seen = new Set();
+    options.forEach(opt => {
+      if (seen.has(opt.label)) return;
+      seen.add(opt.label);
+      const o = document.createElement('option');
+      o.value = opt.v;
+      o.textContent = opt.label;
+      sel.appendChild(o);
+    });
+    elems.spO2Help.textContent = `Escala ${scale === '1' ? '1' : '2'} • ${source === 'supp' ? 'O₂ suplementar' : 'Ar ambiente'}.`;
+  }
 
-      // Frequência respiratória
-      if (fr <= 8 || fr >= 25) score += 3;
-      else if (fr >= 21 && fr <= 24) score += 2;
-      else if (fr >= 9 && fr <= 11) score += 1;
-      else if (fr >= 12 && fr <= 20) score += 0;
+  populateSpO2Options();
+  elems.spO2Scale.addEventListener('change', populateSpO2Options);
+  elems.oxygenSource.addEventListener('change', populateSpO2Options);
 
-      // SpO2
-      if (hipercapnia === "sim") {
-        if (spo2 <= 83) score += 3;
-        else if (spo2 <= 85) score += 2;
-        else if (spo2 <= 87) score += 1;
-        else if ((spo2 >= 88 && spo2 <= 92) || (spo2 >= 93 && o2 === 0)) score += 0;
-        else if (spo2 >= 93 && spo2 <= 94 && o2 === 2) score += 1;
-        else if (spo2 >= 95 && spo2 <= 96 && o2 === 2) score += 2;
-        else if (spo2 >= 97 && o2 === 2) score += 3;
-      } else {
-        if (spo2 <= 91) score += 3;
-        else if (spo2 <= 93) score += 2;
-        else if (spo2 <= 95) score += 1;
-        else if (spo2 >= 96) score += 0;
-      }
+  // Response templates (Português) and "O que fazer?"
+  const responseTemplates = {
+    'low': {
+      title: '0–4 — Low',
+      summary: [
+        'Mínimo a cada 12 horas se a pontuação for 0.',
+        'Mínimo a cada 4–6 horas se a pontuação for 1–4.',
+        'Avaliação por um enfermeiro registrado competente ou equivalente para decidir mudança na frequência do monitoramento clínico ou na necessidade de escalonamento do cuidado.'
+               ],
+      actionsTitle: 'O que fazer?',
+      actions: [
+        'Se score = 0: monitorização mínima a cada 12 horas.',
+        'Se score 1–4: monitorização mínima a cada 4–6 horas; enfermeiro(a) competente avalia necessidade de mudança de frequência.',
+        'Vigiar evolução; reagir ao aparecimento de novos sinais.'
+      ],
+      style: 'low'
+    },
+    'low-medium': {
+      title: 'Score de 3 em qualquer parâmetro — Low-medium',
+      summary: [
+        'Score de 3 em um parâmetro isolado exige atenção imediata.',
+        'Mínimo a cada 1 hora.',
+        'Revisão urgente por um médico da enfermaria para decidir mudança na frequência do monitoramento clínico ou na necessidade de escalonamento do cuidado.'
+               ],
+      actionsTitle: 'O que fazer?',
+      actions: [
+        'Monitorização mínima a cada 1 hora.',
+        'Revisão urgente por médico da enfermaria (ward-based) para decidir aumento de vigilância ou escalonamento.',
+        'Avaliar necessidade de intervenções imediatas (oxigenação, ventilação, suporte hemodinâmico).'
+      ],
+      style: 'lowmedium'
+    },
+    'medium': {
+      title: '5–6 — Medium',
+      summary: [
+      'Revisão urgente por um médico da enfermaria ou enfermeiro da equipe de cuidados agudos.',
+      'Considerar se é necessária avaliação pela equipe de terapia intensiva.'
 
-      // O2 suplementar (aplica-se sempre)
-      score += o2;
-
-      // Temperatura
-      if (temp <= 35) score += 3;
-      else if (temp >= 35.1 && temp <= 36.0) score += 1;
-      else if (temp >= 36.1 && temp <= 38.0) score += 0;
-      else if (temp >= 38.1 && temp <= 39.0) score += 1;
-      else if (temp >= 39.1) score += 2;
-
-      // PAS
-      if (pas <= 90) score += 3;
-      else if (pas >= 91 && pas <= 100) score += 2;
-      else if (pas >= 101 && pas <= 110) score += 1;
-      else if (pas >= 111 && pas <= 219) score += 0;
-      else if (pas >= 220) score += 3;
-
-      // FC
-      if (fc <= 40) score += 3;
-      else if (fc >= 41 && fc <= 50) score += 1;
-      else if (fc >= 51 && fc <= 90) score += 0;
-      else if (fc >= 91 && fc <= 110) score += 1;
-      else if (fc >= 111 && fc <= 130) score += 2;
-      else if (fc >= 131) score += 3;
-
-      // AVPU
-      score += avpu;
-
-      // Interpretação
-      let gravidade = "";
-      if (score === 0) gravidade = "Risco mínimo";
-      else if (score <= 4) gravidade = "Risco baixo";
-      else if (score <= 6) gravidade = "Risco moderado";
-      else gravidade = "Risco alto";
-
-      resultadoDiv.innerHTML = `
-        <strong>🧾 NEWS2 Total:</strong> ${score} ponto(s)<br>
-        <strong>🔎 Gravidade clínica:</strong> ${gravidade}
-      `;
+      ],
+      actionsTitle: 'O que fazer?',
+      actions: [
+        'Revisão urgente por médico de enfermaria ou enfermeiro(a) da equipa aguda.',
+        'Considerar avaliação pelo time de cuidados críticos conforme a resposta clínica.',
+        'Aumentar frequência de monitorização e preparar intervenções.'
+      ],
+      style: 'med'
+    },
+    'high': {
+      title: '≥ 7 — High',
+      summary: [
+        'Monitoramento contínuo dos sinais vitais.',
+        'Avaliação emergencial por uma equipe clínica ou equipe de terapia intensiva e, geralmente, transferência para um nível mais alto de cuidado.'
+      ],
+      actionsTitle: 'O que fazer?',
+      actions: [
+        'Monitorização contínua de sinais vitais.',
+        'Avaliação emergente por equipe clínica/terapêutica ou time de cuidados críticos.',
+        'Normalmente considerar transferência para nível superior de cuidados (UCI/UTI).'
+      ],
+      style: 'high'
     }
-  </script>
+  };
+
+  // Interpret logic: consider any single-parameter 3 as special low-medium
+  function interpretLevel(total, individualScores) {
+    const maxParam = Math.max(...individualScores);
+    if (maxParam === 3 && total < 5) {
+      return { key: 'low-medium', tpl: responseTemplates['low-medium'] };
+    }
+    if (total >= 7) return { key: 'high', tpl: responseTemplates['high'] };
+    if (total >= 5) return { key: 'medium', tpl: responseTemplates['medium'] };
+    return { key: 'low', tpl: responseTemplates['low'] };
+  }
+
+  function renderResponseBlock(tpl) {
+    // Build HTML for responseContent
+    const container = document.createElement('div');
+    const title = document.createElement('div');
+    title.style.fontWeight = '800';
+    title.textContent = tpl.title;
+    container.appendChild(title);
+
+    // summary bullets
+    const ul = document.createElement('ul');
+    tpl.summary.forEach(line => {
+      const li = document.createElement('li');
+      li.style.marginTop = '6px';
+      li.textContent = line;
+      ul.appendChild(li);
+    });
+    container.appendChild(ul);
+
+    // "O que fazer?"
+    const whatTitle = document.createElement('div');
+    whatTitle.style.marginTop = '10px';
+    whatTitle.style.fontWeight = '800';
+    whatTitle.textContent = tpl.actionsTitle;
+    container.appendChild(whatTitle);
+
+    const wul = document.createElement('ul');
+    tpl.actions.forEach(a => {
+      const li = document.createElement('li');
+      li.style.marginTop = '6px';
+      li.textContent = a;
+      wul.appendChild(li);
+    });
+    container.appendChild(wul);
+
+    return container;
+  }
+
+  // Main calculation
+  function calculateAndShow() {
+    // Parse selected point values (the selects hold points)
+    const s_rr = Number(elems.rr.value);
+    const s_sp = Number(elems.spO2Select.value);
+    const s_sbp = Number(elems.sbp.value);
+    const s_hr = Number(elems.hr.value);
+    const s_cons = Number(elems.conscious.value);
+    const s_temp = Number(elems.temp.value);
+    const s_o2uplift = elems.oxygenSource.value === 'supp' ? 2 : 0;
+    const total = s_rr + s_sp + s_sbp + s_hr + s_cons + s_temp + s_o2uplift;
+
+    // Fill UI
+    elems.score_rr.textContent = s_rr;
+    elems.score_spO2.textContent = s_sp;
+    elems.score_sbp.textContent = s_sbp;
+    elems.score_hr.textContent = s_hr;
+    elems.score_conscious.textContent = s_cons;
+    elems.score_temp.textContent = s_temp;
+    elems.score_o2uplift.textContent = s_o2uplift;
+    elems.totalScore.textContent = total;
+
+    // Determine level
+    const indiv = [s_rr, s_sp, s_sbp, s_hr, s_cons, s_temp];
+    const level = interpretLevel(total, indiv);
+    elems.interpretEl.textContent = level.tpl.title;
+    // set class for interpretEl
+    elems.interpretEl.className = 'interpret ' + (level.key === 'high' ? 'high' : (level.key === 'medium' ? 'med' : (level.key === 'low-medium' ? 'lowmedium' : 'low')));
+
+    // response content
+    elems.responseContent.innerHTML = '';
+    elems.responseContent.appendChild(renderResponseBlock(level.tpl));
+
+    elems.scoreTag.textContent = (level.key === 'high' ? 'ALTA' : (level.key === 'medium' ? 'MODERADO' : (level.key === 'low-medium' ? 'LOW-MED' : 'BAIXO')));
+    elems.updatedAt.textContent = new Date().toLocaleString();
+
+    elems.output.hidden = false;
+  }
+
+  function clearAll() {
+    elems.rr.selectedIndex = 2; // 12-20
+    elems.spO2Scale.value = '1';
+    elems.oxygenSource.value = 'room';
+    populateSpO2Options();
+    elems.spO2Select.selectedIndex = elems.spO2Select.options.length - 1;
+    elems.sbp.selectedIndex = 3;
+    elems.hr.selectedIndex = 2;
+    elems.conscious.selectedIndex = 0;
+    elems.temp.selectedIndex = 2;
+    elems.output.hidden = true;
+    elems.responseContent.innerHTML = '';
+  }
+
+  // Presets (best-effort index-based)
+  const presets = {
+    'normal': { rrIndex:2, spScale:'1', oxygen:'room', spLabelContains:'≥ 96', sbpIndex:3, hrIndex:2, consIndex:0, tempIndex:2 },
+    'hipoxia-leve': { rrIndex:3, spScale:'1', oxygen:'supp', spLabelContains:'92–93', sbpIndex:1, hrIndex:3, consIndex:1, tempIndex:2 },
+    'hipoxia-grave': { rrIndex:4, spScale:'1', oxygen:'supp', spLabelContains:'≤ 91', sbpIndex:0, hrIndex:5, consIndex:1, tempIndex:3 },
+    'instavel': { rrIndex:0, spScale:'2', oxygen:'supp', spLabelContains:'≤ 83', sbpIndex:0, hrIndex:0, consIndex:1, tempIndex:0 },
+    'bradicardia': { rrIndex:2, spScale:'1', oxygen:'room', spLabelContains:'≥ 96', sbpIndex:2, hrIndex:0, consIndex:0, tempIndex:2 },
+    'febre': { rrIndex:3, spScale:'1', oxygen:'room', spLabelContains:'94–95', sbpIndex:3, hrIndex:3, consIndex:0, tempIndex:4 }
+  };
+
+  document.querySelectorAll('.preset-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const key = btn.dataset.preset;
+      const p = presets[key];
+      if (!p) return;
+      elems.rr.selectedIndex = p.rrIndex;
+      elems.spO2Scale.value = p.spScale;
+      elems.oxygenSource.value = p.oxygen;
+      populateSpO2Options();
+      const opts = Array.from(elems.spO2Select.options);
+      const found = opts.findIndex(o => o.text.includes(p.spLabelContains));
+      elems.spO2Select.selectedIndex = found >= 0 ? found : 0;
+      elems.sbp.selectedIndex = p.sbpIndex;
+      elems.hr.selectedIndex = p.hrIndex;
+      elems.conscious.selectedIndex = p.consIndex;
+      elems.temp.selectedIndex = p.tempIndex;
+      calculateAndShow();
+      setTimeout(()=> { if (window.innerWidth < 720) window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); }, 120);
+    });
+  });
+
+  elems.calcBtn.addEventListener('click', calculateAndShow);
+  elems.clearBtn.addEventListener('click', clearAll);
+
+  // initialize
+  clearAll();
+</script>
 </body>
 </html>
