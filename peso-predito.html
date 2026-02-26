@@ -2,142 +2,312 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Calculadora VM - Peso Predito</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover" />
+  <title>VM Calculadora - Peso Predito</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
-      transition: all 0.2s ease-in-out;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      background: linear-gradient(to right, #0d47a1, #1565c0);
-      margin: 0;
-      padding: 2rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(145deg, #0a3b76 0%, #135ba0 100%);
       min-height: 100vh;
-      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      margin: 0;
+      color: #fff;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      margin: auto;
     }
 
     .card {
-      background: #1e2a38;
-      padding: 2rem;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      width: 100%;
-      max-width: 420px;
+      background: rgba(18, 28, 40, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 28px;
+      padding: 24px 20px;
+      box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      text-align: center;
+      color: #fff;
+      margin-bottom: 8px;
+      background: linear-gradient(120deg, #90caf9, #bbdefb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
       text-align: center;
       color: #90caf9;
-      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      font-weight: 400;
+      margin-bottom: 28px;
+      opacity: 0.9;
+      letter-spacing: 0.3px;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
     }
 
     label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.95rem;
       font-weight: 600;
-      margin-top: 1rem;
-      display: block;
       color: #bbdefb;
+      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+    }
+
+    label i {
+      font-size: 1.2rem;
+      font-style: normal;
     }
 
     input, select {
       width: 100%;
-      padding: 0.75rem;
-      margin-top: 0.4rem;
-      border-radius: 8px;
-      border: 1px solid #5c6bc0;
+      padding: 16px 18px;
       font-size: 1rem;
-      background-color: #283a52;
-      color: #ffffff;
+      background: #1f2f41;
+      border: 1.5px solid #34495e;
+      border-radius: 18px;
+      color: white;
+      font-weight: 500;
+      outline: none;
+      transition: all 0.2s ease;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2390caf9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      background-size: 18px;
+      padding-right: 48px;
     }
 
     input:focus, select:focus {
-      border-color: #82b1ff;
-      background-color: #324965;
-      outline: none;
+      border-color: #42a5f5;
+      background: #25374b;
+      box-shadow: 0 0 0 3px rgba(66, 165, 245, 0.2);
+    }
+
+    input::placeholder {
+      color: #5f7a9a;
+      font-weight: 400;
+      opacity: 0.7;
     }
 
     button {
-      margin-top: 1.8rem;
       width: 100%;
-      padding: 0.9rem;
-      background-color: #1976d2;
-      color: white;
-      font-size: 1.1rem;
-      font-weight: 600;
+      padding: 18px;
+      background: linear-gradient(135deg, #1976d2, #0d47a1);
       border: none;
-      border-radius: 10px;
+      border-radius: 22px;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin: 24px 0 16px;
+      box-shadow: 0 10px 20px -5px rgba(25, 118, 210, 0.4);
       cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    button:hover {
-      background-color: #0d47a1;
+    button:active {
+      transform: scale(0.98);
+      box-shadow: 0 5px 10px -3px rgba(25, 118, 210, 0.5);
     }
 
     .resultado {
-      margin-top: 2rem;
-      padding: 1.2rem;
-      background-color: #2e3e56;
+      background: #0f1a27;
+      border-radius: 22px;
+      padding: 20px 18px;
       border-left: 5px solid #42a5f5;
-      border-radius: 8px;
-      color: #e3f2fd;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .resultado.show {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .resultado strong {
       display: block;
-      margin-bottom: 0.6rem;
+      font-size: 1.1rem;
+      color: #90caf9;
+      margin-bottom: 12px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
     }
 
-    .info-line {
-      margin: 0.3rem 0;
+    .peso-destaque {
+      background: #1e3245;
+      padding: 14px 16px;
+      border-radius: 18px;
+      margin-bottom: 18px;
+      text-align: center;
     }
 
-    @media (max-width: 480px) {
-      .card {
-        padding: 1.5rem;
-      }
+    .peso-valor {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.2;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
 
-      h2 {
-        font-size: 1.4rem;
-      }
+    .peso-label {
+      font-size: 0.9rem;
+      color: #90caf9;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .volumes-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .volume-item {
+      background: #1a293b;
+      padding: 12px 16px;
+      border-radius: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #2d4057;
+    }
+
+    .volume-label {
+      font-weight: 600;
+      color: #bbdefb;
+      font-size: 1rem;
+    }
+
+    .volume-value {
+      font-weight: 700;
+      color: white;
+      background: #0d47a1;
+      padding: 5px 16px;
+      border-radius: 30px;
+      font-size: 1.2rem;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .erro {
+      background: #4a2a2a;
+      border-left-color: #ef5350;
+      color: #ffcdd2;
+      font-weight: 500;
+      text-align: center;
+      padding: 18px;
+    }
+
+    /* Touch optimization */
+    input, select, button {
+      touch-action: manipulation;
+    }
+
+    @media (max-width: 380px) {
+      .card { padding: 18px 16px; }
+      h2 { font-size: 1.5rem; }
+      .peso-valor { font-size: 1.8rem; }
+    }
+
+    /* Dark mode fallback */
+    @media (prefers-color-scheme: dark) {
+      body { background: linear-gradient(145deg, #0a3b76 0%, #0f4a8a 100%); }
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>Cálculo VM: Peso Predito e Volume Corrente</h2>
+  <div class="container">
+    <div class="card">
+      <h2>VM Calculadora</h2>
+      <div class="subtitle">Peso Predito · Volume Corrente</div>
 
-    <label for="altura">📏 Altura (cm):</label>
-    <input type="number" id="altura" placeholder="Ex: 170" />
+      <div class="input-group">
+        <label><i>📏</i> Altura (cm)</label>
+        <input type="number" id="altura" placeholder="Ex: 170" min="100" max="250" step="0.1" inputmode="decimal" />
+      </div>
 
-    <label for="genero">⚧️ Gênero:</label>
-    <select id="genero">
-      <option value="">Selecione o gênero</option>
-      <option value="masculino">Masculino</option>
-      <option value="feminino">Feminino</option>
-    </select>
+      <div class="input-group">
+        <label><i>⚧️</i> Gênero</label>
+        <select id="genero">
+          <option value="" disabled selected>Selecione</option>
+          <option value="masculino">Masculino</option>
+          <option value="feminino">Feminino</option>
+        </select>
+      </div>
 
-    <button onclick="calcular()">Calcular</button>
+      <button onclick="calcular()">Calcular</button>
 
-    <div class="resultado" id="resultado"></div>
+      <div class="resultado" id="resultado"></div>
+    </div>
   </div>
 
   <script>
     function calcular() {
-      const altura = parseFloat(document.getElementById("altura").value);
-      const genero = document.getElementById("genero").value;
+      const alturaInput = document.getElementById("altura");
+      const generoSelect = document.getElementById("genero");
       const resultadoDiv = document.getElementById("resultado");
 
-      if (!altura || !genero) {
-        resultadoDiv.innerHTML = "<strong>⚠️ Preencha todos os campos corretamente.</strong>";
+      const altura = parseFloat(alturaInput.value);
+      const genero = generoSelect.value;
+
+      // Validação aprimorada
+      if (!altura || altura < 100 || altura > 250 || isNaN(altura)) {
+        resultadoDiv.innerHTML = `
+          <div class="erro show">
+            <strong>⚠️ Altura inválida</strong>
+            <div style="font-size: 0.9rem; margin-top: 6px;">Digite um valor entre 100 e 250 cm</div>
+          </div>
+        `;
+        resultadoDiv.classList.add("show");
         return;
       }
 
+      if (!genero) {
+        resultadoDiv.innerHTML = `
+          <div class="erro show">
+            <strong>⚠️ Gênero não selecionado</strong>
+            <div style="font-size: 0.9rem; margin-top: 6px;">Escolha masculino ou feminino</div>
+          </div>
+        `;
+        resultadoDiv.classList.add("show");
+        return;
+      }
+
+      // Cálculo do peso predito
       let pesoPredito;
       if (genero === "masculino") {
         pesoPredito = 50 + 0.91 * (altura - 152.4);
@@ -145,26 +315,45 @@
         pesoPredito = 45.5 + 0.91 * (altura - 152.4);
       }
 
-      pesoPredito = pesoPredito.toFixed(2);
+      pesoPredito = Math.round(pesoPredito * 100) / 100; // Fixa 2 casas decimais
 
-      const volumes = {
-        "5 mL/kg": (pesoPredito * 5).toFixed(1),
-        "6 mL/kg": (pesoPredito * 6).toFixed(1),
-        "7 mL/kg": (pesoPredito * 7).toFixed(1),
-        "8 mL/kg": (pesoPredito * 8).toFixed(1),
-      };
+      // Volumes pré-definidos
+      const volumes = [5, 6, 7, 8];
+      
+      // Montar HTML dos volumes
+      let volumesHtml = '';
+      volumes.forEach(ml => {
+        const valor = (pesoPredito * ml).toFixed(1);https://github.com/Rcs1992/FisioPlataforma/blob/main/peso-predito.html
+        volumesHtml += `
+          <div class="volume-item">
+            <span class="volume-label">${ml} mL/kg</span>
+            <span class="volume-value">${valor} mL</span>
+          </div>
+        `;
+      });
 
+      // Resultado completo
       resultadoDiv.innerHTML = `
-        <strong>✅ Peso Predito:</strong>
-        <div class="info-line">${pesoPredito} kg</div>
-
-        <strong>💨 Volume Corrente Ideal:</strong>
-        <div class="info-line">• 5 mL/kg: ${volumes["5 mL/kg"]} mL</div>
-        <div class="info-line">• 6 mL/kg: ${volumes["6 mL/kg"]} mL</div>
-        <div class="info-line">• 7 mL/kg: ${volumes["7 mL/kg"]} mL</div>
-        <div class="info-line">• 8 mL/kg: ${volumes["8 mL/kg"]} mL</div>
+        <div class="peso-destaque">
+          <div class="peso-label">Peso Predito</div>
+          <div class="peso-valor">${pesoPredito} kg</div>
+        </div>
+        <strong>📊 Volumes Correntes</strong>
+        <div class="volumes-grid">
+          ${volumesHtml}
+        </div>
       `;
+
+      resultadoDiv.classList.add("show");
     }
+
+    // Permite calcular com Enter no campo altura
+    document.getElementById("altura").addEventListener("keypress", function(e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        calcular();
+      }
+    });
   </script>
 </body>
 </html>
