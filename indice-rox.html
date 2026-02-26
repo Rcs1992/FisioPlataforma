@@ -2,124 +2,702 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Calculadora ROX</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes" />
+  <title>Calculadora ROX - HFNC Predictor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    body {
-      background: linear-gradient(to right, #0d47a1, #1565c0);
-      font-family: 'Inter', sans-serif;
+    * {
       margin: 0;
-      padding: 2rem;
-      color: #fff;
+      padding: 0;
+      box-sizing: border-box;
+      transition: background-color 0.3s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    /* Variáveis de cores - Dark mode (padrão) */
+    :root {
+      --bg-gradient-start: #0B1E33;
+      --bg-gradient-end: #0D2B45;
+      --card-bg: #0F2A40;
+      --input-bg: #082032;
+      --input-border: #1E3A5A;
+      --input-focus-border: #2196F3;
+      --label-color: #B3D9FF;
+      --text-primary: #ffffff;
+      --text-secondary: #E1F0FF;
+      --hint-color: #5F8BB3;
+      --result-bg: #082632;
+      --result-border: rgba(33, 150, 243, 0.2);
+      --button-gradient-start: #1976D2;
+      --button-gradient-end: #0D47A1;
+      --button-border: rgba(255, 255, 255, 0.1);
+      --shadow-color: rgba(0, 0, 0, 0.7);
+      --rox-value-color: #7BB9FF;
+      --card-border: rgba(33, 150, 243, 0.15);
+      --success-color: #4CAF50;
+      --warning-color: #FFC107;
+      --danger-color: #F44336;
+      --info-color: #2196F3;
+    }
+
+    /* Light mode */
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg-gradient-start: #E3F2FD;
+        --bg-gradient-end: #BBDEFB;
+        --card-bg: #FFFFFF;
+        --input-bg: #F5F9FF;
+        --input-border: #90CAF9;
+        --input-focus-border: #1976D2;
+        --label-color: #0D47A1;
+        --text-primary: #0A1A2F;
+        --text-secondary: #1E3A5A;
+        --hint-color: #546E7A;
+        --result-bg: #F0F8FF;
+        --result-border: rgba(25, 118, 210, 0.2);
+        --button-gradient-start: #2196F3;
+        --button-gradient-end: #1976D2;
+        --button-border: rgba(255, 255, 255, 0.3);
+        --shadow-color: rgba(0, 0, 0, 0.1);
+        --rox-value-color: #0D47A1;
+        --card-border: rgba(25, 118, 210, 0.2);
+      }
+    }
+
+    body {
+      background: linear-gradient(145deg, var(--bg-gradient-start), var(--bg-gradient-end));
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
+      align-items: center;
+      padding: 16px;
+      margin: 0;
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     .card {
-      background: #1e2a38;
-      padding: 2rem;
-      border-radius: 12px;
-      max-width: 600px;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      padding: 24px 20px;
+      border-radius: 28px;
+      max-width: 520px;
       width: 100%;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      box-shadow: 
+        0 20px 35px -8px var(--shadow-color),
+        inset 0 1px 1px rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--card-border);
+      transition: all 0.3s ease;
     }
 
     h2 {
       text-align: center;
-      color: #90caf9;
-      margin-bottom: 1.5rem;
+      color: var(--rox-value-color);
+      font-size: clamp(1.5rem, 6vw, 1.8rem);
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+      text-shadow: 0 2px 4px var(--shadow-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--label-color);
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+      padding: 8px 12px;
+      background: var(--input-bg);
+      border-radius: 100px;
+      display: inline-block;
+      width: auto;
+      margin-left: auto;
+      margin-right: auto;
+      border: 1px solid var(--input-border);
+    }
+
+    .time-selector {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .time-btn {
+      flex: 1;
+      min-width: 70px;
+      padding: 12px 8px;
+      background: var(--input-bg);
+      border: 2px solid var(--input-border);
+      border-radius: 30px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .time-btn.active {
+      background: var(--button-gradient-start);
+      border-color: var(--button-gradient-end);
+      color: white;
+      box-shadow: 0 4px 12px var(--shadow-color);
+    }
+
+    .input-group {
+      margin-bottom: 20px;
     }
 
     label {
       display: block;
-      margin-top: 1rem;
+      font-size: 0.9rem;
       font-weight: 600;
-      color: #bbdefb;
+      color: var(--label-color);
+      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
     }
 
     input {
       width: 100%;
-      padding: 0.6rem;
-      margin-top: 0.4rem;
-      border-radius: 6px;
-      border: none;
-      background: #2e3e56;
-      color: #fff;
+      padding: 16px 16px;
+      background: var(--input-bg);
+      border: 2px solid var(--input-border);
+      border-radius: 18px;
+      color: var(--text-primary);
+      font-size: 1.1rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input:focus {
+      border-color: var(--input-focus-border);
+      background: var(--input-bg);
+      box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.15);
+    }
+
+    input::placeholder {
+      color: var(--hint-color);
+      font-weight: 400;
+      font-size: 0.95rem;
+      opacity: 0.7;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type=number] {
+      -moz-appearance: textfield;
     }
 
     button {
-      margin-top: 2rem;
       width: 100%;
-      padding: 0.8rem;
-      background: #1976d2;
+      padding: 18px 20px;
+      background: linear-gradient(145deg, var(--button-gradient-start), var(--button-gradient-end));
       color: white;
-      font-size: 1rem;
-      font-weight: bold;
+      font-size: 1.2rem;
+      font-weight: 700;
       border: none;
-      border-radius: 8px;
+      border-radius: 30px;
       cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 8px 16px -4px var(--shadow-color);
+      margin: 24px 0 16px 0;
+      letter-spacing: 0.5px;
+      border: 1px solid var(--button-border);
     }
 
-    button:hover {
-      background: #0d47a1;
+    button:active {
+      transform: scale(0.98);
+      background: linear-gradient(145deg, var(--button-gradient-end), var(--button-gradient-start));
+      box-shadow: 0 4px 8px -2px var(--shadow-color);
     }
 
     .resultado {
-      margin-top: 2rem;
-      background: #2e3e56;
-      padding: 1rem;
-      border-left: 5px solid #42a5f5;
-      border-radius: 8px;
+      background: var(--result-bg);
+      padding: 20px 18px;
+      border-left: 6px solid;
+      border-radius: 20px;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+      border: 1px solid var(--result-border);
+      word-break: break-word;
+    }
+
+    .resultado[data-level="bom"] {
+      border-left-color: var(--success-color);
+    }
+
+    .resultado[data-level="medio"] {
+      border-left-color: var(--warning-color);
+    }
+
+    .resultado[data-level="alto"] {
+      border-left-color: var(--danger-color);
+    }
+
+    .resultado strong {
+      display: block;
+      font-size: 1rem;
+      color: var(--label-color);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .resultado .rox-value {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--rox-value-color);
+      margin: 8px 0 4px 0;
+      line-height: 1.2;
+    }
+
+    .time-indicator {
+      font-size: 0.9rem;
+      color: var(--hint-color);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .resultado .interpretacao {
+      font-size: 1rem;
+      line-height: 1.5;
+      color: var(--text-secondary);
+      background: var(--input-bg);
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid var(--input-border);
+      margin-top: 12px;
+    }
+
+    .predictor-table {
+      background: var(--input-bg);
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 24px;
+      border: 1px solid var(--input-border);
+    }
+
+    .predictor-table h4 {
+      color: var(--label-color);
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .predictor-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--input-border);
+    }
+
+    .predictor-item:last-child {
+      border-bottom: none;
+    }
+
+    .predictor-time {
+      font-weight: 600;
+      color: var(--rox-value-color);
+    }
+
+    .predictor-value {
+      background: var(--danger-color);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .predictor-value.success {
+      background: var(--success-color);
+    }
+
+    .auc-badge {
+      background: var(--info-color);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      margin-left: 6px;
+    }
+
+    .hint {
+      font-size: 0.75rem;
+      color: var(--hint-color);
+      margin-top: 4px;
+      padding-left: 8px;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 12px;
+      }
+
+      .card {
+        padding: 20px 16px;
+        border-radius: 24px;
+      }
+
+      input {
+        padding: 18px 14px;
+        font-size: 1rem;
+      }
+
+      button {
+        padding: 18px 16px;
+        font-size: 1.1rem;
+      }
+
+      .resultado .rox-value {
+        font-size: 2rem;
+      }
+
+      .time-btn {
+        font-size: 0.8rem;
+        padding: 10px 4px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      h2 {
+        font-size: 1.3rem;
+      }
+
+      .time-selector {
+        gap: 4px;
+      }
+    }
+
+    .resultado:empty {
+      display: none;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .resultado:not(:empty) {
+      animation: fadeIn 0.3s ease;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--card-bg);
+      border: 2px solid var(--input-border);
+      border-radius: 50px;
+      padding: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px var(--shadow-color);
+      z-index: 1000;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    [data-theme="dark"] {
+      --bg-gradient-start: #0B1E33;
+      --bg-gradient-end: #0D2B45;
+      --card-bg: #0F2A40;
+      --input-bg: #082032;
+      --input-border: #1E3A5A;
+      --input-focus-border: #2196F3;
+      --label-color: #B3D9FF;
+      --text-primary: #ffffff;
+      --text-secondary: #E1F0FF;
+      --hint-color: #5F8BB3;
+      --result-bg: #082632;
+      --result-border: rgba(33, 150, 243, 0.2);
+      --button-gradient-start: #1976D2;
+      --button-gradient-end: #0D47A1;
+      --button-border: rgba(255, 255, 255, 0.1);
+      --shadow-color: rgba(0, 0, 0, 0.7);
+      --rox-value-color: #7BB9FF;
+      --card-border: rgba(33, 150, 243, 0.15);
+    }
+
+    [data-theme="light"] {
+      --bg-gradient-start: #E3F2FD;
+      --bg-gradient-end: #BBDEFB;
+      --card-bg: #FFFFFF;
+      --input-bg: #F5F9FF;
+      --input-border: #90CAF9;
+      --input-focus-border: #1976D2;
+      --label-color: #0D47A1;
+      --text-primary: #0A1A2F;
+      --text-secondary: #1E3A5A;
+      --hint-color: #546E7A;
+      --result-bg: #F0F8FF;
+      --result-border: rgba(25, 118, 210, 0.2);
+      --button-gradient-start: #2196F3;
+      --button-gradient-end: #1976D2;
+      --button-border: rgba(255, 255, 255, 0.3);
+      --shadow-color: rgba(0, 0, 0, 0.1);
+      --rox-value-color: #0D47A1;
+      --card-border: rgba(25, 118, 210, 0.2);
     }
   </style>
 </head>
 <body>
   <div class="card">
-    <h2>🧮 Calculadora do Índice de ROX</h2>
+    <h2>
+      📊 Índice ROX
+      <span>HFNC</span>
+    </h2>
+    <div class="subtitle">Predictor de falência da cânula nasal de alto fluxo</div>
 
-    <label>Saturação de O₂ (SpO₂ %) :</label>
-    <input type="number" id="spo2" min="0" max="100">
+    <!-- Seletor de tempo -->
+    <div class="time-selector">
+      <button class="time-btn active" onclick="setTime(2)" id="time2">2 horas</button>
+      <button class="time-btn" onclick="setTime(6)" id="time6">6 horas</button>
+      <button class="time-btn" onclick="setTime(12)" id="time12">12 horas</button>
+    </div>
 
-    <label>Fração inspirada de oxigênio (FiO₂):</label>
-    <input type="number" id="fio2" step="0.01" min="0.21" max="1.0" placeholder="Ex: 0.5 para 50%">
+    <div class="input-group">
+      <label>Saturação de O₂ (SpO₂ %)</label>
+      <div class="input-wrapper">
+        <input type="number" id="spo2" min="0" max="100" step="1" placeholder="Ex: 95" value="95">
+      </div>
+      <div class="hint">Valor entre 0-100%</div>
+    </div>
 
-    <label>Frequência respiratória (irpm):</label>
-    <input type="number" id="fr" min="1">
+    <div class="input-group">
+      <label>Fração inspirada de oxigênio (FiO₂)</label>
+      <div class="input-wrapper">
+        <input type="number" id="fio2" step="0.01" min="0.21" max="1.0" placeholder="Ex: 0.5" value="0.5">
+      </div>
+      <div class="hint">Use 0.21 para ar ambiente, 1.0 para O₂ puro</div>
+    </div>
 
-    <button onclick="calcularROX()">Calcular ROX</button>
+    <div class="input-group">
+      <label>Frequência respiratória (irpm)</label>
+      <div class="input-wrapper">
+        <input type="number" id="fr" min="1" max="60" placeholder="Ex: 22" value="22">
+      </div>
+      <div class="hint">Incursões por minuto</div>
+    </div>
+
+    <button onclick="calcularROX()">Calcular Índice ROX</button>
 
     <div class="resultado" id="resultado"></div>
+
+    <!-- Tabela de preditores -->
+    <div class="predictor-table">
+      <h4>📈 Precisão preditiva (AUC)</h4>
+      <div class="predictor-item">
+        <span class="predictor-time">2 horas</span>
+        <span><span class="auc-badge">AUC 0.679</span></span>
+      </div>
+      <div class="predictor-item">
+        <span class="predictor-time">6 horas</span>
+        <span><span class="auc-badge">AUC 0.703</span></span>
+      </div>
+      <div class="predictor-item">
+        <span class="predictor-time">12 horas</span>
+        <span><span class="auc-badge">AUC 0.759</span></span>
+      </div>
+    </div>
+
+    <div class="predictor-table">
+      <h4>⚠️ Preditores de falência (risco alto)</h4>
+      <div class="predictor-item">
+        <span class="predictor-time">2 horas</span>
+        <span class="predictor-value">ROX &lt; 2.85</span>
+      </div>
+      <div class="predictor-item">
+        <span class="predictor-time">6 horas</span>
+        <span class="predictor-value">ROX &lt; 3.47</span>
+      </div>
+      <div class="predictor-item">
+        <span class="predictor-time">12 horas</span>
+        <span class="predictor-value">ROX &lt; 3.85</span>
+      </div>
+    </div>
+
+    <div class="predictor-table">
+      <h4>✅ Baixo risco de intubação</h4>
+      <div class="predictor-item">
+        <span class="predictor-time">2, 6 e 12 horas</span>
+        <span class="predictor-value success">ROX ≥ 4.88</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botão de tema -->
+  <div class="theme-toggle" onclick="toggleTheme()" id="themeToggle" title="Alternar tema">
+    🌓
   </div>
 
   <script>
+    let currentTime = 2; // 2 horas padrão
+
+    function setTime(hours) {
+      currentTime = hours;
+      
+      // Atualizar botões ativos
+      document.getElementById('time2').classList.remove('active');
+      document.getElementById('time6').classList.remove('active');
+      document.getElementById('time12').classList.remove('active');
+      
+      if (hours === 2) document.getElementById('time2').classList.add('active');
+      if (hours === 6) document.getElementById('time6').classList.add('active');
+      if (hours === 12) document.getElementById('time12').classList.add('active');
+      
+      // Recalcular se já tiver valores
+      calcularROX();
+    }
+
     function calcularROX() {
       const spo2 = parseFloat(document.getElementById('spo2').value);
       const fio2 = parseFloat(document.getElementById('fio2').value);
       const fr = parseFloat(document.getElementById('fr').value);
       const resultadoDiv = document.getElementById("resultado");
 
-      if (isNaN(spo2) || isNaN(fio2) || isNaN(fr) || fio2 === 0 || fr === 0) {
-        resultadoDiv.innerHTML = "<strong>⚠️ Preencha todos os campos corretamente.</strong>";
+      resultadoDiv.removeAttribute('data-level');
+
+      // Validação
+      if (isNaN(spo2) || isNaN(fio2) || isNaN(fr) || 
+          spo2 < 0 || spo2 > 100 ||
+          fio2 < 0.21 || fio2 > 1.0 ||
+          fr < 1 || fr > 60) {
+        resultadoDiv.innerHTML = `
+          <strong>⚠️ Entrada inválida</strong>
+          <div class="interpretacao">
+            Verifique os valores inseridos:<br>
+            • SpO₂: 0-100%<br>
+            • FiO₂: 0.21-1.0<br>
+            • FR: 1-60 irpm
+          </div>
+        `;
         return;
       }
 
       const rox = (spo2 / fio2) / fr;
+      
+      // Determinar thresholds baseado no tempo
+      let thresholdAlto = 0;
+      let thresholdBaixo = 4.88; // ≥4.88 sempre baixo risco
       let interpretacao = "";
-
-      if (rox >= 4.88) {
-        interpretacao = "✅ Bom prognóstico – menor risco de falência da oxigenoterapia de alto fluxo.";
-      } else if (rox >= 3.85) {
-        interpretacao = "🟡 Atenção – risco moderado de falha, monitorar evolução.";
+      let nivel = "medio";
+      
+      // Thresholds de risco alto por tempo
+      if (currentTime === 2) thresholdAlto = 2.85;
+      else if (currentTime === 6) thresholdAlto = 3.47;
+      else if (currentTime === 12) thresholdAlto = 3.85;
+      
+      // Interpretação baseada nos thresholds
+      if (rox >= thresholdBaixo) {
+        interpretacao = "✅ Baixo risco de intubação - Bom prognóstico. ROX ≥4.88 indica menor risco de falência da oxigenoterapia de alto fluxo.";
+        nivel = "bom";
+      } else if (rox < thresholdAlto) {
+        interpretacao = `🔴 ALTO RISCO de falência - ROX < ${thresholdAlto} às ${currentTime} horas. Considerar necessidade de suporte ventilatório avançado.`;
+        nivel = "alto";
       } else {
-        interpretacao = "🔴 Alto risco – possível necessidade de suporte ventilatório avançado.";
+        interpretacao = `🟡 Risco moderado - ROX entre ${thresholdAlto} e 4.88 às ${currentTime} horas. Monitorar evolução cuidadosamente.`;
+        nivel = "medio";
       }
 
+      resultadoDiv.setAttribute('data-level', nivel);
+      
+      // Texto do tempo
+      const tempoTexto = currentTime === 2 ? "2 horas" : currentTime === 6 ? "6 horas" : "12 horas";
+      
       resultadoDiv.innerHTML = `
-        <strong>🧾 Índice de ROX:</strong> ${rox.toFixed(2)}<br>
-        <strong>🔍 Interpretação:</strong> ${interpretacao}
+        <strong>Índice de ROX</strong>
+        <div class="rox-value">${rox.toFixed(2)}</div>
+        <div class="time-indicator">
+          ⏱️ Avaliação em ${tempoTexto} 
+          (AUC ${currentTime === 2 ? '0.679' : currentTime === 6 ? '0.703' : '0.759'})
+        </div>
+        <div class="interpretacao">
+          <span style="display:block; margin-bottom:8px; font-weight:600; color:var(--rox-value-color);">
+            ${nivel === 'bom' ? '✅' : nivel === 'medio' ? '🟡' : '🔴'} Interpretação:
+          </span>
+          ${interpretacao}
+        </div>
       `;
+
+      // Feedback tátil
+      if (window.navigator && window.navigator.vibrate) {
+        window.navigator.vibrate(10);
+      }
     }
+
+    // Enter para calcular
+    document.querySelectorAll('input').forEach(input => {
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          calcularROX();
+        }
+      });
+    });
+
+    // Sistema de tema
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme');
+      
+      if (currentTheme === 'light') {
+        html.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        html.setAttribute('data-theme', 'light');
+        localStorage.setItem('theme', 'light');
+      }
+    }
+
+    // Inicialização do tema
+    (function initTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const html = document.documentElement;
+      
+      if (savedTheme) {
+        html.setAttribute('data-theme', savedTheme);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        html.setAttribute('data-theme', 'light');
+      } else {
+        html.setAttribute('data-theme', 'dark');
+      }
+    })();
+
+    // Calcular ao carregar
+    window.onload = function() {
+      calcularROX();
+    };
   </script>
 </body>
 </html>
