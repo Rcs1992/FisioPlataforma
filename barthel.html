@@ -2,159 +2,411 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Índice de Barthel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+  <title>Índice de Barthel - Profissional</title>
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f4f7fb;
-      color: #333;
-      padding: 20px;
-      max-width: 700px;
-      margin: auto;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #f0f4f8;
+      color: #1a2b3c;
+      padding: 12px;
+      min-height: 100vh;
+      line-height: 1.5;
     }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
     h1 {
+      font-size: 1.8rem;
       text-align: center;
-      color: #2a5d8f;
+      color: #0a4b78;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 600;
     }
-    .grupo {
-      margin-top: 20px;
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0, 30, 60, 0.08);
+      border: 1px solid rgba(10, 75, 120, 0.1);
+      transition: all 0.2s;
     }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-bottom: 5px;
+
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+      gap: 8px;
     }
+
+    .item-titulo {
+      font-weight: 600;
+      color: #0a4b78;
+      font-size: 1.1rem;
+    }
+
+    .item-pontos {
+      background: #e6f0fa;
+      padding: 4px 10px;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      color: #0a4b78;
+      font-weight: 500;
+    }
+
     select {
       width: 100%;
-      padding: 8px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1.5px solid #d0ddee;
+      background: white;
+      font-size: 1rem;
+      color: #1a2b3c;
+      appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%230a4b78" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      background-size: 18px;
+      font-weight: 500;
     }
-    button {
-      background: #2a5d8f;
+
+    select:focus {
+      outline: none;
+      border-color: #0a4b78;
+      box-shadow: 0 0 0 3px rgba(10, 75, 120, 0.15);
+    }
+
+    .dica {
+      background: #f8fcff;
+      padding: 10px 14px;
+      border-radius: 16px;
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: #2c3e50;
+      border-left: 4px solid #0a4b78;
+      line-height: 1.4;
+    }
+
+    .dica strong {
+      color: #0a4b78;
+    }
+
+    .botao-calcular {
+      background: #0a4b78;
       color: white;
       border: none;
-      padding: 12px;
-      font-size: 16px;
-      border-radius: 10px;
-      margin-top: 20px;
+      padding: 18px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      border-radius: 30px;
       width: 100%;
       cursor: pointer;
+      margin: 16px 0;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 8px 16px rgba(10, 75, 120, 0.2);
     }
-    button:hover {
-      background: #1f456a;
+
+    .botao-calcular:hover {
+      background: #063a5e;
     }
-    .resultado {
-      background: #e3f2fd;
-      border-left: 5px solid #2a5d8f;
-      padding: 15px;
-      margin-top: 20px;
-      border-radius: 8px;
+
+    .botao-calcular:active {
+      transform: scale(0.98);
+    }
+
+    .resultado-card {
+      background: white;
+      border-radius: 24px;
+      padding: 20px;
+      margin: 16px 0;
+      border-left: 6px solid #0a4b78;
+      box-shadow: 0 8px 20px rgba(0, 40, 80, 0.1);
+    }
+
+    .pontuacao-total {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #0a4b78;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .classificacao {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .progresso-container {
+      background: #eef2f6;
+      height: 20px;
+      border-radius: 30px;
+      margin: 16px 0;
+      overflow: hidden;
+    }
+
+    .progresso-barra {
+      height: 100%;
+      background: linear-gradient(90deg, #0a4b78, #2a7faa);
+      width: 0%;
+      transition: width 0.3s;
+      border-radius: 30px;
+    }
+
+    .intervencoes {
+      background: #f0f7fc;
+      padding: 18px;
+      border-radius: 20px;
+      margin-top: 16px;
+    }
+
+    .intervencoes h3 {
+      color: #0a4b78;
+      margin-bottom: 12px;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .intervencoes ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .intervencoes li {
+      margin-bottom: 10px;
+      padding-left: 24px;
+      position: relative;
+    }
+
+    .intervencoes li::before {
+      content: "•";
+      color: #0a4b78;
+      font-weight: bold;
+      font-size: 1.4rem;
+      position: absolute;
+      left: 4px;
+      top: -4px;
+    }
+
+    .referencia {
+      font-size: 0.8rem;
+      color: #4a627a;
+      margin-top: 12px;
+      padding-top: 8px;
+      border-top: 1px dashed #cbd6e6;
+    }
+
+    .reset-btn {
+      background: none;
+      border: none;
+      color: #0a4b78;
+      font-weight: 500;
+      text-decoration: underline;
+      padding: 8px;
+      margin-top: 8px;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <h1>🧩 Índice de Barthel</h1>
+  <div class="container">
+    <h1>🧩 Índice de Barthel</h1>
+    <p style="text-align:center; margin-bottom:16px; color:#2c3e50;">Avaliação de independência funcional</p>
 
-  <form id="formBarthel">
-    <div class="grupo">
-      <label for="alimentacao">Alimentação</label>
-      <select id="alimentacao">
-        <option value="10">Independente</option>
-        <option value="5">Necessita ajuda leve</option>
-        <option value="0">Dependente</option>
-      </select>
-    </div>
+    <form id="formBarthel">
+      <!-- Alimentação -->
+      <div class="card">
+        <div class="item-header">
+          <span class="item-titulo">🍽️ Alimentação</span>
+          <span class="item-pontos" id="pontos-alimentacao">10 pts</span>
+        </div>
+        <select id="alimentacao" onchange="atualizarPontosItem('alimentacao', this)">
+          <option value="10">Independente (10 pts)</option>
+          <option value="5">Necessita ajuda leve (5 pts)</option>
+          <option value="0">Dependente (0 pts)</option>
+        </select>
+        <div class="dica"><strong>📌 Critério:</strong> Independente = alimenta-se sozinho em tempo razoável. Ajuda leve = necessário auxílio para cortar, passar manteiga etc.</div>
+      </div>
 
-    <div class="grupo">
-      <label for="banho">Banho</label>
-      <select id="banho">
-        <option value="5">Independente</option>
-        <option value="0">Dependente</option>
-      </select>
-    </div>
+      <!-- Banho -->
+      <div class="card">
+        <div class="item-header">
+          <span class="item-titulo">🛁 Banho</span>
+          <span class="item-pontos" id="pontos-banho">5 pts</span>
+        </div>
+        <select id="banho" onchange="atualizarPontosItem('banho', this)">
+          <option value="5">Independente (5 pts)</option>
+          <option value="0">Dependente (0 pts)</option>
+        </select>
+        <div class="dica"><strong>📌 Critério:</strong> Independente = entra e sai do chuveiro/banheira sem ajuda, ou lava-se sozinho.</div>
+      </div>
 
-    <div class="grupo">
-      <label for="higiene">Higiene pessoal</label>
-      <select id="higiene">
-        <option value="5">Independente</option>
-        <option value="0">Dependente</option>
-      </select>
-    </div>
+      <!-- Higiene pessoal -->
+      <div class="card">
+        <div class="item-header">
+          <span class="item-titulo">🧼 Higiene pessoal</span>
+          <span class="item-pontos" id="pontos-higiene">5 pts</span>
+        </div>
+        <select id="higiene" onchange="atualizarPontosItem('higiene', this)">
+          <option value="5">Independente (5 pts)</option>
+          <option value="0">Dependente (0 pts)</option>
+        </select>
+        <div class="dica"><strong>📌 Critério:</strong> Lavar rosto, pentear cabelo, escovar dentes, barbear-se sem ajuda.</div>
+      </div>
 
-    <div class="grupo">
-      <label for="vestir">Vestir-se</label>
-      <select id="vestir">
-        <option value="10">Independente</option>
-        <option value="5">Necessita ajuda</option>
-        <option value="0">Dependente</option>
-      </select>
-    </div>
+      <!-- Vestir-se -->
+      <div class="card">
+        <div class="item-header">
+          <span class="item-titulo">👕 Vestir-se</span>
+          <span class="item-pontos" id="pontos-vestir">10 pts</span>
+        </div>
+        <select id="vestir" onchange="atualizarPontosItem('vestir', this)">
+          <option value="10">Independente (10 pts)</option>
+          <option value="5">Necessita ajuda (5 pts)</option>
+          <option value="0">Dependente (0 pts)</option>
+        </select>
+        <div class="dica"><strong>📌 Critério:</strong> Independente = veste-se sem ajuda, inclusive botões, zíper, cadarços.</div>
+      </div>
 
-    <div class="grupo">
-      <label for="intestino">Controle de intestinos</label>
-      <select id="intestino">
-        <option value="10">Contínencia total</option>
-        <option value="5">Ocasional</option>
-        <option value="0">Incontinente</option>
-      </select>
-    </div>
+      <!-- Intestino -->
+      <div class="card">
+        <div class="item-header">
+          <span class="item-titulo">💩 Controle intestino</span>
+          <span class="item-pontos" id="pontos-intestino">10 pts</span>
+        </div>
+        <select id="intestino" onchange="atualizarPontosItem('intestino', this)">
+          <option value="10">Continência total (10 pts)</option>
+          <option value="5">Ocasional (5 pts)</option>
+          <option value="0">Incontinente (0 pts)</option>
+        </select>
+        <div class="dica"><strong>📌 Critério:</strong> Ocasional = menos de 1x/semana. Pode usar supositório/ajuda para enema.</div>
+      </div>
 
-    <div class="grupo">
-      <label for="bexiga">Controle da bexiga</label>
-      <select id="bexiga">
-        <option value="10">Contínencia total</option>
-        <option value="5">Ocasional</option>
-        <option value="0">Incontinente</option>
-      </select>
-    </div>
+      <!-- Bexiga -->
+      <div class="card">
+        <div class="item-header">
+          <span class="item-titulo">💧 Controle bexiga</span>
+          <span class="item-pontos" id="pontos-bexiga">10 pts</span>
+        </div>
+        <select id="bexiga" onchange="atualizarPontosItem('bexiga', this)">
+          <option value="10">Continência total (10 pts)</option>
+          <option value="5">Ocasional (5 pts)</option>
+          <option value="0">Incontinente (0 pts)</option>
+        </select>
+        <div class="dica"><strong>📌 Critério:</strong> Ocasional = menos de 1x/dia. Sonda vesical = 5 pts se autocuidado.</div>
+      </div>
 
-    <div class="grupo">
-      <label for="sanitario">Uso do vaso sanitário</label>
-      <select id="sanitario">
-        <option value="10">Independente</option>
-        <option value="5">Necessita ajuda</option>
-        <option value="0">Dependente</option>
-      </select>
-    </div>
+      <!-- Vaso sanitário -->
+      <div class="card">
+        <div class="item-header">
+          <span class="item-titulo">🚽 Uso do vaso</span>
+          <span class="item-pontos" id="pontos-sanitario">10 pts</span>
+        </div>
+        <select id="sanitario" onchange="atualizarPontosItem('sanitario', this)">
+          <option value="10">Independente (10 pts)</option>
+          <option value="5">Necessita ajuda (5 pts)</option>
+          <option value="0">Dependente (0 pts)</option>
+        </select>
+        <div class="dica"><strong>📌 Critério:</strong> Ir ao banheiro, limpar-se, vestir-se. Ajuda pode ser para equilíbrio.</div>
+      </div>
 
-    <div class="grupo">
-      <label for="transferencia">Transferência (leito ↔ cadeira)</label>
-      <select id="transferencia">
-        <option value="15">Independente</option>
-        <option value="10">Ajuda leve</option>
-        <option value="5">Grande ajuda</option>
-        <option value="0">Dependente</option>
-      </select>
-    </div>
+      <!-- Transferência -->
+      <div class="card">
+        <div class="item-header">
+          <span class="item-titulo">🛏️ Transferência</span>
+          <span class="item-pontos" id="pontos-transferencia">15 pts</span>
+        </div>
+        <select id="transferencia" onchange="atualizarPontosItem('transferencia', this)">
+          <option value="15">Independente (15 pts)</option>
+          <option value="10">Ajuda leve (10 pts)</option>
+          <option value="5">Grande ajuda (5 pts)</option>
+          <option value="0">Dependente (0 pts)</option>
+        </select>
+        <div class="dica"><strong>📌 Critério:</strong> Leito/cadeira. Ajuda leve = supervisão ou pequena assistência.</div>
+      </div>
 
-    <div class="grupo">
-      <label for="deambulacao">Deambulação</label>
-      <select id="deambulacao">
-        <option value="15">Independente</option>
-        <option value="10">Com auxílio</option>
-        <option value="5">Usa cadeira de rodas</option>
-        <option value="0">Impossível</option>
-      </select>
-    </div>
+      <!-- Deambulação -->
+      <div class="card">
+        <div class="item-header">
+          <span class="item-titulo">🚶 Deambulação</span>
+          <span class="item-pontos" id="pontos-deambulacao">15 pts</span>
+        </div>
+        <select id="deambulacao" onchange="atualizarPontosItem('deambulacao', this)">
+          <option value="15">Independente (15 pts)</option>
+          <option value="10">Com auxílio (10 pts)</option>
+          <option value="5">Cadeira de rodas (5 pts)</option>
+          <option value="0">Impossível (0 pts)</option>
+        </select>
+        <div class="dica"><strong>📌 Critério:</strong> 50m sem ajuda. Auxílio = muleta, bengala, andador ou supervisão.</div>
+      </div>
 
-    <div class="grupo">
-      <label for="escadas">Subir escadas</label>
-      <select id="escadas">
-        <option value="10">Independente</option>
-        <option value="5">Com ajuda</option>
-        <option value="0">Incapaz</option>
-      </select>
-    </div>
+      <!-- Escadas -->
+      <div class="card">
+        <div class="item-header">
+          <span class="item-titulo">🪜 Subir escadas</span>
+          <span class="item-pontos" id="pontos-escadas">10 pts</span>
+        </div>
+        <select id="escadas" onchange="atualizarPontosItem('escadas', this)">
+          <option value="10">Independente (10 pts)</option>
+          <option value="5">Com ajuda (5 pts)</option>
+          <option value="0">Incapaz (0 pts)</option>
+        </select>
+        <div class="dica"><strong>📌 Critério:</strong> Subir um lance sem ajuda. Ajuda = supervisão ou auxílio físico/corrimão.</div>
+      </div>
 
-    <button type="button" onclick="calcularBarthel()">Calcular Pontuação</button>
-  </form>
+      <button type="button" class="botao-calcular" onclick="calcularBarthel()">📊 Calcular Pontuação</button>
+    </form>
 
-  <div id="resultado" class="resultado" style="display:none;"></div>
+    <div id="resultado" class="resultado-card" style="display:none;"></div>
+
+    <button class="reset-btn" onclick="resetarFormulario()">↻ Iniciar nova avaliação</button>
+  </div>
 
   <script>
+    function atualizarPontosItem(id, select) {
+      const valor = select.value;
+      const pontosSpan = document.getElementById(`pontos-${id}`);
+      if (pontosSpan) {
+        pontosSpan.innerText = valor + ' pts';
+      }
+    }
+
+    function resetarFormulario() {
+      document.getElementById('formBarthel').reset();
+      // Resetar todos os pontos exibidos para o valor padrão
+      document.querySelectorAll('select').forEach(select => {
+        const id = select.id;
+        const valor = select.value;
+        const pontosSpan = document.getElementById(`pontos-${id}`);
+        if (pontosSpan) pontosSpan.innerText = valor + ' pts';
+      });
+      document.getElementById('resultado').style.display = 'none';
+    }
+
     function calcularBarthel() {
       const campos = [
         "alimentacao", "banho", "higiene", "vestir", "intestino",
@@ -163,21 +415,85 @@
       let total = 0;
 
       campos.forEach(id => {
-        total += parseInt(document.getElementById(id).value);
+        total += parseInt(document.getElementById(id).value || 0);
       });
 
       let grau = "";
-      if (total >= 100) grau = "🔵 Independência Total";
-      else if (total >= 91) grau = "🟢 Independência Leve";
-      else if (total >= 61) grau = "🟡 Dependência Moderada";
-      else if (total >= 21) grau = "🟠 Dependência Grave";
-      else grau = "🔴 Dependência Total";
+      let cor = "";
+      let icone = "";
+      let intervencoes = "";
 
-      const resultado = document.getElementById("resultado");
-      resultado.style.display = "block";
-      resultado.innerHTML = `<strong>Pontuação Total:</strong> ${total}<br/>
-                             <strong>Classificação:</strong> ${grau}`;
+      if (total === 100) {
+        grau = "Independência Total";
+        cor = "#0a4b78";
+        icone = "🔵";
+        intervencoes = "✅ <strong>Manutenção da funcionalidade:</strong> incentivo a atividades comunitárias e prevenção de quedas. Acompanhamento periódico.";
+      } else if (total >= 91) {
+        grau = "Independência Leve";
+        cor = "#2a7faa";
+        icone = "🟢";
+        intervencoes = "🏠 <strong>Orientar:</strong> identificar atividades que exigem mais tempo. Considerar terapia ocupacional para otimização de desempenho.";
+      } else if (total >= 61) {
+        grau = "Dependência Moderada";
+        cor = "#f4b942";
+        icone = "🟡";
+        intervencoes = "🩺 <strong>Intervenção:</strong> avaliar necessidade de cuidador, adaptações ambientais (barras de apoio, remoção de tapetes), fisioterapia para ganho de força, treino de AVDs.";
+      } else if (total >= 21) {
+        grau = "Dependência Grave";
+        cor = "#d96c4e";
+        icone = "🟠";
+        intervencoes = "🏥 <strong>Cuidados intensivos:</strong> suporte para AVDs, prevenção de úlceras por pressão (mudança de decúbito), nutrição assistida, esvaziamento intestinal programado, fisioterapia motora passiva/ativa, considerar home care.";
+      } else {
+        grau = "Dependência Total";
+        cor = "#b23b3b";
+        icone = "🔴";
+        intervencoes = "🆘 <strong>Cuidados paliativos/Integrais:</strong> manejo de incontinência, posicionamento no leito, prevenção de contraturas, cuidados com a pele, suporte familiar, avaliação de via alternativa de alimentação se necessário, abordagem multidisciplinar.";
+      }
+
+      const resultadoDiv = document.getElementById("resultado");
+      resultadoDiv.style.display = "block";
+      
+      // Barra de progresso
+      const percent = total;
+      
+      resultadoDiv.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span class="pontuacao-total">${total}</span>
+          <span style="background:${cor}20; color:${cor}; padding:8px 16px; border-radius:30px; font-weight:600;">${icone} ${grau}</span>
+        </div>
+        
+        <div class="progresso-container">
+          <div class="progresso-barra" style="width:${total}%; background:${cor};"></div>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; margin:12px 0; font-size:0.9rem;">
+          <span>⬇️ 0 (dependente)</span>
+          <span>100 (independente)</span>
+        </div>
+
+        <div class="intervencoes">
+          <h3>💡 Intervenções baseadas em evidências</h3>
+          <ul>
+            <li>${intervencoes}</li>
+            <li><strong>Pontos de corte:</strong> 0-20: dependência total | 21-60: grave | 61-90: moderada | 91-99: leve | 100: total</li>
+          </ul>
+        </div>
+
+        <div class="referencia">
+          <strong>📚 Referência:</strong> Adaptado de MAHONEY, F.I.; BARTHEL, D.W. (1965). Amplamente utilizado em geriatria, reabilitação e cuidados paliativos. Validação brasileira: Minosso et al. (2010).
+        </div>
+      `;
     }
+
+    // Inicializar todos os pontos na carga
+    window.onload = function() {
+      document.querySelectorAll('select').forEach(select => {
+        const id = select.id;
+        const valor = select.value;
+        const pontosSpan = document.getElementById(`pontos-${id}`);
+        if (pontosSpan) pontosSpan.innerText = valor + ' pts';
+      });
+    };
   </script>
 </body>
 </html>
