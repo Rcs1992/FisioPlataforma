@@ -1,130 +1,265 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
   <title>Titulação de PEEP</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <!-- Certifique-se de que o plugin autoTable está carregado -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
   <style>
-    /* Reset e configurações básicas */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
+    
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       background-color: #eef2f7;
-      color: #333;
-      padding: 20px;
-      line-height: 1.6;
+      color: #1a2b3c;
+      padding: 12px;
+      line-height: 1.5;
+      min-height: 100vh;
     }
-    h1, h2 {
+    
+    h1 {
+      font-size: 1.6rem;
+      color: #005b96;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+    
+    h2 {
+      font-size: 1.3rem;
       color: #005b96;
       margin-bottom: 10px;
     }
-    p, ul {
-      margin-bottom: 15px;
+    
+    p {
+      margin-bottom: 12px;
+      font-size: 0.95rem;
     }
+    
     ul {
+      margin-bottom: 15px;
       padding-left: 20px;
+      font-size: 0.9rem;
     }
-    /* Container principal com redução de escala e margem inferior para evitar o banner */
+    
+    li {
+      margin-bottom: 6px;
+    }
+    
     .container {
-      max-width: 900px;
-      margin: 0 auto 120px auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-      transform: scale(0.95);
-      transform-origin: top center;
+      max-width: 500px;
+      margin: 0 auto 20px auto;
+      background: white;
+      padding: 16px;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
-    /* Botões */
+    
     .button-container {
       display: flex;
-      justify-content: flex-start;
-      gap: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
       margin-bottom: 20px;
+      justify-content: center;
     }
+    
     button {
       background-color: #005b96;
-      color: #fff;
+      color: white;
       border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-size: 16px;
+      padding: 14px 20px;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: 500;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: all 0.2s ease;
+      flex: 1 1 auto;
+      min-width: 140px;
+      -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
-    button:hover {
+    
+    button:active {
       background-color: #003f66;
+      transform: scale(0.97);
     }
-    /* Tabelas */
+    
+    button:focus-visible {
+      outline: 3px solid #7ab3d9;
+    }
+    
     table {
       width: 100%;
       border-collapse: collapse;
       margin-bottom: 20px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
-    th, td {
-      padding: 12px;
-      text-align: center;
-      border-bottom: 1px solid #ddd;
-    }
+    
     th {
       background-color: #005b96;
-      color: #fff;
+      color: white;
+      font-weight: 500;
+      font-size: 0.85rem;
+      padding: 12px 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
     }
+    
     td {
-      background-color: #f9f9f9;
+      padding: 12px 6px;
+      text-align: center;
+      border-bottom: 1px solid #e0e7ef;
+      background-color: white;
+      font-size: 0.9rem;
     }
-    /* Canvas do gráfico */
+    
+    tr:last-child td {
+      border-bottom: none;
+    }
+    
+    input[type="number"] {
+      width: 70px;
+      padding: 10px 6px;
+      border: 1.5px solid #d0d9e5;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 1rem;
+      background-color: #f8fafd;
+      transition: border-color 0.2s;
+    }
+    
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #005b96;
+      background-color: white;
+    }
+    
     #chart-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 20px;
+      margin: 20px 0;
+      padding: 10px;
+      background: #f8fafd;
+      border-radius: 16px;
     }
+    
     canvas {
-      max-width: 600px;
-      max-height: 400px;
+      width: 100% !important;
+      height: auto !important;
+      max-height: 280px;
+      touch-action: pan-y pinch-zoom;
     }
-    /* Esconde seções */
+    
+    #minDP, #finalMinDP {
+      text-align: center;
+      font-size: 1.1rem;
+      padding: 14px;
+      background-color: #e3f0fa;
+      border-radius: 30px;
+      color: #005b96;
+      margin-top: 15px;
+    }
+    
     #step2, #step3 {
       display: none;
     }
-    /* Responsividade */
-    @media (max-width: 600px) {
-      button {
-        font-size: 14px;
-        padding: 8px 16px;
-      }
-      th, td {
-        font-size: 14px;
+    
+    .card-info {
+      background-color: #f0f7ff;
+      border-left: 4px solid #005b96;
+      padding: 14px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+    }
+    
+    @media (max-width: 380px) {
+      body {
         padding: 8px;
       }
+      
+      .container {
+        padding: 12px;
+      }
+      
+      h1 {
+        font-size: 1.4rem;
+      }
+      
+      h2 {
+        font-size: 1.2rem;
+      }
+      
+      button {
+        padding: 12px 16px;
+        font-size: 0.95rem;
+        min-width: 120px;
+      }
+      
+      th {
+        font-size: 0.75rem;
+        padding: 10px 3px;
+      }
+      
+      td {
+        padding: 10px 3px;
+        font-size: 0.85rem;
+      }
+      
+      input[type="number"] {
+        width: 60px;
+        padding: 8px 4px;
+      }
+    }
+    
+    @media (hover: hover) {
+      button:hover {
+        background-color: #003f66;
+      }
+    }
+    
+    .peep-value {
+      font-weight: 600;
+      color: #005b96;
+    }
+    
+    .warning-note {
+      background-color: #fff3cd;
+      border: 1px solid #ffeeba;
+      color: #856404;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      margin-bottom: 15px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Titulação Decremental da PEEP</h1>
+    <h1>📋 Titulação Decremental da PEEP</h1>
 
-    <!-- Passo 1 -->
     <div id="step1">
       <div class="button-container">
-        <button onclick="goToStep2()">Ir para Passo 2</button>
+        <button onclick="goToStep2()">▶️ Iniciar Passo 2</button>
       </div>
+      
+      <div class="card-info">
+        <strong>⚠️ Importante:</strong> Certifique-se de que o paciente está estável antes de iniciar.
+      </div>
+      
       <h2>Passo 1: MODO PCV</h2>
-      <p>Instruções:</p>
+      <p>Instruções sequenciais:</p>
       <ul>
-        <li>Aumentar PEEP para 15 cmH2O e permanecer por 10 segundos</li>
-        <li>Aumentar PEEP para 20 cmH2O e permanecer por 10 segundos</li>
-        <li>Aumentar PEEP para 26 cmH2O e permanecer por 30 segundos</li>
+        <li>🔹 Aumentar PEEP para <strong>15 cmH2O</strong> (10 segundos)</li>
+        <li>🔹 Aumentar PEEP para <strong>20 cmH2O</strong> (10 segundos)</li>
+        <li>🔹 Aumentar PEEP para <strong>26 cmH2O</strong> (30 segundos)</li>
       </ul>
+      
       <table>
         <thead>
           <tr>
@@ -138,55 +273,61 @@
         </thead>
         <tbody>
           <tr>
-            <td>15 cmH2O</td>
-            <td>10 irpm</td>
+            <td>15</td>
+            <td>10</td>
             <td>3s</td>
             <td>1:1</td>
             <td>100%</td>
-            <td>10 cmH2O</td>
+            <td>10</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <!-- Passo 2 -->
     <div id="step2">
       <div class="button-container">
-        <button onclick="goToStep1()">Retornar ao Início</button>
-        <button onclick="goToStep3()">Ir para Passo 3</button>
+        <button onclick="goToStep1()">⬅️ Retornar</button>
+        <button onclick="goToStep3()">Passo 3 ➡️</button>
       </div>
-      <h2>Passo 2: MODO VCV e Titulação da PEEP</h2>
-      <p>Configurar: VC de 6 ml/kg, FR 20 irpm, I:E 1:2, FiO2 100%, a partir de PEEP de 26 cmH2O.</p>
-      <table>
-        <thead>
-          <tr>
-            <th>PEEP</th>
-            <th>Pplat (cmH2O)</th>
-            <th>Driving Pressure (DP)</th>
-          </tr>
-        </thead>
-        <tbody id="peepTable">
-          <!-- Linhas serão inseridas via JavaScript -->
-        </tbody>
-      </table>
+      
+      <h2>Passo 2: Titulação</h2>
+      <div class="card-info">
+        <strong>Configuração:</strong> VC 6 ml/kg | FR 20 | I:E 1:2 | FiO2 100%<br>
+        Iniciar em PEEP 26 cmH2O
+      </div>
+      
+      <div style="overflow-x: auto; margin-bottom: 15px; border-radius: 12px;">
+        <table>
+          <thead>
+            <tr>
+              <th>PEEP</th>
+              <th>Pplat</th>
+              <th>DP</th>
+            </tr>
+          </thead>
+          <tbody id="peepTable"></tbody>
+        </table>
+      </div>
+      
       <div id="chart-container">
         <canvas id="peepChart"></canvas>
-        <div id="minDP" style="margin-top: 10px; font-weight: bold;"></div>
+        <div id="minDP"></div>
       </div>
     </div>
 
-    <!-- Passo 3 -->
     <div id="step3">
       <div class="button-container">
-        <button onclick="goToStep1()">Retornar ao Início</button>
+        <button onclick="goToStep1()">🏠 Início</button>
+        <button id="sendPdfButton">📧 Enviar PDF</button>
       </div>
-      <h2>Passo 3: MODO PCV</h2>
-      <p>Instruções:</p>
+      
+      <h2>Passo 3: Retorno ao PCV</h2>
       <ul>
-        <li>Aumentar PEEP para 15 cmH2O e permanecer por 10 segundos</li>
-        <li>Aumentar PEEP para 20 cmH2O e permanecer por 10 segundos</li>
-        <li>Aumentar PEEP para 26 cmH2O e permanecer por 30 segundos</li>
+        <li>🔹 Aumentar PEEP para <strong>15 cmH2O</strong> (10s)</li>
+        <li>🔹 Aumentar PEEP para <strong>20 cmH2O</strong> (10s)</li>
+        <li>🔹 Aumentar PEEP para <strong>26 cmH2O</strong> (30s)</li>
       </ul>
+      
       <table>
         <thead>
           <tr>
@@ -200,66 +341,69 @@
         </thead>
         <tbody>
           <tr>
-            <td>15 cmH2O</td>
-            <td>10 irpm</td>
+            <td>15</td>
+            <td>10</td>
             <td>3s</td>
             <td>1:1</td>
             <td>100%</td>
-            <td>10 cmH2O</td>
+            <td>10</td>
           </tr>
         </tbody>
       </table>
-      <p id="finalMinDP" style="font-weight: bold;"></p>
-      <!-- Botão para envio do PDF -->
-      <div class="button-container">
-        <button id="sendPdfButton">Enviar PDF por E-mail</button>
+      
+      <div class="warning-note">
+        <strong>📌 PEEP ideal:</strong> Ajuste para o valor encontrado no Passo 2
       </div>
+      
+      <p id="finalMinDP" style="font-weight: bold;"></p>
     </div>
   </div>
 
   <script>
-    let chartInstance; // Guarda a instância do gráfico
-    let minPEEP; // Armazena a PEEP de menor DP
+    let chartInstance;
+    let minPEEP;
 
     function goToStep2() {
       document.getElementById('step1').style.display = 'none';
       document.getElementById('step2').style.display = 'block';
       createPeepTable();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function goToStep3() {
       document.getElementById('step2').style.display = 'none';
       document.getElementById('step3').style.display = 'block';
-      document.getElementById('finalMinDP').textContent = `A PEEP de menor Driving Pressure é: ${minPEEP} cmH2O`;
+      const minDPText = document.getElementById('minDP').textContent;
+      document.getElementById('finalMinDP').textContent = minDPText || 'Nenhum dado registrado';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function goToStep1() {
-      location.reload();
+      window.location.reload();
     }
 
     function createPeepTable() {
       const peepValues = [26, 24, 22, 20, 18, 16, 14, 12, 10, 8, 6];
       const tableBody = document.getElementById('peepTable');
-      tableBody.innerHTML = ''; // Limpa a tabela
+      tableBody.innerHTML = '';
 
       peepValues.forEach(peep => {
         const row = document.createElement('tr');
 
-        // Coluna PEEP
         const peepCell = document.createElement('td');
-        peepCell.textContent = peep + ' cmH2O';
+        peepCell.textContent = peep;
+        peepCell.className = 'peep-value';
         row.appendChild(peepCell);
 
-        // Coluna Pplat com input
         const pplatCell = document.createElement('td');
         const pplatInput = document.createElement('input');
         pplatInput.type = 'number';
-        pplatInput.style.width = '80px';
+        pplatInput.placeholder = 'Pplat';
+        pplatInput.inputMode = 'numeric';
         pplatInput.oninput = calculateDP;
         pplatCell.appendChild(pplatInput);
         row.appendChild(pplatCell);
 
-        // Coluna DP
         const dpCell = document.createElement('td');
         dpCell.textContent = '-';
         row.appendChild(dpCell);
@@ -281,7 +425,7 @@
         if (pplatInput.value) {
           const pplat = parseFloat(pplatInput.value);
           const dp = pplat - peep;
-          dpCell.textContent = dp.toFixed(2);
+          dpCell.textContent = dp.toFixed(1);
 
           if (dp < minDP || (dp === minDP && peep < minPEEP)) {
             minDP = dp;
@@ -292,7 +436,6 @@
         }
       });
 
-      // Atualiza o gráfico se houver dados
       updateChart();
     }
 
@@ -310,10 +453,13 @@
         }
       });
 
+      if (peepValues.length === 0) return;
+
       const ctx = document.getElementById('peepChart').getContext('2d');
       if (chartInstance) {
         chartInstance.destroy();
       }
+      
       chartInstance = new Chart(ctx, {
         type: 'line',
         data: {
@@ -321,143 +467,145 @@
           datasets: [{
             label: 'Driving Pressure',
             data: dpValues,
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 2,
-            fill: false,
+            borderColor: '#005b96',
+            backgroundColor: 'rgba(0, 91, 150, 0.1)',
+            borderWidth: 3,
+            fill: true,
             tension: 0.4,
-            pointBackgroundColor: dpValues.map(dp => dp === Math.min(...dpValues) ? 'red' : 'rgba(75, 192, 192, 1)'),
-            pointRadius: dpValues.map(dp => dp === Math.min(...dpValues) ? 6 : 3)
+            pointBackgroundColor: dpValues.map(dp => dp === Math.min(...dpValues) ? '#dc3545' : '#005b96'),
+            pointRadius: dpValues.map(dp => dp === Math.min(...dpValues) ? 8 : 4),
+            pointHoverRadius: 10
           }]
         },
         options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: '#005b96',
+              titleColor: 'white',
+              bodyColor: 'white',
+              cornerRadius: 8,
+              padding: 10
+            }
+          },
           scales: {
             x: {
               title: {
                 display: true,
-                text: 'PEEP (cmH2O)'
-              }
+                text: 'PEEP (cmH2O)',
+                font: { size: 12, weight: 'bold' }
+              },
+              grid: { display: false }
             },
             y: {
               title: {
                 display: true,
-                text: 'Driving Pressure (DP)'
-              }
+                text: 'DP (cmH2O)',
+                font: { size: 12, weight: 'bold' }
+              },
+              beginAtZero: true,
+              grid: { color: '#e0e7ef' }
             }
           }
         }
       });
 
-      // Exibe a PEEP com menor DP, se houver
       if (minPEEP !== null) {
-        document.getElementById('minDP').textContent = `A PEEP de menor DP é: ${minPEEP} cmH2O`;
+        document.getElementById('minDP').innerHTML = `✅ <strong>PEEP ideal: ${minPEEP} cmH2O</strong> (menor Driving Pressure)`;
       }
     }
 
-    // Função para gerar o PDF e enviar por e-mail
     async function generateAndSendPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
 
-      // Página 1: Passo 1
-      doc.setFontSize(22);
-      doc.text('Titulação Decremental da PEEP', 14, 22);
-      doc.setFontSize(16);
-      doc.text('Passo 1: MODO PCV', 14, 32);
-      doc.setFontSize(12);
-      doc.text(`Instruções:
-- Aumentar PEEP para 15 cmH2O e permanecer por 10 segundos
-- Aumentar PEEP para 20 cmH2O e permanecer por 10 segundos
-- Aumentar PEEP para 26 cmH2O e permanecer por 30 segundos`, 14, 42);
+      doc.setFontSize(20);
+      doc.text('Titulação Decremental da PEEP', 14, 20);
+      
+      doc.setFontSize(14);
+      doc.text('Passo 1: MODO PCV', 14, 30);
+      doc.setFontSize(10);
+      doc.text('Instruções:', 14, 38);
+      doc.text('• PEEP 15 cmH2O - 10s', 14, 44);
+      doc.text('• PEEP 20 cmH2O - 10s', 14, 50);
+      doc.text('• PEEP 26 cmH2O - 30s', 14, 56);
+      
       doc.autoTable({
-        startY: 70,
+        startY: 65,
         head: [['Pinsp', 'FR', 'TI', 'I:E', 'FiO2', 'PEEP']],
-        body: [['15 cmH2O', '10 irpm', '3s', '1:1', '100%', '10 cmH2O']]
+        body: [['15', '10', '3s', '1:1', '100%', '10']],
+        theme: 'grid',
+        headStyles: { fillColor: [0, 91, 150] }
       });
 
-      // Página 2: Passo 2 – Titulação com dados dinâmicos
       doc.addPage();
-      doc.setFontSize(16);
-      doc.text('Passo 2: MODO VCV e Titulação da PEEP', 14, 22);
-      doc.setFontSize(12);
-      doc.text('Configurar: VC de 6 ml/kg, FR 20 irpm, I:E 1:2, FiO2 100%, a partir de PEEP de 26 cmH2O.', 14, 32);
+      doc.setFontSize(14);
+      doc.text('Passo 2: Titulação', 14, 20);
       
-      // Extrai os dados da tabela de titulação (Passo 2)
       const tableRows = [];
       const rows = document.querySelectorAll('#peepTable tr');
       rows.forEach(row => {
         const peep = row.cells[0].textContent;
-        const pplat = row.cells[1].querySelector('input').value || '-';
+        const pplat = row.cells[1].querySelector('input')?.value || '-';
         const dp = row.cells[2].textContent;
         tableRows.push([peep, pplat, dp]);
       });
       
       doc.autoTable({
-        startY: 40,
-        head: [['PEEP', 'Pplat (cmH2O)', 'Driving Pressure (DP)']],
-        body: tableRows
+        startY: 28,
+        head: [['PEEP', 'Pplat', 'DP']],
+        body: tableRows,
+        theme: 'grid',
+        headStyles: { fillColor: [0, 91, 150] }
       });
 
-      // Página 3: Gráfico
       const chartCanvas = document.getElementById('peepChart');
       if (chartCanvas) {
-        // Converte o canvas para imagem
         const chartImage = chartCanvas.toDataURL('image/png');
         doc.addPage();
-        doc.setFontSize(16);
-        doc.text('Gráfico PEEP x Driving Pressure', 14, 22);
-        doc.addImage(chartImage, 'PNG', 14, 30, 180, 120);
+        doc.setFontSize(14);
+        doc.text('Gráfico PEEP x Driving Pressure', 14, 20);
+        doc.addImage(chartImage, 'PNG', 10, 30, 190, 100);
       }
 
-      // Página 4: Exibe a PEEP com menor DP
-      const minDPText = document.getElementById('minDP').textContent;
-      if (minDPText) {
-        doc.addPage();
-        doc.setFontSize(16);
-        doc.text('Menor Driving Pressure', 14, 22);
-        doc.setFontSize(12);
-        doc.text(minDPText, 14, 32);
-      }
-
-      // Página 5: Passo 3
       doc.addPage();
-      doc.setFontSize(16);
-      doc.text('Passo 3: MODO PCV', 14, 22);
-      doc.setFontSize(12);
-      doc.text(`Instruções:
-- Aumentar PEEP para 15 cmH2O e permanecer por 10 segundos
-- Aumentar PEEP para 20 cmH2O e permanecer por 10 segundos
-- Aumentar PEEP para 26 cmH2O e permanecer por 30 segundos`, 14, 32);
+      doc.setFontSize(14);
+      doc.text('Passo 3: Retorno ao PCV', 14, 20);
+      doc.setFontSize(10);
+      doc.text('Instruções:', 14, 28);
+      doc.text('• PEEP 15 cmH2O - 10s', 14, 34);
+      doc.text('• PEEP 20 cmH2O - 10s', 14, 40);
+      doc.text('• PEEP 26 cmH2O - 30s', 14, 46);
+      
       doc.autoTable({
-        startY: 60,
+        startY: 55,
         head: [['Pinsp', 'FR', 'TI', 'I:E', 'FiO2', 'PEEP']],
-        body: [['15 cmH2O', '10 irpm', '3s', '1:1', '100%', '10 cmH2O']]
+        body: [['15', '10', '3s', '1:1', '100%', '10']],
+        theme: 'grid',
+        headStyles: { fillColor: [0, 91, 150] }
       });
 
-      // Converte o PDF para um blob
-      const pdfBlob = doc.output('blob');
-
-      // Cria um FormData para envio
-      const formData = new FormData();
-      formData.append('pdf', pdfBlob, 'titulacao_peep.pdf');
-
-      try {
-        const response = await fetch('http://localhost:3000/send-email', {
-          method: 'POST',
-          body: formData
-        });
-        const result = await response.json();
-        alert(result.message);
-      } catch (error) {
-        console.error('Erro no envio do e-mail:', error);
-        alert('Houve um erro ao enviar o e-mail.');
+      const minDPText = document.getElementById('minDP')?.textContent || '';
+      if (minDPText) {
+        doc.setFontSize(12);
+        doc.text(minDPText, 14, 90);
       }
 
-      // Opcional: salvar o PDF localmente
-      doc.save('titulacao_peep.pdf');
+      const pdfBlob = doc.output('blob');
+      
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(pdfBlob);
+      link.download = 'titulacao_peep.pdf';
+      link.click();
+      
+      alert('📄 PDF gerado com sucesso!');
     }
 
-    // Vincula o evento ao botão de envio de PDF
-    document.getElementById('sendPdfButton').addEventListener('click', generateAndSendPDF);
+    document.getElementById('sendPdfButton')?.addEventListener('click', generateAndSendPDF);
   </script>
 </body>
 </html>
