@@ -2,158 +2,490 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Interpretação de Gasometria e Ventilação Mecânica</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes">
+  <title>VM Baseada em Evidências ATS/ERS</title>
   <style>
-    /* Estilo geral e background com degradê azul */
-    body {
-      font-family: Arial, sans-serif;
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      background: linear-gradient(135deg, #2980b9, #6dd5fa);
-      color: #333;
     }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      background: linear-gradient(145deg, #0a3147 0%, #1a4e7a 50%, #2c6185 100%);
+      min-height: 100vh;
+      padding: 12px;
+      margin: 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
     .container {
-      max-width: 900px;
-      margin: 2rem auto;
-      background: #fff;
-      padding: 20px 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 480px;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 24px;
+      padding: 20px 16px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(10px);
+      margin: 0 auto;
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
-    h1, h2 {
+
+    h1 {
+      font-size: 1.6rem;
       text-align: center;
-      color: #2980b9;
+      color: #0a3147;
+      margin-bottom: 16px;
+      line-height: 1.3;
+      font-weight: 700;
+      padding: 0 4px;
+      word-break: break-word;
+      border-bottom: 3px solid #3498db;
+      padding-bottom: 12px;
     }
+
+    .badge-ats {
+      background: #2c3e50;
+      color: white;
+      font-size: 0.7rem;
+      padding: 4px 8px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-left: 8px;
+      vertical-align: middle;
+      font-weight: normal;
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      color: #1a4e7a;
+      margin-bottom: 16px;
+      font-weight: 600;
+      border-left: 5px solid #3498db;
+      padding-left: 12px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
     .section {
-      margin-bottom: 2rem;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 1rem;
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 18px 16px;
+      margin-bottom: 24px;
+      border: 1px solid rgba(52, 152, 219, 0.3);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
     }
+
+    .info-box {
+      background: #e1f0fa;
+      border-left: 5px solid #2980b9;
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+      color: #1a4e7a;
+    }
+
+    .info-box strong {
+      color: #0a3147;
+      display: block;
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+
     label {
       display: block;
-      margin-top: 10px;
-      font-weight: bold;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-top: 16px;
+      margin-bottom: 4px;
+      letter-spacing: -0.2px;
     }
+
+    .label-small {
+      font-size: 0.8rem;
+      color: #7f8c8d;
+      font-weight: normal;
+      margin-top: 4px;
+    }
+
     input[type="number"],
     input[type="text"] {
       width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      padding: 14px 16px;
+      font-size: 16px;
+      border: 1.5px solid #dde7f0;
+      border-radius: 14px;
+      background: white;
+      transition: all 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
     }
+
+    input:focus {
+      outline: none;
+      border-color: #2980b9;
+      box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.1);
+    }
+
     input:invalid {
       border-color: #e74c3c;
     }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .input-group input {
+      flex: 1;
+    }
+
+    .input-group select {
+      width: 120px;
+      padding: 14px;
+      border: 1.5px solid #dde7f0;
+      border-radius: 14px;
+      background: white;
+      font-size: 16px;
+    }
+
     .checkbox-container {
       display: flex;
       align-items: center;
-      margin-top: 10px;
-    }
-    .checkbox-container input {
-      margin-right: 8px;
-    }
-    button {
-      display: block;
-      width: 100%;
-      background-color: #2980b9;
-      color: #fff;
-      padding: 12px;
-      border: none;
-      border-radius: 5px;
-      font-size: 1rem;
-      cursor: pointer;
+      gap: 12px;
       margin-top: 20px;
+      padding: 8px 0;
     }
-    button:hover {
-      background-color: #1c5980;
+
+    .checkbox-container input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      margin: 0;
+      accent-color: #2980b9;
+      flex-shrink: 0;
     }
+
+    .checkbox-container label {
+      margin: 0;
+      font-size: 1rem;
+      color: #2c3e50;
+    }
+
+    button {
+      width: 100%;
+      background: linear-gradient(145deg, #2980b9, #1f6692);
+      color: white;
+      padding: 16px 20px;
+      border: none;
+      border-radius: 16px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-top: 24px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(41, 128, 185, 0.4);
+      -webkit-tap-highlight-color: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    button:active {
+      transform: scale(0.98);
+      background: linear-gradient(145deg, #1f6692, #1a4e7a);
+    }
+
+    button.secondary {
+      background: linear-gradient(145deg, #7f8c8d, #5f6b6c);
+      margin-top: 12px;
+    }
+
     .resultado {
-      background: #f4f4f4;
-      padding: 15px;
-      border-radius: 5px;
-      margin-top: 15px;
+      background: white;
+      border: 1px solid #e1e8ed;
+      border-radius: 18px;
+      padding: 18px;
+      margin-top: 20px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #2c3e50;
       white-space: pre-line;
-      border: 1px solid #ccc;
+      max-height: 350px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
     }
-    .aviso {
-      color: #e74c3c;
-      font-weight: bold;
-      margin-top: 10px;
+
+    .alerta {
+      color: #c0392b;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-top: 12px;
+      padding: 12px;
+      background: #fae2e0;
+      border-radius: 12px;
+      border-left: 4px solid #e74c3c;
     }
-    @media (max-width: 600px) {
+
+    .recomendacao {
+      color: #27ae60;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-top: 12px;
+      padding: 12px;
+      background: #e0f2e0;
+      border-radius: 12px;
+      border-left: 4px solid #27ae60;
+    }
+
+    .aviso-importante {
+      background: #fff3cd;
+      border-left: 5px solid #ffc107;
+      padding: 12px;
+      border-radius: 12px;
+      margin: 16px 0 8px;
+      font-size: 0.9rem;
+      color: #856404;
+    }
+
+    .aviso-importante strong {
+      display: block;
+      margin-bottom: 6px;
+      color: #533f03;
+    }
+
+    .referencia {
+      font-size: 0.75rem;
+      color: #7f8c8d;
+      text-align: center;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px dashed #ccc;
+    }
+
+    .referencia a {
+      color: #2980b9;
+      text-decoration: none;
+    }
+
+    @media (max-width: 360px) {
       .container {
-        padding: 15px 20px;
+        padding: 16px 12px;
       }
+      
+      h1 {
+        font-size: 1.4rem;
+      }
+      
+      .input-group {
+        flex-direction: column;
+        gap: 8px;
+      }
+      
+      .input-group select {
+        width: 100%;
+      }
+    }
+
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+
+    button, .checkbox-container, input {
+      touch-action: manipulation;
+    }
+
+    .resultado::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .resultado::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    
+    .resultado::-webkit-scrollbar-thumb {
+      background: #2980b9;
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Interpretação de Gasometria e Ventilação Mecânica</h1>
+    <h1>Interpretação Gasometria e VM <span class="badge-ats">ATS/ERS 2024</span></h1>
+    
+    <!-- Seção de Peso Ideal (ATENÇÃO ESPECIAL) -->
+    <div class="section">
+      <h2>⚖️ Dados do Paciente</h2>
+      
+      <div class="aviso-importante">
+        <strong>⚠️ ATENÇÃO FISIOTERAPEUTA:</strong>
+        O cálculo do Volume Corrente ideal deve ser baseado no <strong>PESO PREDITO</strong>, não no peso real do paciente. 
+        Utilize a fórmula: <br>• Homens: 50 + 0.91 × (altura cm - 152.4)<br>• Mulheres: 45.5 + 0.91 × (altura cm - 152.4)
+      </div>
+      
+      <label>Altura (cm) <span style="font-weight: normal; color: #666;">- obrigatório para VT ideal</span></label>
+      <input type="number" step="1" id="altura" placeholder="Ex: 170" inputmode="numeric">
+      
+      <div class="input-group">
+        <div style="flex: 1;">
+          <label>Peso Predito (calculado)</label>
+          <input type="number" step="0.1" id="pesoPredito" placeholder="Será calculado" readonly style="background: #f0f7fc;">
+        </div>
+        <div style="width: 120px;">
+          <label>Sexo</label>
+          <select id="sexo">
+            <option value="">Selecione</option>
+            <option value="masculino">Masculino</option>
+            <option value="feminino">Feminino</option>
+          </select>
+        </div>
+      </div>
+      
+      <button class="secondary" onclick="calcularPesoPredito()" style="margin-top: 16px;">📐 Calcular Peso Predito</button>
+    </div>
     
     <!-- Seção de Gasometria -->
-    <div class="section" id="gasometria-section">
-      <h2>Dados da Gasometria</h2>
-      <label for="ph">pH (normal: 7.35 - 7.45)</label>
-      <input type="number" step="0.01" id="ph" placeholder="Ex: 7.40" required>
+    <div class="section">
+      <h2>📊 Gasometria <span class="badge-ats">ATS</span></h2>
       
-      <label for="pco2">pCO₂ (mmHg) (normal: 35 - 45)</label>
-      <input type="number" step="0.1" id="pco2" placeholder="Ex: 40" required>
+      <div class="info-box">
+        <strong>📋 Valores de Referência (ATS/ERS):</strong>
+        pH: 7.35-7.45 | pCO₂: 35-45 mmHg | HCO₃⁻: 22-26 mmol/L | pO₂: 80-100 mmHg | BE: -2 a +2
+      </div>
       
-      <label for="hco3">HCO₃⁻ (mmol/L) (normal: 22 - 26)</label>
-      <input type="number" step="0.1" id="hco3" placeholder="Ex: 24" required>
+      <label>pH</label>
+      <input type="number" step="0.01" id="ph" placeholder="Ex: 7.40" inputmode="decimal">
       
-      <label for="po2">pO₂ (mmHg) (opcional)</label>
-      <input type="number" step="0.1" id="po2" placeholder="Ex: 90">
+      <label>pCO₂ (mmHg)</label>
+      <input type="number" step="0.1" id="pco2" placeholder="Ex: 40" inputmode="decimal">
       
-      <label for="be">BE (Excesso de Base) (opcional)</label>
-      <input type="number" step="0.1" id="be" placeholder="Ex: -2">
+      <label>HCO₃⁻ (mmol/L)</label>
+      <input type="number" step="0.1" id="hco3" placeholder="Ex: 24" inputmode="decimal">
       
-      <button onclick="interpretarGasometria()">Interpretar Gasometria</button>
+      <label>pO₂ (mmHg) <span style="font-weight: normal; color: #666;">(opcional)</span></label>
+      <input type="number" step="0.1" id="po2" placeholder="Ex: 90" inputmode="decimal">
+      
+      <label>BE <span style="font-weight: normal; color: #666;">(opcional)</span></label>
+      <input type="number" step="0.1" id="be" placeholder="Ex: -2" inputmode="decimal">
+      
+      <button onclick="interpretarGasometria()">📈 Interpretar Gasometria (ATS/ERS)</button>
       
       <div class="resultado" id="resultadoGasometria"></div>
     </div>
     
     <!-- Seção de Ventilação Mecânica -->
-    <div class="section" id="ventilacao-section">
-      <h2>Dados da Ventilação Mecânica</h2>
-      <label for="vt">Volume Corrente (mL)</label>
-      <input type="number" step="1" id="vt" placeholder="Ex: 450">
+    <div class="section">
+      <h2>💨 Ventilação Mecânica <span class="badge-ats">ATS/ESICM</span></h2>
       
-      <label for="fr">Frequência Respiratória (bpm)</label>
-      <input type="number" step="1" id="fr" placeholder="Ex: 16">
+      <div class="info-box">
+        <strong>🔬 Diretrizes ATS/ESICM 2024:</strong>
+        • VT: 4-8 mL/kg peso predito (alvo 6 mL/kg)<br>
+        • Pressão Platô: < 30 cmH₂O (forte recomendação)<br>
+        • Driving Pressure: < 15 cmH₂O (se possível)<br>
+        • Posição Prona: se PaO₂/FiO₂ < 150<br>
+        • Contra recrutamento prolongado (>35 cmH₂O por ≥1 min)
+      </div>
       
-      <label for="ti">Tempo Inspiratório (segundos)</label>
-      <input type="number" step="0.1" id="ti" placeholder="Ex: 1.0">
+      <label>Volume Corrente (mL)</label>
+      <input type="number" step="1" id="vt" placeholder="Ex: 450" inputmode="numeric">
+      <div class="label-small" id="vtIdealDisplay"></div>
       
-      <label for="pico">Pressão de Pico (cmH₂O)</label>
-      <input type="number" step="1" id="pico" placeholder="Ex: 30">
+      <label>Frequência Respiratória (bpm)</label>
+      <input type="number" step="1" id="fr" placeholder="Ex: 16" inputmode="numeric">
+      
+      <label>Tempo Inspiratório (s)</label>
+      <input type="number" step="0.1" id="ti" placeholder="Ex: 1.0" inputmode="decimal">
+      
+      <label>Pressão de Pico (cmH₂O)</label>
+      <input type="number" step="1" id="pico" placeholder="Ex: 30" inputmode="numeric">
+      
+      <label>Pressão Platô (cmH₂O) <span style="font-weight: normal; color: #666;">(recomendado ATS)</span></label>
+      <input type="number" step="1" id="pplat" placeholder="Ex: 25" inputmode="numeric">
+      
+      <label>PEEP (cmH₂O) <span style="font-weight: normal; color: #666;">(opcional)</span></label>
+      <input type="number" step="1" id="peep" placeholder="Ex: 8" inputmode="numeric">
+      
+      <label>PaO₂/FiO₂ <span style="font-weight: normal; color: #666;">(opcional)</span></label>
+      <input type="number" step="1" id="pf" placeholder="Ex: 200" inputmode="numeric">
       
       <div class="checkbox-container">
         <input type="checkbox" id="obstrutivo">
-        <label for="obstrutivo" style="margin:0;">Paciente com distúrbio obstrutivo</label>
+        <label for="obstrutivo">🫁 Paciente com distúrbio obstrutivo (DPOC/Asma)</label>
       </div>
       
-      <button onclick="interpretarVentilacao()">Confirmar Ventilação</button>
+      <div class="checkbox-container">
+        <input type="checkbox" id="ards">
+        <label for="ards">🫁 SDRA (Síndrome do Desconforto Respiratório Agudo)</label>
+      </div>
+      
+      <button onclick="interpretarVentilacao()">✅ Analisar conforme ATS/ERS</button>
       
       <div class="resultado" id="resultadoVentilacao"></div>
     </div>
     
+    <div class="referencia">
+      Baseado nas diretrizes <strong>ATS/ERS/ESICM 2023-2024</strong> e declarações conjuntas. Recomendações para ventilação protetora e manejo de SDRA.
+    </div>
   </div>
   
   <script>
-    // Função para validar os campos essenciais de gasometria
+    // Calcula o peso predito baseado na altura e sexo
+    function calcularPesoPredito() {
+      const altura = parseFloat(document.getElementById('altura').value);
+      const sexo = document.getElementById('sexo').value;
+      
+      if (isNaN(altura) || altura < 100 || altura > 250) {
+        alert("Por favor, digite uma altura válida (100-250 cm)");
+        return;
+      }
+      
+      if (!sexo) {
+        alert("Selecione o sexo do paciente");
+        return;
+      }
+      
+      let pesoPredito;
+      if (sexo === 'masculino') {
+        pesoPredito = 50 + 0.91 * (altura - 152.4);
+      } else {
+        pesoPredito = 45.5 + 0.91 * (altura - 152.4);
+      }
+      
+      pesoPredito = Math.round(pesoPredito * 10) / 10;
+      document.getElementById('pesoPredito').value = pesoPredito;
+      
+      // Atualiza a faixa de VT ideal
+      const vtMin = Math.round(pesoPredito * 4);
+      const vtAlvo = Math.round(pesoPredito * 6);
+      const vtMax = Math.round(pesoPredito * 8);
+      
+      document.getElementById('vtIdealDisplay').innerHTML = 
+        `✅ VT ideal para este paciente: ${vtMin}-${vtMax} mL (alvo: ${vtAlvo} mL) · 4-8 mL/kg`;
+      
+      return pesoPredito;
+    }
+    
     function validarGasometria(ph, pco2, hco3) {
       let erros = [];
-      if (isNaN(ph)) erros.push("pH é obrigatório.");
-      if (isNaN(pco2)) erros.push("pCO₂ é obrigatório.");
-      if (isNaN(hco3)) erros.push("HCO₃⁻ é obrigatório.");
+      if (isNaN(ph)) erros.push("⚠️ pH é obrigatório.");
+      if (isNaN(pco2)) erros.push("⚠️ pCO₂ é obrigatório.");
+      if (isNaN(hco3)) erros.push("⚠️ HCO₃⁻ é obrigatório.");
       return erros;
     }
     
-    // Interpretação dos dados de gasometria
     function interpretarGasometria() {
       const ph = parseFloat(document.getElementById('ph').value);
       const pco2 = parseFloat(document.getElementById('pco2').value);
@@ -163,129 +495,209 @@
       
       let erros = validarGasometria(ph, pco2, hco3);
       if (erros.length) {
-        document.getElementById('resultadoGasometria').innerText = "Erros:\n" + erros.join("\n");
+        document.getElementById('resultadoGasometria').innerHTML = erros.join("<br>");
         return;
       }
       
-      let alerta = "";
-      if (ph < 7.35 || ph > 7.45) alerta += "pH fora do normal (" + ph + ").\n";
-      if (pco2 < 35 || pco2 > 45) alerta += "pCO₂ fora do normal (" + pco2 + " mmHg).\n";
-      if (hco3 < 22 || hco3 > 26) alerta += "HCO₃⁻ fora do normal (" + hco3 + " mmol/L).\n";
-      if (!isNaN(po2) && (po2 < 80 || po2 > 100)) alerta += "pO₂ fora do normal (" + po2 + " mmHg).\n";
-      if (!isNaN(be) && (be < -2 || be > 2)) alerta += "BE fora do normal (" + be + ").\n";
+      let alerta = [];
+      if (ph < 7.35 || ph > 7.45) alerta.push(`pH: ${ph} (VR: 7.35-7.45)`);
+      if (pco2 < 35 || pco2 > 45) alerta.push(`pCO₂: ${pco2} mmHg (VR: 35-45)`);
+      if (hco3 < 22 || hco3 > 26) alerta.push(`HCO₃⁻: ${hco3} mmol/L (VR: 22-26)`);
+      if (!isNaN(po2) && (po2 < 80 || po2 > 100)) alerta.push(`pO₂: ${po2} mmHg (VR: 80-100)`);
+      if (!isNaN(be) && (be < -2 || be > 2)) alerta.push(`BE: ${be} (VR: -2 a +2)`);
       
       let interpretacao = "";
       if (ph < 7.35) {
-        interpretacao += "Acidose. ";
-        if (pco2 > 45) {
-          interpretacao += "Predominância respiratória (pCO₂ elevado).\n";
+        interpretacao = "🔴 <strong>ACIDOSE</strong><br>";
+        if (pco2 > 45 && hco3 < 22) {
+          interpretacao += "• Acidose mista (respiratória + metabólica)";
+        } else if (pco2 > 45) {
+          interpretacao += "• Acidose respiratória (pCO₂ ↑)";
         } else if (hco3 < 22) {
-          interpretacao += "Predominância metabólica (HCO₃⁻ baixo).\n";
+          interpretacao += "• Acidose metabólica (HCO₃⁻ ↓)";
         } else {
-          interpretacao += "Possível acidose mista.\n";
+          interpretacao += "• Padrão não definido - avaliar compensação";
         }
       } else if (ph > 7.45) {
-        interpretacao += "Alcalose. ";
-        if (pco2 < 35) {
-          interpretacao += "Predominância respiratória (pCO₂ baixo).\n";
+        interpretacao = "🔵 <strong>ALCALOSE</strong><br>";
+        if (pco2 < 35 && hco3 > 26) {
+          interpretacao += "• Alcalose mista (respiratória + metabólica)";
+        } else if (pco2 < 35) {
+          interpretacao += "• Alcalose respiratória (pCO₂ ↓)";
         } else if (hco3 > 26) {
-          interpretacao += "Predominância metabólica (HCO₃⁻ alto).\n";
+          interpretacao += "• Alcalose metabólica (HCO₃⁻ ↑)";
         } else {
-          interpretacao += "Possível alcalose mista.\n";
+          interpretacao += "• Padrão não definido - avaliar compensação";
         }
       } else {
-        interpretacao += "pH dentro da normalidade.\n";
+        interpretacao = "🟢 <strong>pH NORMAL</strong><br>";
+        if (pco2 > 45 && hco3 > 26) {
+          interpretacao += "• Distúrbio misto: Acidose respiratória + Alcalose metabólica (pH compensado)";
+        } else if (pco2 < 35 && hco3 < 22) {
+          interpretacao += "• Distúrbio misto: Alcalose respiratória + Acidose metabólica (pH compensado)";
+        } else {
+          interpretacao += "• Gasometria dentro dos parâmetros de normalidade";
+        }
       }
       
-      let resultado = "Interpretação da Gasometria:\n" + interpretacao;
-      if (alerta) resultado += "\nParâmetros fora da normalidade:\n" + alerta;
-      document.getElementById('resultadoGasometria').innerText = resultado;
+      let resultado = `<strong>📋 Interpretação ATS/ERS:</strong><br>${interpretacao}`;
+      
+      if (alerta.length > 0) {
+        resultado += `<br><br><strong>⚠️ Valores fora da referência:</strong><br>`;
+        resultado += alerta.join("<br>");
+      }
+      
+      // Recomendação baseada em evidências
+      if (ph < 7.35 && pco2 > 45) {
+        resultado += `<br><br><strong>💡 Conduta baseada em evidências:</strong><br>`;
+        resultado += `• Avaliar causa: sedação excessiva, fadiga muscular, obstrução de vias aéreas<br>`;
+        resultado += `• Antes de ajustar FR: verifique auto-PEEP e driving pressure<br>`;
+        resultado += `• Considere aumentar FR se auto-PEEP < 10 cmH₂O e Pplat < 30`;
+      }
+      
+      if (!isNaN(po2) && po2 < 60) {
+        resultado += `<br><br><strong>⚠️ Hipoxemia grave:</strong> Considere otimizar PEEP, posição prona se SDRA e PaO₂/FiO₂ < 150 (recomendação ATS forte)`;
+      }
+      
+      document.getElementById('resultadoGasometria').innerHTML = resultado;
     }
     
-    // Interpretação dos dados da ventilação mecânica com ênfase na proteção pulmonar
     function interpretarVentilacao() {
       const vt = parseFloat(document.getElementById('vt').value);
       const fr = parseFloat(document.getElementById('fr').value);
       const ti = parseFloat(document.getElementById('ti').value);
       const pico = parseFloat(document.getElementById('pico').value);
+      const pplat = parseFloat(document.getElementById('pplat').value);
+      const peep = parseFloat(document.getElementById('peep').value);
+      const pf = parseFloat(document.getElementById('pf').value);
       const obstrutivo = document.getElementById('obstrutivo').checked;
+      const ards = document.getElementById('ards').checked;
       
-      // Dados gasométricos para integração (se disponíveis)
+      const pesoPredito = parseFloat(document.getElementById('pesoPredito').value);
+      
       const ph = parseFloat(document.getElementById('ph').value);
       const pco2 = parseFloat(document.getElementById('pco2').value);
-      const hco3 = parseFloat(document.getElementById('hco3').value);
       
-      let resultado = "Interpretação da Ventilação Mecânica:\n";
-      
-      // Validação dos dados ventilatórios
       if (isNaN(vt) || isNaN(fr) || isNaN(ti) || isNaN(pico)) {
-        document.getElementById('resultadoVentilacao').innerText = "Por favor, preencha todos os dados de ventilação.";
+        document.getElementById('resultadoVentilacao').innerHTML = "⚠️ Preencha todos os dados de ventilação obrigatórios.";
         return;
       }
       
-      // Orientações para Volume Corrente (VT)
-      if (vt < 300) {
-        resultado += "- Volume corrente muito baixo (<300 mL): risco de hipoventilação e atelectasia. Evite reduções drásticas.\n";
-      } else if (vt >= 300 && vt < 450) {
-        resultado += "- Volume corrente baixo: considere um ajuste cuidadoso, visando manter a proteção pulmonar sem comprometer a ventilação.\n";
-      } else if (vt >= 450 && vt <= 700) {
-        resultado += "- Volume corrente adequado: favorável à proteção pulmonar (meta ~6 mL/kg de peso predito), monitorando Pplat (<30 cmH₂O) e driving pressure.\n";
-      } else {
-        resultado += "- Volume corrente elevado (>700 mL): risco de volutrauma. Reduza o volume, mas sempre mantendo a Pplat e driving pressure dentro dos limites seguros.\n";
+      let resultado = "<strong>💨 Análise conforme Diretrizes ATS/ERS/ESICM 2024:</strong><br><br>";
+      
+      // Cálculo do driving pressure se Pplat e PEEP disponíveis
+      if (!isNaN(pplat) && !isNaN(peep)) {
+        const driving = pplat - peep;
+        resultado += `📊 <strong>Driving Pressure:</strong> ${driving} cmH₂O (recomendado < 15) - `;
+        if (driving < 15) {
+          resultado += "✅ Adequado<br>";
+        } else {
+          resultado += "⚠️ Elevado - associado a pior prognóstico em SDRA<br>";
+        }
       }
       
-      // Orientações para Frequência Respiratória (FR)
-      if (fr < 10) {
-        resultado += "- Frequência respiratória baixa: pode contribuir para hipercapnia, especialmente com VT baixo.\n";
-      } else if (fr <= 20) {
-        resultado += "- Frequência respiratória adequada.\n";
-      } else if (fr <= 30) {
-        resultado += "- Frequência respiratória elevada: cuidado com a redução do tempo expiratório, o que pode levar à hiperinsuflação.\n";
-      } else {
-        resultado += "- Frequência respiratória muito elevada: risco de fadiga muscular e hiperventilação. Ajuste com cautela.\n";
-      }
-      
-      // Orientações para Tempo Inspiratório (TI)
-      if (ti < 0.8) {
-        resultado += "- Tempo inspiratório curto: pode comprometer a oxigenação e a distribuição do VT.\n";
-      } else if (ti <= 1.5) {
-        resultado += "- Tempo inspiratório adequado, permitindo uma inspiração eficaz sem prejudicar o tempo expiratório.\n";
-      } else {
-        resultado += "- Tempo inspiratório prolongado: prejudica o tempo expiratório, aumentando o risco de hiperinsuflação, especialmente em pacientes obstrutivos.\n";
-      }
-      
-      // Orientações para Pressão de Pico (pico)
-      if (pico < 20) {
-        resultado += "- Pressão de pico baixa: pode indicar suporte ventilatório insuficiente ou baixa complacência pulmonar.\n";
-      } else if (pico <= 40) {
-        resultado += "- Pressão de pico adequada: desde que a Pplat esteja <30 cmH₂O e a driving pressure seja baixa, o risco de barotrauma se mantém controlado.\n";
-      } else {
-        resultado += "- Pressão de pico elevada (>40 cmH₂O): risco aumentado de barotrauma. Reduza VT ou ajuste a PEEP para diminuir a driving pressure.\n";
-      }
-      
-      // Integração com os dados gasométricos, se disponíveis
-      if (!isNaN(ph) && !isNaN(pco2) && !isNaN(hco3)) {
-        if (ph < 7.35 && pco2 > 45) {
-          resultado += "\nIntegração Gasométrica:\n- Gasometria indica acidose respiratória. Considere, com cautela, aumentar a frequência respiratória para melhorar a eliminação de CO₂, sem reduzir o VT a ponto de comprometer a ventilação efetiva.\n";
-        } else if (ph > 7.45 && pco2 < 35) {
-          resultado += "\nIntegração Gasométrica:\n- Gasometria indica alcalose respiratória. Considere ajustar o tempo expiratório, evitando aumentar excessivamente a frequência respiratória.\n";
+      // Análise do VT baseado em peso predito
+      if (!isNaN(pesoPredito) && pesoPredito > 0) {
+        const vtPorKg = vt / pesoPredito;
+        resultado += `<br>📏 <strong>Volume Corrente:</strong> ${vt} mL (${vtPorKg.toFixed(1)} mL/kg) - `;
+        
+        if (vtPorKg < 4) {
+          resultado += "⚠️ <strong>ABAIXO</strong> da recomendação 4-8 mL/kg (risco de hipoventilação/atelectasia)<br>";
+        } else if (vtPorKg >= 4 && vtPorKg <= 6) {
+          resultado += "✅ <strong>ÓTIMO</strong> - Faixa ideal de proteção pulmonar (alvo 6 mL/kg)<br>";
+        } else if (vtPorKg > 6 && vtPorKg <= 8) {
+          resultado += "🟡 <strong>ACEITÁVEL</strong> - Dentro da faixa recomendada, mas prefira 6 mL/kg em SDRA<br>";
+        } else {
+          resultado += "🔴 <strong>ACIMA</strong> da recomendação (>8 mL/kg) - risco de volutrauma. Reduza para 6 mL/kg!<br>";
         }
       } else {
-        resultado += "\nDados gasométricos não completos para integração com a ventilação.\n";
+        resultado += `<br>📏 <strong>Volume Corrente:</strong> ${vt} mL - `;
+        if (vt < 300) resultado += "Muito baixo para paciente médio (calcule peso predito)<br>";
+        else if (vt > 700) resultado += "Elevado para maioria dos pacientes (risco de volutrauma)<br>";
+        else resultado += "Valor intermediário - calcule peso predito para avaliação precisa<br>";
       }
       
-      // Sugestões específicas para quadros obstrutivos
+      // Pressão Platô (recomendação forte ATS)
+      if (!isNaN(pplat)) {
+        resultado += `<br>📊 <strong>Pressão Platô:</strong> ${pplat} cmH₂O - `;
+        if (pplat < 30) {
+          resultado += "✅ Adequada (recomendação ATS/ESICM)<br>";
+        } else {
+          resultado += "🔴 <strong>ELEVADA</strong> (>30) - risco de barotrauma. Reduza VT ou ajuste PEEP!<br>";
+        }
+      }
+      
+      // Pressão de Pico
+      resultado += `<br>📊 <strong>Pressão de Pico:</strong> ${pico} cmH₂O - `;
+      if (pico < 30) resultado += "Adequada<br>";
+      else if (pico <= 40) resultado += "Limítrofe - monitore Pplat<br>";
+      else resultado += "Elevada - avalie resistência de vias aéreas e Pplat<br>";
+      
+      // FR e auto-PEEP
+      resultado += `<br>📊 <strong>Frequência Respiratória:</strong> ${fr} bpm - `;
+      if (fr < 12) resultado += "Baixa - risco de hipercapnia se VT baixo<br>";
+      else if (fr <= 25) resultado += "Faixa usual<br>";
+      else resultado += "Elevada - risco de auto-PEEP. Avalie tempo expiratório<br>";
+      
+      // Tempo inspiratório
+      resultado += `<br>📊 <strong>Tempo Inspiratório:</strong> ${ti}s - `;
+      const relacaoIE = ti / (60/fr - ti);
+      if (ti < 0.8) resultado += "Curto - pode comprometer distribuição do VT<br>";
+      else if (ti <= 1.3) resultado += "Adequado<br>";
+      else resultado += "Prolongado - reduza para aumentar tempo expiratório<br>";
+      
+      // PaO2/FiO2 e posição prona
+      if (!isNaN(pf)) {
+        resultado += `<br>📊 <strong>PaO₂/FiO₂:</strong> ${pf} - `;
+        if (pf < 150 && ards) {
+          resultado += "<br>🔵 <strong>RECOMENDAÇÃO FORTE ATS/ERS:</strong> Posição prona por >12-16h/dia em SDRA moderada a grave (PaO₂/FiO₂ < 150)<br>";
+        } else if (pf < 200) {
+          resultado += "Hipoxemia moderada - otimize PEEP e considere recrutamento cuidadoso<br>";
+        }
+      }
+      
+      // Condutas específicas baseadas em diretrizes
+      resultado += "<br><strong>🏥 CONDUTAS BASEADAS EM EVIDÊNCIAS ATS/ERS:</strong><br>";
+      
+      if (ards) {
+        resultado += "• <strong>SDRA confirmada:</strong> Ventilação protetora com VT 6 mL/kg (4-8), Pplat <30, driving pressure <15<br>";
+        resultado += "• <strong>PEEP:</strong> Tabela PEEP/FiO₂ ou titration baseado em complacência<br>";
+        resultado += "• <strong>Manobras de recrutamento:</strong> EVITAR manobras prolongadas (>35 cmH₂O por ≥1 min) - contraindicado pela ATS/ESICM 2024<br>";
+        resultado += "• <strong>Bloqueador neuromuscular:</strong> Considerar se assincronia persistente (recomendação condicional)<br>";
+      }
+      
       if (obstrutivo) {
-        resultado += "\nPaciente com distúrbio obstrutivo:\n";
-        resultado += "- Prolongue o tempo expiratório (reduza a frequência e/ou o tempo inspiratório) para melhorar o esvaziamento alveolar e reduzir a hiperinsuflação.\n";
-        resultado += "- Ajuste a PEEP para manter os alvéolos abertos, sem contribuir para a hiperinsuflação; monitore a pressão platô se disponível.\n";
-        resultado += "- Considere o uso de broncodilatadores e medidas para manejo de secreções conforme o quadro clínico.\n";
+        resultado += "• <strong>Doença obstrutiva:</strong> Monitorar auto-PEEP (alvo <10 cmH₂O). PEEP externa = 50-85% da auto-PEEP<br>";
+        resultado += "• <strong>Tempo expiratório:</strong> Aumente (reduza FR ou TI) para melhorar esvaziamento alveolar<br>";
+        resultado += "• <strong>VNI:</strong> Primeira linha na exacerbação DPOC (recomendação forte ATS/ERS)<br>";
       }
       
-      document.getElementById('resultadoVentilacao').innerText = resultado;
+      // Integração com gasometria - abordagem mais sofisticada
+      if (!isNaN(ph) && !isNaN(pco2)) {
+        resultado += "<br><strong>🔄 INTEGRAÇÃO GASOMETRIA-VENTILAÇÃO:</strong><br>";
+        
+        if (ph < 7.35 && pco2 > 45) {
+          resultado += "• Acidose respiratória: ANTES de aumentar FR, avalie auto-PEEP e driving pressure. Se auto-PEEP <10 e Pplat <30, aumente FR gradualmente<br>";
+        } else if (ph > 7.45 && pco2 < 35) {
+          resultado += "• Alcalose respiratória: Reduza FR ou aumente espaço morto. Evite hiperventilação iatrogênica<br>";
+        }
+      }
+      
+      document.getElementById('resultadoVentilacao').innerHTML = resultado;
     }
+    
+    // Atualiza display do VT ideal quando altura/sexo mudam
+    document.getElementById('altura').addEventListener('input', function() {
+      if (document.getElementById('sexo').value) {
+        calcularPesoPredito();
+      }
+    });
+    
+    document.getElementById('sexo').addEventListener('change', function() {
+      if (document.getElementById('altura').value) {
+        calcularPesoPredito();
+      }
+    });
   </script>
 </body>
 </html>
-
-
