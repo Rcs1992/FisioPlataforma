@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"/>
   <title>Avaliação Fisioterapêutica</title>
   <style>
     :root {
@@ -15,36 +15,54 @@
       --border: #e2e8f0;
       --accent: #10b981;
       --danger: #ef4444;
+      --surface: #ffffff;
+      --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
+      --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
     }
 
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       margin: 0;
-      padding: 16px;
+      padding: 12px;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.5;
-      font-size: 15px;
+      line-height: 1.4;
+      font-size: 14px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Melhorias de toque mobile */
+    input, select, textarea, button, [role="button"] {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
 
     h3 {
-      margin: 28px 0 12px;
-      font-size: 1.3rem;
+      margin: 24px 0 12px;
+      font-size: 1.2rem;
+      font-weight: 600;
       color: var(--primary-dark);
       border-bottom: 1px solid var(--border);
       padding-bottom: 8px;
+      letter-spacing: -0.01em;
     }
 
     label {
       display: block;
-      margin: 0 0 6px 2px;
-      font-size: 0.92rem;
+      margin: 0 0 4px 4px;
+      font-size: 0.85rem;
       font-weight: 600;
       color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
     }
 
     input[type="text"],
@@ -52,13 +70,43 @@
     select,
     textarea {
       width: 100%;
-      padding: 11px 14px;
-      margin-bottom: 14px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
       border: 1px solid var(--border);
-      border-radius: 10px;
-      font-size: 15px;
-      background: white;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      border-radius: 12px;
+      font-size: 16px; /* Previne zoom automático no iOS */
+      background: var(--surface);
+      transition: all 0.2s ease;
+      -webkit-appearance: none;
+      appearance: none;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Ajuste para selects com seta customizada */
+    select {
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 18px;
+      padding-right: 44px;
+    }
+
+    select[multiple] {
+      background-image: none;
+      height: auto;
+      min-height: 140px;
+      padding: 10px;
+    }
+
+    select[multiple] option {
+      padding: 10px 12px;
+      margin: 2px 0;
+      border-radius: 8px;
+    }
+
+    select[multiple] option:checked {
+      background: var(--primary) linear-gradient(0deg, var(--primary) 0%, var(--primary) 100%);
+      color: white;
     }
 
     input:focus,
@@ -72,32 +120,34 @@
     textarea {
       min-height: 100px;
       resize: vertical;
+      line-height: 1.5;
     }
 
     .section {
       background: var(--card);
-      padding: 18px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      padding: 16px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(0,0,0,0.02);
+      transition: all 0.2s ease;
     }
 
-    .section:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    .section:active {
+      background: #fafafa;
     }
 
     .row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 4px;
     }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
     }
 
     .full {
@@ -108,162 +158,286 @@
       display: none !important;
     }
 
-    select[multiple] {
-      height: 160px;
-      padding: 8px;
-      font-size: 14px;
+    /* Checkbox e radio melhorados */
+    .checkbox-group {
+      margin: 16px 0 8px;
     }
 
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      margin: 8px 0;
+      font-weight: 500;
+      font-size: 15px;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: none;
+      letter-spacing: normal;
+    }
+
+    .checkbox-group label:active {
+      background: #e9ecef;
+      transform: scale(0.99);
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      margin: 0;
+      accent-color: var(--primary);
+      pointer-events: none;
+    }
+
+    /* Botões principais */
     button {
       width: 100%;
-      padding: 16px;
+      padding: 16px 20px;
       font-size: 1.1rem;
       font-weight: 600;
       background: var(--primary);
       color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 14px;
       cursor: pointer;
-      margin: 20px 0 12px;
-      transition: all 0.25s ease;
-      box-shadow: 0 3px 8px rgba(0,102,204,0.2);
-    }
-
-    button:hover {
-      background: var(--primary-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0,102,204,0.3);
+      margin: 12px 0 10px;
+      transition: all 0.15s ease;
+      box-shadow: 0 4px 10px rgba(0,102,204,0.2);
+      -webkit-appearance: none;
+      letter-spacing: 0.3px;
+      touch-action: manipulation;
     }
 
     button:active {
-      transform: translateY(0);
-      box-shadow: 0 2px 6px rgba(0,102,204,0.2);
+      background: var(--primary-dark);
+      transform: scale(0.98);
+      box-shadow: 0 2px 5px rgba(0,102,204,0.2);
+    }
+
+    /* Botão de cópia */
+    button:last-of-type {
+      background: var(--accent);
+      box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+      margin-top: 8px;
+    }
+
+    button:last-of-type:active {
+      background: #0e9f6e;
     }
 
     #output {
       white-space: pre-wrap;
       background: white;
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px;
-      margin: 20px 0;
-      font-family: 'Segoe UI', 'Courier New', monospace;
-      font-size: 14.5px;
-      line-height: 1.6;
+      border-radius: 16px;
+      padding: 16px;
+      margin: 16px 0 10px;
+      font-size: 14px;
+      line-height: 1.5;
       background: linear-gradient(to bottom, #ffffff, #f9fcff);
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+      max-height: 400px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .small-title {
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 600;
-      margin: 14px 0 8px;
+      margin: 16px 0 10px;
       color: var(--primary-dark);
+      letter-spacing: -0.2px;
     }
 
-    .checkbox-group {
-      margin: 14px 0;
-    }
-
-    .checkbox-group label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 0;
-      font-weight: normal;
-      cursor: pointer;
-    }
-
-    /* Nova seção para evoluções salvas */
+    /* Seção de evoluções salvas */
     #evolucoesSalvas {
-      margin-top: 20px;
-      padding: 18px;
+      margin-top: 24px;
+      padding: 16px;
       background: var(--card);
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      border-radius: 20px;
+      box-shadow: var(--shadow-md);
     }
 
     #evolucoesSalvas h3 {
-      margin-top: 0;
+      margin-top: 4px;
+      margin-bottom: 16px;
     }
 
     #evolucoesLista {
       list-style: none;
-      padding: 0;
+      margin: 0;
     }
 
     #evolucoesLista li {
-      padding: 12px;
+      padding: 14px;
       border-bottom: 1px solid var(--border);
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
+      gap: 10px;
+      background: white;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      box-shadow: var(--shadow-sm);
     }
 
     #evolucoesLista li:last-child {
       border-bottom: none;
     }
 
+    #evolucoesLista span {
+      font-weight: 500;
+      color: var(--text);
+      font-size: 0.9rem;
+      flex: 1;
+      min-width: 140px;
+    }
+
+    #evolucoesLista div {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
     #evolucoesLista button {
       width: auto;
-      padding: 8px 12px;
-      margin: 0 4px;
-      font-size: 0.9rem;
+      padding: 10px 14px;
+      margin: 0;
+      font-size: 0.85rem;
+      border-radius: 20px;
       background: var(--accent);
+      box-shadow: none;
+      flex: 1;
+      min-width: 80px;
     }
 
     #evolucoesLista button.visualizar {
       background: var(--primary);
     }
 
-    #evolucoesLista button.visualizar:hover {
+    #evolucoesLista button.visualizar:active {
       background: var(--primary-dark);
     }
 
     #limparEvolucoes {
       background: var(--danger);
-      margin-top: 16px;
+      margin-top: 20px;
+      border-radius: 40px;
     }
 
-    #limparEvolucoes:hover {
+    #limparEvolucoes:active {
       background: #dc2626;
     }
 
-    /* Ajustes mobile */
-    @media (max-width: 640px) {
+    /* Badges e indicadores */
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      background: var(--primary);
+      color: white;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    /* Scroll suave */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Loading state para botões */
+    button.loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    /* Responsivo fino */
+    @media (max-width: 380px) {
       body {
-        padding: 12px;
+        padding: 8px;
       }
-      .section {
-        padding: 16px;
-        margin-bottom: 16px;
-      }
-      input, select, textarea {
-        font-size: 16px;
-        padding: 13px 16px;
-      }
-      button {
-        padding: 18px;
-        font-size: 1.15rem;
-      }
+      
       .row {
         grid-template-columns: 1fr;
       }
-      select[multiple] {
-        height: 180px;
-      }
+      
       #evolucoesLista li {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
+        align-items: stretch;
       }
+      
+      #evolucoesLista div {
+        justify-content: stretch;
+      }
+      
+      #evolucoesLista button {
+        flex: 1;
+      }
+    }
+
+    @media (min-width: 640px) and (max-width: 1023px) {
+      body {
+        padding: 24px;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      body {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 30px;
+        font-size: 15px;
+      }
+      
+      .section {
+        padding: 24px;
+      }
+    }
+
+    /* Animações suaves */
+    .fade-in {
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Ajustes de acessibilidade */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* Ajuste para selects no iOS */
+    @supports (-webkit-touch-callout: none) {
+      select {
+        font-size: 16px;
+      }
+    }
+
+    /* Indicador de campo obrigatório */
+    label.required::after {
+      content: " *";
+      color: var(--danger);
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
 
-  <!-- Todo o HTML original dos campos permanece igual, só adicionei a seção nova no final -->
-
+  <!-- TODO: Todo o HTML dos campos permanece igual, apenas com melhorias visuais -->
   <div class="section">
     <label for="leito">Leito</label>
     <input type="text" id="leito" placeholder="Ex: 12" />
@@ -597,7 +771,7 @@
 
   <button onclick="copiarEvolucao()">📋 Copiar Evolução</button>
 
-  <!-- Nova seção para evoluções salvas -->
+  <!-- Seção para evoluções salvas -->
   <div id="evolucoesSalvas">
     <h3>Evoluções Salvas Localmente</h3>
     <ul id="evolucoesLista"></ul>
@@ -605,7 +779,8 @@
   </div>
 
   <script>
-    // Funções originais mantidas
+    // TODO: Todas as funções JavaScript originais permanecem exatamente iguais
+    // Apenas adicionamos a função de loading e feedback tátil
 
     document.getElementById("sedado").addEventListener("change", function () {
       const el = document.getElementById("sedacaoDetalhes");
@@ -655,7 +830,12 @@
       temp.select();
       document.execCommand("copy");
       document.body.removeChild(temp);
-      alert("Evolução copiada para a área de transferência!");
+      
+      // Feedback visual
+      const btn = event.target;
+      const originalText = btn.innerText;
+      btn.innerText = "✅ Copiado!";
+      setTimeout(() => { btn.innerText = originalText; }, 1500);
     }
 
     function gerarCondutasTexto() {
@@ -801,191 +981,201 @@
     }
 
     function gerarEvolucao() {
-      // Lógica original para gerar o texto...
-      const estadoGeral = document.getElementById("estadoGeral").value;
-      const consciencia = document.getElementById("nivelConsciencia").value;
-      const sedado = document.getElementById("sedado").checked;
-      const rass = document.getElementById("rass").value;
-      const sedacaoTexto = sedado ? ` Paciente sedado, RASS: ${rass}.` : "";
+      const btn = event.target;
+      const originalText = btn.innerText;
+      btn.innerText = "⏳ Gerando...";
+      btn.disabled = true;
+      
+      // Pequeno delay para feedback visual
+      setTimeout(() => {
+        const estadoGeral = document.getElementById("estadoGeral").value;
+        const consciencia = document.getElementById("nivelConsciencia").value;
+        const sedado = document.getElementById("sedado").checked;
+        const rass = document.getElementById("rass").value;
+        const sedacaoTexto = sedado ? ` Paciente sedado, RASS: ${rass}.` : "";
 
-      const estadoGeralnovo = Array.from(document.getElementById("estadoGeralSelect").selectedOptions).map(option => option.value);
-      const sedativos = Array.from(document.getElementById("sedacaoSelect").selectedOptions).map(option => option.value);
-      const doseSedativos = document.getElementById("doseSedativos").value;
+        const estadoGeralnovo = Array.from(document.getElementById("estadoGeralSelect").selectedOptions).map(option => option.value);
+        const sedativos = Array.from(document.getElementById("sedacaoSelect").selectedOptions).map(option => option.value);
+        const doseSedativos = document.getElementById("doseSedativos").value;
 
-      const ventilacao = document.getElementById("ventilacao").value;
-      const oxigenioDetalhe = document.getElementById("oxigenioDetalhe").value;
+        const ventilacao = document.getElementById("ventilacao").value;
+        const oxigenioDetalhe = document.getElementById("oxigenioDetalhe").value;
 
-      const modoVM = document.getElementById("modoVM").value;
-      const pinsp = document.getElementById("pinsp").value;
-      const peep = document.getElementById("peep").value;
-      const fio2 = parseFloat(document.getElementById("fio2").value);
-      const vc = parseFloat(document.getElementById("vc").value);
-      const frVM = document.getElementById("frVM").value;
-      const plat = parseFloat(document.getElementById("plat").value);
-      const sexo = document.getElementById("sexo").value;
-      const altura = parseFloat(document.getElementById("altura").value);
-      const peso = parseFloat(document.getElementById("peso").value);
+        const modoVM = document.getElementById("modoVM").value;
+        const pinsp = document.getElementById("pinsp").value;
+        const peep = document.getElementById("peep").value;
+        const fio2 = parseFloat(document.getElementById("fio2").value);
+        const vc = parseFloat(document.getElementById("vc").value);
+        const frVM = document.getElementById("frVM").value;
+        const plat = parseFloat(document.getElementById("plat").value);
+        const sexo = document.getElementById("sexo").value;
+        const altura = parseFloat(document.getElementById("altura").value);
+        const peso = parseFloat(document.getElementById("peso").value);
 
-      let parametrosVM = "";
-      if (ventilacao === "em ventilação mecânica") {
-        parametrosVM = "Parâmetros ventilatórios:";
-        if (modoVM) parametrosVM += ` modo ${modoVM},`;
-        if (pinsp) parametrosVM += ` Pinsp/PS ${pinsp},`;
-        if (peep) parametrosVM += ` PEEP ${peep},`;
-        if (!isNaN(fio2)) parametrosVM += ` FiO₂ ${fio2}%,`;
-        if (!isNaN(vc)) parametrosVM += ` VT ${vc} mL,`;
-        if (frVM) parametrosVM += ` FR ${frVM} irpm,`;
-        if (!isNaN(plat)) parametrosVM += ` Pplat ${plat} cmH₂O,`;
-        parametrosVM = parametrosVM.replace(/,+$/, ".");
-      }
+        let parametrosVM = "";
+        if (ventilacao === "em ventilação mecânica") {
+          parametrosVM = "Parâmetros ventilatórios:";
+          if (modoVM) parametrosVM += ` modo ${modoVM},`;
+          if (pinsp) parametrosVM += ` Pinsp/PS ${pinsp},`;
+          if (peep) parametrosVM += ` PEEP ${peep},`;
+          if (!isNaN(fio2)) parametrosVM += ` FiO₂ ${fio2}%,`;
+          if (!isNaN(vc)) parametrosVM += ` VT ${vc} mL,`;
+          if (frVM) parametrosVM += ` FR ${frVM} irpm,`;
+          if (!isNaN(plat)) parametrosVM += ` Pplat ${plat} cmH₂O,`;
+          parametrosVM = parametrosVM.replace(/,+$/, ".");
+        }
 
-      const fc = document.getElementById("fc").value;
-      const pa = document.getElementById("pa").value;
-      const fr = document.getElementById("fr").value;
-      const spo2 = document.getElementById("spo2").value;
-      const temp = document.getElementById("temp").value;
+        const fc = document.getElementById("fc").value;
+        const pa = document.getElementById("pa").value;
+        const fr = document.getElementById("fr").value;
+        const spo2 = document.getElementById("spo2").value;
+        const temp = document.getElementById("temp").value;
 
-      const exameRespiratorio = Array.from(document.getElementById("exameRespiratorio").selectedOptions).map(opt => opt.value).join(" ");
-      const exameAbdominal = Array.from(document.getElementById("exameAbdominal").selectedOptions).map(opt => opt.value).join(" ");
+        const exameRespiratorio = Array.from(document.getElementById("exameRespiratorio").selectedOptions).map(opt => opt.value).join(" ");
+        const exameAbdominal = Array.from(document.getElementById("exameAbdominal").selectedOptions).map(opt => opt.value).join(" ");
 
-      const ims = document.getElementById("ims").value;
-      const mrc = document.getElementById("mrc").value;
+        const ims = document.getElementById("ims").value;
+        const mrc = document.getElementById("mrc").value;
 
-      const mobilidadeTexto = (ims || mrc)
-        ? `Mobilidade: IMS ${ims || "-"}, MRC ${mrc || "-"}.`
-        : "";
+        const mobilidadeTexto = (ims || mrc)
+          ? `Mobilidade: IMS ${ims || "-"}, MRC ${mrc || "-"}.`
+          : "";
 
-      const condutaTexto = gerarCondutasTexto();
+        const condutaTexto = gerarCondutasTexto();
 
-      const leito = document.getElementById("leito").value || "não informado";
+        const leito = document.getElementById("leito").value || "não informado";
 
-      const hb = parseFloat(document.getElementById("hb").value);
-      const plaquetas = parseFloat(document.getElementById("plaquetas").value);
-      const bastoes = parseFloat(document.getElementById("bastoes").value);
-      const leucograma = document.getElementById("leucograma").value;
-      const lactato = parseFloat(document.getElementById("lactato").value);
-      const creatinina = parseFloat(document.getElementById("creatinina").value);
-      const ureia = parseFloat(document.getElementById("ureia").value);
-      const sodio = parseFloat(document.getElementById("sodio").value);
-      const potassio = parseFloat(document.getElementById("potassio").value);
-      const examesTexto = document.getElementById("examesTexto").value;
+        const hb = parseFloat(document.getElementById("hb").value);
+        const plaquetas = parseFloat(document.getElementById("plaquetas").value);
+        const bastoes = parseFloat(document.getElementById("bastoes").value);
+        const leucograma = document.getElementById("leucograma").value;
+        const lactato = parseFloat(document.getElementById("lactato").value);
+        const creatinina = parseFloat(document.getElementById("creatinina").value);
+        const ureia = parseFloat(document.getElementById("ureia").value);
+        const sodio = parseFloat(document.getElementById("sodio").value);
+        const potassio = parseFloat(document.getElementById("potassio").value);
+        const examesTexto = document.getElementById("examesTexto").value;
 
-      const amostra = document.getElementById("amostra").value;
-      const ph = parseFloat(document.getElementById("ph").value);
-      const paco2 = parseFloat(document.getElementById("paco2").value);
-      const pao2 = parseFloat(document.getElementById("pao2").value);
-      const hco3 = parseFloat(document.getElementById("hco3").value);
-      const saturacao = parseFloat(document.getElementById("saturacao").value);
+        const amostra = document.getElementById("amostra").value;
+        const ph = parseFloat(document.getElementById("ph").value);
+        const paco2 = parseFloat(document.getElementById("paco2").value);
+        const pao2 = parseFloat(document.getElementById("pao2").value);
+        const hco3 = parseFloat(document.getElementById("hco3").value);
+        const saturacao = parseFloat(document.getElementById("saturacao").value);
 
-      const pbw = calcularPBW(sexo, altura);
+        const pbw = calcularPBW(sexo, altura);
 
-      let texto = `Paciente internado na UTI, leito ${leito}, ${estadoGeral}. Apresenta-se ${consciencia}.${sedacaoTexto}\n`;
+        let texto = `Paciente internado na UTI, leito ${leito}, ${estadoGeral}. Apresenta-se ${consciencia}.${sedacaoTexto}\n`;
 
-      if (estadoGeralnovo.length > 0) {
-        texto += `Avaliação física: ${estadoGeralnovo.join(', ')}.\n`;
-      }
+        if (estadoGeralnovo.length > 0) {
+          texto += `Avaliação física: ${estadoGeralnovo.join(', ')}.\n`;
+        }
 
-      if (sedativos.length > 0 || doseSedativos) {
-        texto += `Sedação: ${sedativos.join(', ')}.`;
-        if (doseSedativos) texto += ` Observações: ${doseSedativos}.`;
-        texto += `\n`;
-      }
+        if (sedativos.length > 0 || doseSedativos) {
+          texto += `Sedação: ${sedativos.join(', ')}.`;
+          if (doseSedativos) texto += ` Observações: ${doseSedativos}.`;
+          texto += `\n`;
+        }
 
-      if (document.getElementById("usaDVA").checked) {
-        const drogas = Array.from(document.getElementById("drogaVasoativa").selectedOptions).map(opt => opt.value);
-        const doseObs = document.getElementById("doseDVA").value.trim();
-        if (drogas.length > 0) {
-          texto += `Com necessidade de: ${drogas.join(", ")}.`;
-          if (doseObs) texto += ` Doses/observações: ${doseObs}.`;
+        if (document.getElementById("usaDVA").checked) {
+          const drogas = Array.from(document.getElementById("drogaVasoativa").selectedOptions).map(opt => opt.value);
+          const doseObs = document.getElementById("doseDVA").value.trim();
+          if (drogas.length > 0) {
+            texto += `Com necessidade de: ${drogas.join(", ")}.`;
+            if (doseObs) texto += ` Doses/observações: ${doseObs}.`;
+            texto += `\n`;
+          } else {
+            texto += `Uso de drogas vasoativas informado, porém nenhuma droga selecionada.\n`;
+          }
+        }
+
+        texto += `Encontra-se ${ventilacao}${oxigenioDetalhe ? ", utilizando: " + oxigenioDetalhe : ""}.\n`;
+        if (parametrosVM) texto += parametrosVM + "\n";
+
+        texto += `Sinais vitais: FC ${fc} bpm, PA ${pa} mmHg, FR ${fr} irpm, SpO₂ ${spo2}%, Tº ${temp}°C.\n`;
+        texto += `Exame respiratório: ${exameRespiratorio || "sem alterações relevantes"}.\n`;
+        texto += `Exame abdominal: ${exameAbdominal || "sem alterações relevantes"}.\n`;
+
+        if (mobilidadeTexto) texto += mobilidadeTexto + '\n';
+        if (condutaTexto) texto += condutaTexto + '\n';
+
+        texto += `\n--- Exames laboratoriais (principais) ---\n`;
+        if (!isNaN(hb)) texto += `Hb: ${hb} g/dL. `;
+        if (!isNaN(plaquetas)) texto += `Plaquetas: ${plaquetas} x10³. `;
+        if (!isNaN(bastoes)) texto += `Bastões: ${bastoes}%. `;
+        if (leucograma) texto += `Leucograma: ${leucograma}. `;
+        if (!isNaN(lactato)) texto += `Lactato: ${lactato} mmol/L. `;
+        if (!isNaN(creatinina)) texto += `Creatinina: ${creatinina} mg/dL. `;
+        if (!isNaN(ureia)) texto += `Ureia: ${ureia} mg/dL. `;
+        if (!isNaN(sodio)) texto += `Na⁺: ${sodio} mEq/L. `;
+        if (!isNaN(potassio)) texto += `K⁺: ${potassio} mEq/L. `;
+        if (examesTexto && examesTexto.trim() !== "") {
+          texto += `\nObservações/Laudo: ${examesTexto}\n`;
+        } else {
+          texto += `\n`;
+        }
+
+        texto += `\n--- Interpretação laboratorial (automática) ---\n`;
+        const labsInterpret = interpretarLabs({
+          hb, plaquetas, bastoes, leucograma,
+          lactato, creatinina, ureia, sodio, potassio
+        });
+        texto += labsInterpret + "\n";
+
+        texto += `\n--- Gasometria (${amostra}) ---\n`;
+        const gasInterpret = interpretarGasometria({
+          ph, paco2, pao2, hco3, saturacao, amostra
+        }, fio2, ventilacao === "em ventilação mecânica", { vt: isNaN(vc) ? NaN : vc, plat: isNaN(plat) ? NaN : plat }, pbw);
+        texto += gasInterpret + "\n";
+
+        texto += `\n--- Correlações e recomendações (VM) ---\n`;
+        if (ventilacao === "em ventilação mecânica") {
+          if (isNaN(pbw)) {
+            texto += `PBW: não calculado (sexo/altura ausentes). Informe sexo e altura para avaliação de VT/kg.\n`;
+          } else {
+            texto += `PBW calculado: ${pbw.toFixed(1)} kg.\n`;
+          }
+          if (!isNaN(vc) && !isNaN(pbw) && pbw > 0) {
+            const vtkg = vc / pbw;
+            texto += `VT atual: ${vc} mL → ${vtkg.toFixed(2)} mL/kg PBW.\n`;
+            if (vtkg > 8) texto += `Sugerido: reduzir VT para intervalo protetor (6–8 mL/kg PBW) se clinicamente possível.\n`;
+            else texto += `VT dentro do alvo protetor (6–8 mL/kg) ou próximo.\n`;
+          } else {
+            texto += `VT ou PBW não disponíveis para cálculo exato de VT/kg.\n`;
+          }
+          if (!isNaN(plat)) {
+            texto += `Pplat: ${plat} cmH₂O.`;
+            if (plat > 30) texto += ` Atenção: Pplat >30 cmH₂O — considerar ajustes (redução de VT) para evitar volutrauma.\n`;
+            else texto += ` Pplat dentro do alvo (≤30 cmH₂O).\n`;
+          } else {
+            texto += `Pplat não informado.\n`;
+          }
+          if (!isNaN(paco2)) {
+            if (paco2 > 50) texto += `PaCO₂ elevado — revisar ventilação (aumentar FR/VT se essencial) e avaliar causa (dead space, hipoventilação, sedação).`;
+            else if (paco2 < 30) texto += `PaCO₂ baixo — avaliar possibilidade de hiperventilação (sedação, modo ventilatório).`;
+          }
           texto += `\n`;
         } else {
-          texto += `Uso de drogas vasoativas informado, porém nenhuma droga selecionada.\n`;
+          texto += `Paciente não em ventilação mecânica — correlações com VM não aplicáveis.\n`;
         }
-      }
 
-      texto += `Encontra-se ${ventilacao}${oxigenioDetalhe ? ", utilizando: " + oxigenioDetalhe : ""}.\n`;
-      if (parametrosVM) texto += parametrosVM + "\n";
-
-      texto += `Sinais vitais: FC ${fc} bpm, PA ${pa} mmHg, FR ${fr} irpm, SpO₂ ${spo2}%, Tº ${temp}°C.\n`;
-      texto += `Exame respiratório: ${exameRespiratorio || "sem alterações relevantes"}.\n`;
-      texto += `Exame abdominal: ${exameAbdominal || "sem alterações relevantes"}.\n`;
-
-      if (mobilidadeTexto) texto += mobilidadeTexto + '\n';
-      if (condutaTexto) texto += condutaTexto + '\n';
-
-      texto += `\n--- Exames laboratoriais (principais) ---\n`;
-      if (!isNaN(hb)) texto += `Hb: ${hb} g/dL. `;
-      if (!isNaN(plaquetas)) texto += `Plaquetas: ${plaquetas} x10³. `;
-      if (!isNaN(bastoes)) texto += `Bastões: ${bastoes}%. `;
-      if (leucograma) texto += `Leucograma: ${leucograma}. `;
-      if (!isNaN(lactato)) texto += `Lactato: ${lactato} mmol/L. `;
-      if (!isNaN(creatinina)) texto += `Creatinina: ${creatinina} mg/dL. `;
-      if (!isNaN(ureia)) texto += `Ureia: ${ureia} mg/dL. `;
-      if (!isNaN(sodio)) texto += `Na⁺: ${sodio} mEq/L. `;
-      if (!isNaN(potassio)) texto += `K⁺: ${potassio} mEq/L. `;
-      if (examesTexto && examesTexto.trim() !== "") {
-        texto += `\nObservações/Laudo: ${examesTexto}\n`;
-      } else {
-        texto += `\n`;
-      }
-
-      texto += `\n--- Interpretação laboratorial (automática) ---\n`;
-      const labsInterpret = interpretarLabs({
-        hb, plaquetas, bastoes, leucograma,
-        lactato, creatinina, ureia, sodio, potassio
-      });
-      texto += labsInterpret + "\n";
-
-      texto += `\n--- Gasometria (${amostra}) ---\n`;
-      const gasInterpret = interpretarGasometria({
-        ph, paco2, pao2, hco3, saturacao, amostra
-      }, fio2, ventilacao === "em ventilação mecânica", { vt: isNaN(vc) ? NaN : vc, plat: isNaN(plat) ? NaN : plat }, pbw);
-      texto += gasInterpret + "\n";
-
-      texto += `\n--- Correlações e recomendações (VM) ---\n`;
-      if (ventilacao === "em ventilação mecânica") {
-        if (isNaN(pbw)) {
-          texto += `PBW: não calculado (sexo/altura ausentes). Informe sexo e altura para avaliação de VT/kg.\n`;
-        } else {
-          texto += `PBW calculado: ${pbw.toFixed(1)} kg.\n`;
+        const obsFinais = document.getElementById("obsFinais").value;
+        if (obsFinais.trim() !== "") {
+          texto += `\nObs.: ${obsFinais}\n`;
         }
-        if (!isNaN(vc) && !isNaN(pbw) && pbw > 0) {
-          const vtkg = vc / pbw;
-          texto += `VT atual: ${vc} mL → ${vtkg.toFixed(2)} mL/kg PBW.\n`;
-          if (vtkg > 8) texto += `Sugerido: reduzir VT para intervalo protetor (6–8 mL/kg PBW) se clinicamente possível.\n`;
-          else texto += `VT dentro do alvo protetor (6–8 mL/kg) ou próximo.\n`;
-        } else {
-          texto += `VT ou PBW não disponíveis para cálculo exato de VT/kg.\n`;
-        }
-        if (!isNaN(plat)) {
-          texto += `Pplat: ${plat} cmH₂O.`;
-          if (plat > 30) texto += ` Atenção: Pplat >30 cmH₂O — considerar ajustes (redução de VT) para evitar volutrauma.\n`;
-          else texto += ` Pplat dentro do alvo (≤30 cmH₂O).\n`;
-        } else {
-          texto += `Pplat não informado.\n`;
-        }
-        if (!isNaN(paco2)) {
-          if (paco2 > 50) texto += `PaCO₂ elevado — revisar ventilação (aumentar FR/VT se essencial) e avaliar causa (dead space, hipoventilação, sedação).`;
-          else if (paco2 < 30) texto += `PaCO₂ baixo — avaliar possibilidade de hiperventilação (sedação, modo ventilatório).`;
-        }
-        texto += `\n`;
-      } else {
-        texto += `Paciente não em ventilação mecânica — correlações com VM não aplicáveis.\n`;
-      }
 
-      const obsFinais = document.getElementById("obsFinais").value;
-      if (obsFinais.trim() !== "") {
-        texto += `\nObs.: ${obsFinais}\n`;
-      }
+        // Exibe a evolução atual
+        document.getElementById("output").innerText = texto;
 
-      // Exibe a evolução atual
-      document.getElementById("output").innerText = texto;
+        // Salva no localStorage (nova funcionalidade)
+        salvarEvolucao(texto);
 
-      // Salva no localStorage (nova funcionalidade)
-      salvarEvolucao(texto);
-
-      // Atualiza a lista de evoluções salvas
-      atualizarListaEvolucoes();
+        // Atualiza a lista de evoluções salvas
+        atualizarListaEvolucoes();
+        
+        btn.innerText = originalText;
+        btn.disabled = false;
+      }, 200);
     }
 
     // ────── Novas funções para armazenamento local ──────
@@ -1006,7 +1196,7 @@
 
       const evolucoes = JSON.parse(localStorage.getItem('evolucoes')) || [];
       if (evolucoes.length === 0) {
-        lista.innerHTML = "<li>Nenhuma evolução salva ainda.</li>";
+        lista.innerHTML = "<li style='text-align: center; color: var(--text-light); padding: 20px;'>Nenhuma evolução salva ainda.</li>";
         return;
       }
 
@@ -1015,7 +1205,7 @@
         li.innerHTML = `
           <span>${ev.data} (Evolução #${index + 1})</span>
           <div>
-            <button class="visualizar" onclick="visualizarEvolucao(${index})">Visualizar</button>
+            <button class="visualizar" onclick="visualizarEvolucao(${index})">👁️ Ver</button>
             <button onclick="copiarEvolucaoSalva(${index})">📋 Copiar</button>
           </div>
         `;
@@ -1027,7 +1217,14 @@
       const evolucoes = JSON.parse(localStorage.getItem('evolucoes')) || [];
       const texto = evolucoes[index]?.texto || "";
       document.getElementById("output").innerText = texto;
-      alert("Evolução carregada no output principal!");
+      
+      // Scroll suave até o output
+      document.getElementById("output").scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
+      // Feedback visual breve
+      const output = document.getElementById("output");
+      output.style.backgroundColor = "#f0f9ff";
+      setTimeout(() => { output.style.backgroundColor = ""; }, 500);
     }
 
     function copiarEvolucaoSalva(index) {
@@ -1043,7 +1240,12 @@
       temp.select();
       document.execCommand("copy");
       document.body.removeChild(temp);
-      alert("Evolução copiada para a área de transferência!");
+      
+      // Feedback visual no botão clicado
+      const btn = event.target;
+      const originalText = btn.innerText;
+      btn.innerText = "✅ Copiado!";
+      setTimeout(() => { btn.innerText = originalText; }, 1500);
     }
 
     function limparEvolucoes() {
@@ -1054,7 +1256,14 @@
     }
 
     // Carrega a lista ao abrir a página
-    window.addEventListener("load", atualizarListaEvolucoes);
+    window.addEventListener("load", () => {
+      atualizarListaEvolucoes();
+      
+      // Adiciona pequeno delay para animação
+      document.querySelectorAll('.section').forEach((el, i) => {
+        el.style.animation = `fadeIn 0.3s ease ${i * 0.05}s both`;
+      });
+    });
   </script>
 </body>
 </html>
