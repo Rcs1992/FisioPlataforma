@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Controle VENT · CER Leblon</title>
+    <!-- Fonte Georgia (similar à serifada) -->
+    <link href="https://fonts.googleapis.com/css2?family=Georgia&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #f0f2f5;
+            font-family: 'Georgia', 'Times New Roman', Times, serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 16px 8px;
+        }
+
+        .app-container {
+            max-width: 480px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 10px 30px rgba(0, 63, 127, 0.15);
+            overflow: hidden;
+            border: 1px solid #d9e2ef;
+        }
+
+        /* HEADER COM A LOGO REAL */
+        .header {
+            background: white;
+            padding: 16px 18px;
+            border-bottom: 4px solid #5c9ce5; /* azul claro */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .header img {
+            max-width: 220px;
+            height: auto;
+            display: block;
+        }
+
+        .secao {
+            margin: 14px 12px 20px 12px;
+            background: #f9fafc;
+            border-radius: 20px;
+            padding: 16px 12px;
+            border: 1px solid #d9e2ef;
+        }
+
+        .secao-titulo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #003f7f;
+            background: transparent;
+            display: inline-block;
+            padding: 6px 0 6px 0;
+            margin-bottom: 14px;
+            border-bottom: 3px solid #5c9ce5; /* azul claro */
+            font-family: 'Georgia', 'Times New Roman', Times, serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .vent-item {
+            background: white;
+            border-radius: 16px;
+            padding: 14px 14px 10px 14px;
+            margin-bottom: 16px;
+            border-left: 6px solid #003f7f; /* azul escuro */
+            box-shadow: 0 3px 8px rgba(0, 63, 127, 0.08);
+            border-right: none;
+            border-top: 1px solid #edf2f9;
+            border-bottom: 1px solid #edf2f9;
+        }
+
+        .vent-titulo {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-family: 'Georgia', 'Times New Roman', Times, serif;
+        }
+
+        .vent-titulo span {
+            background: #5c9ce5; /* azul claro */
+            color: white;
+            padding: 3px 10px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.4px;
+        }
+
+        .controles-duplos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: space-between;
+        }
+
+        .status-box {
+            flex: 1 1 40%;
+            min-width: 130px;
+            background: #f3f6fb;
+            border-radius: 14px;
+            padding: 8px 10px;
+            border: 1px solid #cbd6e8;
+        }
+
+        .status-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #003f7f;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .status-label input[type="number"] {
+            width: 70px;
+            padding: 6px 4px;
+            font-size: 0.95rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 600;
+            border: 2px solid #b0c4de;
+            border-radius: 12px;
+            text-align: center;
+            background: white;
+            color: #003f7f;
+            margin-left: auto;
+        }
+
+        .status-label input[type="number"]:focus {
+            outline: none;
+            border-color: #5c9ce5; /* azul claro */
+            background: #e8f0fe;
+        }
+
+        .info-standby {
+            font-size: 0.7rem;
+            color: #5a6879;
+            margin-top: 4px;
+            padding-left: 20px;
+            background: none;
+        }
+
+        .transporte-especial {
+            margin-top: 16px;
+            background: #e8f0fe;
+            border-radius: 18px;
+            padding: 12px 12px 8px 12px;
+            border: 2px dashed #5c9ce5; /* azul claro */
+        }
+
+        .transporte-especial .vent-titulo {
+            color: #003f7f;
+        }
+
+        .transporte-especial .vent-titulo span {
+            background: #003f7f; /* azul escuro */
+        }
+
+        .observacoes-area {
+            margin: 14px 12px 20px 12px;
+            background: #f9fafc;
+            border-radius: 20px;
+            padding: 16px 16px;
+            border: 1px solid #d9e2ef;
+        }
+
+        .observacoes-area label {
+            font-weight: 700;
+            color: #003f7f;
+            font-size: 1rem;
+            display: block;
+            margin-bottom: 8px;
+            font-family: 'Georgia', 'Times New Roman', Times, serif;
+        }
+
+        .observacoes-area textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #cbd6e8;
+            border-radius: 16px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 70px;
+            background: white;
+        }
+
+        .observacoes-area textarea:focus {
+            outline: none;
+            border-color: #5c9ce5;
+        }
+
+        .footer-actions {
+            background: white;
+            padding: 20px 16px 24px 16px;
+            border-top: 4px solid #5c9ce5; /* azul claro */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn-pdf {
+            background: #003f7f;
+            border: none;
+            color: white;
+            font-family: 'Georgia', 'Times New Roman', Times, serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            padding: 14px 20px;
+            border-radius: 50px;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 5px 0 #002856;
+            transition: all 0.1s ease;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            border: 1px solid #ffffff80;
+        }
+
+        .btn-pdf:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #002856;
+        }
+
+        @media (max-width: 400px) {
+            .secao-titulo { font-size: 1rem; }
+            .vent-titulo { font-size: 0.9rem; }
+            .header img { max-width: 180px; }
+        }
+    </style>
+    <!-- Biblioteca jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+<div class="app-container" id="appFormulario">
+    <div class="header">
+        <!-- Logo real do CER Leblon -->
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQe2oczhvgRwnprtUxFwiqZRnAMcO1E2dHH7vztsmvFVg&s" alt="Logo CER Leblon">
+    </div>
+
+    <!-- CTI 1 -->
+    <div class="secao">
+        <div class="secao-titulo">🩺 CTI 1</div>
+        <div class="vent-item">
+            <div class="vent-titulo"><span>SV300</span> Mindray</div>
+            <div class="controles-duplos">
+                <div class="status-box">
+                    <div class="status-label">💨 EM USO <input type="number" id="cti1_mindray_uso" value="0" min="0" step="1"></div>
+                    <div class="status-label">⏳ STANDBY <input type="number" id="cti1_mindray_standby" value="0" min="0" step="1"></div>
+                </div>
+            </div>
+        </div>
+        <div class="vent-item">
+            <div class="vent-titulo"><span>Savina 300</span> Dräger</div>
+            <div class="controles-duplos">
+                <div class="status-box">
+                    <div class="status-label">💨 EM USO <input type="number" id="cti1_drager_uso" value="0" min="0" step="1"></div>
+                    <div class="status-label">⏳ STANDBY <input type="number" id="cti1_drager_standby" value="0" min="0" step="1"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTI 3 (com transporte) -->
+    <div class="secao">
+        <div class="secao-titulo">🚑 CTI 3</div>
+        <div class="vent-item">
+            <div class="vent-titulo"><span>SV300</span> Mindray</div>
+            <div class="controles-duplos">
+                <div class="status-box">
+                    <div class="status-label">💨 EM USO <input type="number" id="cti3_mindray_uso" value="0" min="0" step="1"></div>
+                    <div class="status-label">⏳ STANDBY <input type="number" id="cti3_mindray_standby" value="0" min="0" step="1"></div>
+                </div>
+            </div>
+        </div>
+        <div class="vent-item">
+            <div class="vent-titulo"><span>Savina 300</span> Dräger</div>
+            <div class="controles-duplos">
+                <div class="status-box">
+                    <div class="status-label">💨 EM USO <input type="number" id="cti3_drager_uso" value="0" min="0" step="1"></div>
+                    <div class="status-label">⏳ STANDBY <input type="number" id="cti3_drager_standby" value="0" min="0" step="1"></div>
+                </div>
+            </div>
+        </div>
+        <div class="transporte-especial">
+            <div class="vent-titulo"><span>🚐 TRANSPORTE</span> Mindray</div>
+            <div class="controles-duplos">
+                <div class="status-box">
+                    <div class="status-label">💨 EM USO <input type="number" id="cti3_transporte_uso" value="0" min="0" step="1"></div>
+                    <div class="status-label">⏳ STANDBY <input type="number" id="cti3_transporte_standby" value="0" min="0" step="1"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SALA VERMELHA -->
+    <div class="secao">
+        <div class="secao-titulo">🆘 VERMELHA</div>
+        <div class="vent-item">
+            <div class="vent-titulo"><span>SV300</span> Mindray</div>
+            <div class="controles-duplos">
+                <div class="status-box">
+                    <div class="status-label">💨 EM USO <input type="number" id="svermelha_mindray_uso" value="0" min="0" step="1"></div>
+                    <div class="status-label">⏳ STANDBY <input type="number" id="svermelha_mindray_standby" value="0" min="0" step="1"></div>
+                </div>
+            </div>
+        </div>
+        <div class="vent-item">
+            <div class="vent-titulo"><span>Savina 300</span> Dräger</div>
+            <div class="controles-duplos">
+                <div class="status-box">
+                    <div class="status-label">💨 EM USO <input type="number" id="svermelha_drager_uso" value="0" min="0" step="1"></div>
+                    <div class="status-label">⏳ STANDBY <input type="number" id="svermelha_drager_standby" value="0" min="0" step="1"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PEDIÁTRICA -->
+    <div class="secao">
+        <div class="secao-titulo">🧸 PEDIÁTRICA</div>
+        <div class="vent-item">
+            <div class="vent-titulo"><span>SV300</span> Mindray</div>
+            <div class="controles-duplos">
+                <div class="status-box">
+                    <div class="status-label">💨 EM USO <input type="number" id="spediatric_mindray_uso" value="0" min="0" step="1"></div>
+                    <div class="status-label">⏳ STANDBY <input type="number" id="spediatric_mindray_standby" value="0" min="0" step="1"></div>
+                </div>
+            </div>
+        </div>
+        <div class="vent-item">
+            <div class="vent-titulo"><span>Savina 300</span> Dräger</div>
+            <div class="controles-duplos">
+                <div class="status-box">
+                    <div class="status-label">💨 EM USO <input type="number" id="spediatric_drager_uso" value="0" min="0" step="1"></div>
+                    <div class="status-label">⏳ STANDBY <input type="number" id="spediatric_drager_standby" value="0" min="0" step="1"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Observações -->
+    <div class="observacoes-area">
+        <label>📝 Observações</label>
+        <textarea id="observacoes" placeholder="Anote qualquer observação relevante..."></textarea>
+    </div>
+
+    <div class="footer-actions">
+        <button class="btn-pdf" id="gerarPDF">📄 GERAR PDF</button>
+        <p style="font-size: 0.7rem; margin-top: 14px; color: #5a6879;">CER Leblon · Identidade institucional</p>
+    </div>
+</div>
+
+<script>
+(function() {
+    if (typeof window.jspdf === 'undefined') {
+        alert('Erro: Biblioteca jsPDF não carregada.');
+        return;
+    }
+
+    const btn = document.getElementById('gerarPDF');
+    btn.addEventListener('click', function() {
+        try {
+            function getVal(id) {
+                const el = document.getElementById(id);
+                return el ? (parseInt(el.value, 10) || 0) : 0;
+            }
+
+            const c1mUso = getVal('cti1_mindray_uso'), c1mStd = getVal('cti1_mindray_standby');
+            const c1dUso = getVal('cti1_drager_uso'), c1dStd = getVal('cti1_drager_standby');
+            const c3mUso = getVal('cti3_mindray_uso'), c3mStd = getVal('cti3_mindray_standby');
+            const c3dUso = getVal('cti3_drager_uso'), c3dStd = getVal('cti3_drager_standby');
+            const c3tUso = getVal('cti3_transporte_uso'), c3tStd = getVal('cti3_transporte_standby');
+            const svmUso = getVal('svermelha_mindray_uso'), svmStd = getVal('svermelha_mindray_standby');
+            const svdUso = getVal('svermelha_drager_uso'), svdStd = getVal('svermelha_drager_standby');
+            const pedmUso = getVal('spediatric_mindray_uso'), pedmStd = getVal('spediatric_mindray_standby');
+            const peddUso = getVal('spediatric_drager_uso'), peddStd = getVal('spediatric_drager_standby');
+            const obs = document.getElementById('observacoes')?.value || '';
+
+            const totalCTI1 = { uso: c1mUso + c1dUso, standby: c1mStd + c1dStd };
+            const totalCTI3 = { uso: c3mUso + c3dUso + c3tUso, standby: c3mStd + c3dStd + c3tStd };
+            const totalVerm = { uso: svmUso + svdUso, standby: svmStd + svdStd };
+            const totalPedi = { uso: pedmUso + peddUso, standby: pedmStd + peddStd };
+            const totalUso = totalCTI1.uso + totalCTI3.uso + totalVerm.uso + totalPedi.uso;
+            const totalStd = totalCTI1.standby + totalCTI3.standby + totalVerm.standby + totalPedi.standby;
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+
+            doc.setFont('Times', 'normal');
+            doc.setFontSize(18);
+            doc.setTextColor(0, 63, 127);
+            doc.text('Relatório de Ventiladores - CER Leblon', 40, 50);
+            doc.setFontSize(11);
+            doc.setTextColor(80, 80, 80);
+            const data = new Date().toLocaleString('pt-BR');
+            doc.text(`Gerado em: ${data}`, 40, 70);
+            doc.line(40, 80, 550, 80);
+
+            let y = 100;
+            const left = 45;
+
+            function linha(desc, uso, std, yp) {
+                doc.setFont('Courier', 'normal');
+                doc.setFontSize(11);
+                doc.setTextColor(0,0,0);
+                doc.text(desc, left, yp);
+                doc.text('USO:', 270, yp);
+                doc.text(uso.toString().padStart(2), 320, yp);
+                doc.text('STDBY:', 360, yp);
+                doc.text(std.toString().padStart(2), 430, yp);
+            }
+
+            function linhaTotal(desc, uso, std, yp) {
+                doc.setFont('Times', 'bold');
+                doc.setFontSize(11);
+                doc.setTextColor(0,0,0);
+                doc.text(desc, left, yp);
+                doc.text('USO:', 270, yp);
+                doc.setFont('Courier', 'bold');
+                doc.text(uso.toString().padStart(2), 320, yp);
+                doc.setFont('Times', 'bold');
+                doc.text('STDBY:', 360, yp);
+                doc.setFont('Courier', 'bold');
+                doc.text(std.toString().padStart(2), 430, yp);
+            }
+
+            doc.setFont('Times', 'bold');
+            doc.text('CTI 1', left, y); y += 18;
+            linha('Mindray SV300', c1mUso, c1mStd, y); y += 16;
+            linha('Dräger Savina 300', c1dUso, c1dStd, y); y += 16;
+            linhaTotal('→ Subtotal', totalCTI1.uso, totalCTI1.standby, y); y += 26;
+
+            doc.text('CTI 3', left, y); y += 18;
+            linha('Mindray SV300', c3mUso, c3mStd, y); y += 16;
+            linha('Dräger Savina 300', c3dUso, c3dStd, y); y += 16;
+            linha('TRANSPORTE Mindray', c3tUso, c3tStd, y); y += 16;
+            linhaTotal('→ Subtotal', totalCTI3.uso, totalCTI3.standby, y); y += 26;
+
+            doc.text('SALA VERMELHA', left, y); y += 18;
+            linha('Mindray SV300', svmUso, svmStd, y); y += 16;
+            linha('Dräger Savina 300', svdUso, svdStd, y); y += 16;
+            linhaTotal('→ Subtotal', totalVerm.uso, totalVerm.standby, y); y += 26;
+
+            doc.text('PEDIÁTRICA', left, y); y += 18;
+            linha('Mindray SV300', pedmUso, pedmStd, y); y += 16;
+            linha('Dräger Savina 300', peddUso, peddStd, y); y += 16;
+            linhaTotal('→ Subtotal', totalPedi.uso, totalPedi.standby, y); y += 26;
+
+            linhaTotal('TOTAL GERAL', totalUso, totalStd, y); y += 30;
+
+            doc.setFont('Times', 'bold');
+            doc.text('Observações:', left, y); y += 16;
+            doc.setFont('Courier', 'normal');
+            doc.setFontSize(10);
+            if (obs.trim()) doc.text(doc.splitTextToSize(obs, 450), left, y);
+            else doc.text('(Nenhuma observação)', left, y);
+            y += 40;
+
+            doc.setFont('Times', 'normal');
+            doc.text('_________________________________', left, y); y += 14;
+            doc.text('Assinatura do responsável', left, y);
+
+            doc.save(`relatorio_CER_Leblon_${new Date().toISOString().slice(0,10)}.pdf`);
+        } catch (e) {
+            alert('Erro ao gerar PDF: ' + e.message);
+        }
+    });
+})();
+
+// Inicializa inputs com zero
+document.querySelectorAll('input[type=number]').forEach(i => {
+    if (!i.value) i.value = '0';
+    i.addEventListener('blur', function() { if (this.value === '') this.value = '0'; });
+});
+</script>
+</body>
+      </html>
