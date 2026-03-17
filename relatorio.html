@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Relatório de Troca de Dispositivos - CTI</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 25px 20px;
+        }
+
+        h1 {
+            color: #1e3c72;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 3px solid #4a90e2;
+            padding-bottom: 10px;
+            font-weight: 600;
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-size: 1.4rem;
+            margin: 20px 0 15px 0;
+            font-weight: 500;
+        }
+
+        h3 {
+            color: #2c3e50;
+            font-size: 1.2rem;
+            margin: 15px 0 10px 0;
+            font-weight: 500;
+        }
+
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+            background: #f8faff;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid #4a90e2;
+        }
+
+        @media (min-width: 600px) {
+            .form-row {
+                flex-direction: row;
+                align-items: flex-end;
+            }
+        }
+
+        .input-group {
+            flex: 1;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #34495e;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e7ff;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        .btn-add {
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 25px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 120px;
+            box-shadow: 0 4px 6px rgba(74, 144, 226, 0.2);
+        }
+
+        .btn-add:hover {
+            background: #357abd;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(74, 144, 226, 0.3);
+        }
+
+        .btn-add:active {
+            transform: translateY(0);
+        }
+
+        .btn-add i {
+            font-size: 1.4rem;
+            font-style: normal;
+        }
+
+        .leitos-list {
+            margin: 25px 0;
+            background: #f8faff;
+            border-radius: 15px;
+            padding: 15px;
+        }
+
+        .leito-item {
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #4a90e2;
+            animation: slideIn 0.3s ease;
+        }
+
+        .leito-item.falta-equipamento {
+            border-left-color: #e74c3c;
+            background: #fff5f5;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .leito-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .leito-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .leito-numero {
+            font-weight: 700;
+            color: #1e3c72;
+            background: #e8f0fe;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 1rem;
+        }
+
+        .leito-dispositivo {
+            color: #2c3e50;
+            font-weight: 500;
+            background: #f0f4f8;
+            padding: 6px 15px;
+            border-radius: 20px;
+        }
+
+        .btn-remove {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0 8px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .btn-remove:hover {
+            color: #c0392b;
+            transform: scale(1.1);
+        }
+
+        .falta-checkboxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #e0e7ff;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: #f8faff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e0e7ff;
+        }
+
+        .checkbox-item:hover {
+            background: #e8f0fe;
+            border-color: #4a90e2;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #e74c3c;
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            color: #34495e;
+            font-weight: 500;
+        }
+
+        .checkbox-item.marcado {
+            background: #fff5f5;
+            border-color: #e74c3c;
+        }
+
+        .checkbox-item.marcado label {
+            color: #c0392b;
+            font-weight: 600;
+        }
+
+        .resumo-box {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        .resumo-header {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .totals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .total-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .total-card h3 {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .total-card .total-value {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .falta-section {
+            background: #fff5f5;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 25px 0;
+            border: 2px solid #e74c3c;
+        }
+
+        .falta-header {
+            color: #c0392b;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .falta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        .falta-item {
+            background: white;
+            padding: 12px;
+            border-radius: 10px;
+            border-left: 4px solid #e74c3c;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .falta-item .equipamento {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .falta-item .quantidade {
+            color: #e74c3c;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .tabela-container {
+            overflow-x: auto;
+            margin: 20px 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 300px;
+        }
+
+        th {
+            background: #1e3c72;
+            color: white;
+            padding: 15px 12px;
+            font-weight: 500;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e7ff;
+            color: #34495e;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:nth-child(even) {
+            background: #f8faff;
+        }
+
+        tr.falta-row td {
+            background: #fff5f5;
+            color: #c0392b;
+        }
+
+        .falta-indicator {
+            color: #e74c3c;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: 8px;
+        }
+
+        .btn-pdf {
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(39, 174, 96, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-pdf:hover {
+            background: #219a52;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-pdf:active {
+            transform: translateY(0);
+        }
+
+        .btn-pdf i {
+            font-style: normal;
+            font-size: 1.4rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #95a6a6;
+            padding: 30px;
+            font-style: italic;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 0.85rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .badge-falta {
+            background: #e74c3c;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 CTI - Troca de Dispositivos</h1>
+        
+        <div class="form-row">
+            <div class="input-group">
+                <label for="leito">Número do Leito</label>
+                <input type="text" id="leito" placeholder="Ex: 07A, 12B..." inputmode="numeric">
+            </div>
+            
+            <div class="input-group">
+                <label for="dispositivo">Dispositivo para Troca</label>
+                <select id="dispositivo">
+                    <option value="Cateter Nasal + Umidificador">Cateter Nasal + Umidificador</option>
+                    <option value="MNBZ + Hudson">MNBZ + Hudson</option>
+                    <option value="MR + Umidificador">MR + Umidificador</option>
+                    <option value="MNBZ + Tenda de TQT">MNBZ + Tenda de TQT</option>
+                    <option value="MNBZ + Peça T">MNBZ + Peça T</option>
+                </select>
+            </div>
+            
+            <button class="btn-add" onclick="adicionarLeito()">
+                <i>➕</i> Adicionar
+            </button>
+        </div>
+
+        <div class="leitos-list" id="leitosList">
+            <!-- Itens serão inseridos aqui via JavaScript -->
+        </div>
+
+        <div class="falta-section" id="faltaSection" style="display: none;">
+            <div class="falta-header">
+                <span>⚠️</span> Equipamentos em Falta (Total por tipo)
+            </div>
+            <div class="falta-grid" id="faltaGrid">
+                <!-- Itens em falta serão inseridos aqui -->
+            </div>
+        </div>
+
+        <div class="resumo-box" id="resumo">
+            <div class="resumo-header">📊 Resumo da Troca</div>
+            <div class="totals-grid" id="totalsGrid">
+                <!-- Totais serão inseridos aqui via JavaScript -->
+            </div>
+        </div>
+
+        <div class="tabela-container">
+            <table id="tabelaDispositivos">
+                <thead>
+                    <tr>
+                        <th>Leito</th>
+                        <th>Dispositivo</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaBody">
+                    <!-- Dados da tabela serão inseridos aqui -->
+                </tbody>
+            </table>
+        </div>
+
+        <button class="btn-pdf" onclick="gerarPDF()">
+            <i>📄</i> Gerar Relatório PDF
+        </button>
+        
+        <footer>
+            CTI - Unidade de Terapia Intensiva • Clique nos checkboxes para marcar equipamentos em falta
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    
+    <script>
+        let leitos = [];
+        
+        // Lista de equipamentos individuais que podem estar em falta
+        const equipamentosFalta = [
+            'MNBZ',
+            'Tenda de Traqueostomia',
+            'Peça T',
+            'Extensor para O2',
+            'Umidificador',
+            'MR'
+        ];
+
+        function adicionarLeito() {
+            const leitoInput = document.getElementById('leito');
+            const dispositivoSelect = document.getElementById('dispositivo');
+            
+            const leito = leitoInput.value.trim();
+            const dispositivo = dispositivoSelect.value;
+
+            if (!leito) {
+                alert('Por favor, informe o número do leito');
+                return;
+            }
+
+            // Verifica se o leito já foi adicionado
+            if (leitos.some(item => item.leito === leito)) {
+                alert('Este leito já foi adicionado!');
+                return;
+            }
+
+            leitos.push({
+                leito: leito,
+                dispositivo: dispositivo,
+                equipamentosEmFalta: [] // Inicia sem nenhum equipamento em falta
+            });
+
+            // Limpa o input
+            leitoInput.value = '';
+            
+            // Atualiza a interface
+            atualizarLista();
+            atualizarResumo();
+            atualizarTabela();
+            atualizarFaltaSection();
+        }
+
+        function removerLeito(leito) {
+            leitos = leitos.filter(item => item.leito !== leito);
+            atualizarLista();
+            atualizarResumo();
+            atualizarTabela();
+            atualizarFaltaSection();
+        }
+
+        function toggleEquipamentoFalta(leito, equipamento) {
+            const index = leitos.findIndex(item => item.leito === leito);
+            if (index !== -1) {
+                const item = leitos[index];
+                const faltaIndex = item.equipamentosEmFalta.indexOf(equipamento);
+                
+                if (faltaIndex === -1) {
+                    // Adiciona equipamento à lista de falta
+                    item.equipamentosEmFalta.push(equipamento);
+                } else {
+                    // Remove equipamento da lista de falta
+                    item.equipamentosEmFalta.splice(faltaIndex, 1);
+                }
+                
+                // Atualiza a interface
+                atualizarLista();
+                atualizarResumo();
+                atualizarTabela();
+                atualizarFaltaSection();
+            }
+        }
+
+        function atualizarLista() {
+            const lista = document.getElementById('leitosList');
+            
+            if (leitos.length === 0) {
+                lista.innerHTML = '<div class="empty-state">Nenhum leito adicionado. Adicione o primeiro leito acima.</div>';
+                return;
+            }
+
+            lista.innerHTML = leitos.map(item => {
+                const temFalta = item.equipamentosEmFalta && item.equipamentosEmFalta.length > 0;
+                
+                // Gera os checkboxes para cada equipamento
+                const checkboxes = equipamentosFalta.map(eq => {
+                    const isMarcado = item.equipamentosEmFalta.includes(eq);
+                    return `
+                        <div class="checkbox-item ${isMarcado ? 'marcado' : ''}" onclick="event.stopPropagation()">
+                            <input type="checkbox" 
+                                ${isMarcado ? 'checked' : ''} 
+                                onchange="toggleEquipamentoFalta('${item.leito}', '${eq}')"
+                                onclick="event.stopPropagation()">
+                            <label onclick="event.stopPropagation()">${eq}</label>
+                        </div>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="leito-item ${temFalta ? 'falta-equipamento' : ''}">
+                        <div class="leito-header">
+                            <div class="leito-info">
+                                <span class="leito-numero">Leito ${item.leito}</span>
+                                <span class="leito-dispositivo">${item.dispositivo}</span>
+                                ${temFalta ? `<span class="badge badge-falta">${item.equipamentosEmFalta.length} falta(s)</span>` : ''}
+                            </div>
+                            <button class="btn-remove" onclick="removerLeito('${item.leito}')" title="Remover">✕</button>
+                        </div>
+                        <div class="falta-checkboxes">
+                            ${checkboxes}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function atualizarResumo() {
+            const dispositivos = {};
+            
+            leitos.forEach(item => {
+                dispositivos[item.dispositivo] = (dispositivos[item.dispositivo] || 0) + 1;
+            });
+
+            const dispositivosOrdenados = [
+                'Cateter Nasal + Umidificador',
+                'MNBZ + Hudson',
+                'MR + Umidificador',
+                'MNBZ + Tenda de TQT',
+                'MNBZ + Peça T'
+            ];
+
+            const totalsGrid = document.getElementById('totalsGrid');
+            
+            if (leitos.length === 0) {
+                totalsGrid.innerHTML = `
+                    <div class="total-card">
+                        <h3>Total de Leitos</h3>
+                        <div class="total-value">0</div>
+                    </div>
+                `;
+                return;
+            }
+
+            totalsGrid.innerHTML = dispositivosOrdenados.map(disp => {
+                const quantidade = dispositivos[disp] || 0;
+                if (quantidade > 0) {
+                    return `
+                        <div class="total-card">
+                            <h3>${disp}</h3>
+                            <div class="total-value">${quantidade}</div>
+                        </div>
+                    `;
+                }
+                return '';
+            }).join('') + `
+                <div class="total-card" style="background: rgba(255, 255, 255, 0.2);">
+                    <h3>Total de Dispositivos</h3>
+                    <div class="total-value">${leitos.length}</div>
+                </div>
+            `;
+        }
+
+        function atualizarFaltaSection() {
+            const faltaSection = document.getElementById('faltaSection');
+            const faltaGrid = document.getElementById('faltaGrid');
+            
+            // Contar equipamentos em falta
+            const faltaCount = {};
+            leitos.forEach(item => {
+                if (item.equipamentosEmFalta && item.equipamentosEmFalta.length > 0) {
+                    item.equipamentosEmFalta.forEach(eq => {
+                        faltaCount[eq] = (faltaCount[eq] || 0) + 1;
+                    });
+                }
+            });
+
+            const temFalta = Object.keys(faltaCount).length > 0;
+            
+            if (!temFalta) {
+                faltaSection.style.display = 'none';
+                return;
+            }
+
+            faltaSection.style.display = 'block';
+            
+            faltaGrid.innerHTML = Object.entries(faltaCount)
+                .sort((a, b) => b[1] - a[1])
+                .map(([equipamento, quantidade]) => `
+                    <div class="falta-item">
+                        <div class="equipamento">${equipamento}</div>
+                        <div class="quantidade">${quantidade} unidade(s)</div>
+                    </div>
+                `).join('');
+        }
+
+        function atualizarTabela() {
+            const tbody = document.getElementById('tabelaBody');
+            
+            if (leitos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="empty-state">Nenhum dispositivo para trocar</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = leitos.map(item => {
+                const temFalta = item.equipamentosEmFalta && item.equipamentosEmFalta.length > 0;
+                return `
+                    <tr class="${temFalta ? 'falta-row' : ''}">
+                        <td><strong>${item.leito}</strong></td>
+                        <td>${item.dispositivo}</td>
+                        <td>
+                            ${temFalta ? 
+                                `<span class="falta-indicator">⚠️ Falta: ${item.equipamentosEmFalta.join(', ')}</span>` : 
+                                '<span style="color: #27ae60;">✓ OK</span>'
+                            }
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function gerarPDF() {
+            if (leitos.length === 0) {
+                alert('Adicione pelo menos um leito para gerar o relatório');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            // Configurações de fonte e cores
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(22);
+            doc.setTextColor(30, 60, 114); // #1e3c72
+            
+            // Título
+            doc.text('CTI - Relatório de Troca de Dispositivos', 105, 20, { align: 'center' });
+            
+            // Data e hora
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(100, 100, 100);
+            const data = new Date().toLocaleString('pt-BR');
+            doc.text(`Gerado em: ${data}`, 105, 30, { align: 'center' });
+
+            // Resumo dos totais
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(30, 60, 114);
+            doc.text('Resumo da Troca', 14, 45);
+
+            // Calcular totais por dispositivo
+            const dispositivos = {};
+            leitos.forEach(item => {
+                dispositivos[item.dispositivo] = (dispositivos[item.dispositivo] || 0) + 1;
+            });
+
+            let yPos = 55;
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(0, 0, 0);
+
+            Object.entries(dispositivos).forEach(([disp, qtd]) => {
+                doc.text(`• ${disp}: ${qtd} unidade(s)`, 20, yPos);
+                yPos += 7;
+            });
+
+            doc.setFont('helvetica', 'bold');
+            doc.text(`Total de dispositivos: ${leitos.length}`, 20, yPos + 5);
+
+            // Seção de equipamentos em falta
+            const faltaCount = {};
+            leitos.forEach(item => {
+                if (item.equipamentosEmFalta && item.equipamentosEmFalta.length > 0) {
+                    item.equipamentosEmFalta.forEach(eq => {
+                        faltaCount[eq] = (faltaCount[eq] || 0) + 1;
+                    });
+                }
+            });
+
+            if (Object.keys(faltaCount).length > 0) {
+                yPos += 15;
+                doc.setFontSize(14);
+                doc.setTextColor(192, 57, 43); // Vermelho para falta
+                doc.text('⚠️ Equipamentos em Falta', 14, yPos);
+                
+                yPos += 7;
+                doc.setFontSize(10);
+                doc.setTextColor(0, 0, 0);
+                
+                Object.entries(faltaCount).forEach(([eq, qtd]) => {
+                    doc.text(`• ${eq}: ${qtd} unidade(s) em falta`, 20, yPos);
+                    yPos += 7;
+                });
+            }
+
+            // Tabela de leitos
+            yPos += 10;
+            doc.setFontSize(14);
+            doc.setTextColor(30, 60, 114);
+            doc.text('Detalhamento por Leito', 14, yPos);
+
+            // Dados para a tabela
+            const tableData = leitos.map(item => {
+                const status = item.equipamentosEmFalta && item.equipamentosEmFalta.length > 0 
+                    ? `⚠️ Falta: ${item.equipamentosEmFalta.join(', ')}` 
+                    : '✓ OK';
+                return [item.leito, item.dispositivo, status];
+            });
+            
+            doc.autoTable({
+                startY: yPos + 5,
+                head: [['Leito', 'Dispositivo', 'Status']],
+                body: tableData,
+                theme: 'grid',
+                headStyles: {
+                    fillColor: [30, 60, 114],
+                    textColor: [255, 255, 255],
+                    fontStyle: 'bold'
+                },
+                styles: {
+                    fontSize: 10,
+                    cellPadding: 5
+                },
+                columnStyles: {
+                    0: { cellWidth: 30 },
+                    1: { cellWidth: 80 },
+                    2: { cellWidth: 60 }
+                },
+                alternateRowStyles: {
+                    fillColor: [248, 250, 255]
+                },
+                didParseCell: function(data) {
+                    // Destacar linhas com falta em vermelho
+                    if (data.row.index >= 0 && data.section === 'body') {
+                        const item = leitos[data.row.index];
+                        if (item && item.equipamentosEmFalta && item.equipamentosEmFalta.length > 0) {
+                            data.cell.styles.textColor = [192, 57, 43];
+                            data.cell.styles.fontStyle = 'bold';
+                        }
+                    }
+                }
+            });
+
+            // Salvar PDF
+            doc.save(`relatorio-cti-${new Date().toISOString().slice(0,10)}.pdf`);
+        }
+
+        // Inicialização
+        atualizarLista();
+        atualizarResumo();
+        atualizarTabela();
+        atualizarFaltaSection();
+    </script>
+</body>
+</html>
