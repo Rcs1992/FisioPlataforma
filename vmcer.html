@@ -37,7 +37,7 @@
         .header {
             background: white;
             padding: 16px 18px;
-            border-bottom: 4px solid #5c9ce5; /* azul claro */
+            border-bottom: 4px solid #5c9ce5;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -65,7 +65,7 @@
             display: inline-block;
             padding: 6px 0 6px 0;
             margin-bottom: 14px;
-            border-bottom: 3px solid #5c9ce5; /* azul claro */
+            border-bottom: 3px solid #5c9ce5;
             font-family: 'Georgia', 'Times New Roman', Times, serif;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -74,9 +74,9 @@
         .vent-item {
             background: white;
             border-radius: 16px;
-            padding: 14px 14px 10px 14px;
+            padding: 14px 14px 14px 14px;
             margin-bottom: 16px;
-            border-left: 6px solid #003f7f; /* azul escuro */
+            border-left: 6px solid #003f7f;
             box-shadow: 0 3px 8px rgba(0, 63, 127, 0.08);
             border-right: none;
             border-top: 1px solid #edf2f9;
@@ -85,23 +85,24 @@
 
         .vent-titulo {
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 1.1rem;
             color: #1a1a1a;
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             font-family: 'Georgia', 'Times New Roman', Times, serif;
         }
 
-        .vent-titulo span {
-            background: #5c9ce5; /* azul claro */
+        .vent-titulo .marca-principal {
+            background: #003f7f;
             color: white;
-            padding: 3px 10px;
+            padding: 4px 12px;
             border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 500;
-            letter-spacing: 0.4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
         .controles-duplos {
@@ -127,12 +128,43 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
-        .status-label input[type="number"] {
-            width: 70px;
-            padding: 6px 4px;
+        .controle-numero {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 4px;
+            margin-left: auto;
+        }
+
+        .controle-numero button {
+            width: 30px;
+            height: 30px;
+            border-radius: 30px;
+            border: none;
+            background: white;
+            color: #003f7f;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 63, 127, 0.2);
+            border: 1px solid #b0c4de;
+            transition: all 0.1s ease;
+        }
+
+        .controle-numero button:active {
+            transform: scale(0.95);
+            background: #e8f0fe;
+        }
+
+        .controle-numero input[type="number"] {
+            width: 50px;
+            padding: 6px 0;
             font-size: 0.95rem;
             font-family: 'Courier New', Courier, monospace;
             font-weight: 600;
@@ -141,21 +173,22 @@
             text-align: center;
             background: white;
             color: #003f7f;
-            margin-left: auto;
         }
 
-        .status-label input[type="number"]:focus {
+        .controle-numero input[type="number"]:focus {
             outline: none;
-            border-color: #5c9ce5; /* azul claro */
+            border-color: #5c9ce5;
             background: #e8f0fe;
         }
 
-        .info-standby {
-            font-size: 0.7rem;
-            color: #5a6879;
-            margin-top: 4px;
-            padding-left: 20px;
-            background: none;
+        /* Remove as setas internas do input number */
+        .controle-numero input[type="number"]::-webkit-inner-spin-button,
+        .controle-numero input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .controle-numero input[type="number"] {
+            -moz-appearance: textfield;
         }
 
         .transporte-especial {
@@ -163,15 +196,15 @@
             background: #e8f0fe;
             border-radius: 18px;
             padding: 12px 12px 8px 12px;
-            border: 2px dashed #5c9ce5; /* azul claro */
+            border: 2px dashed #5c9ce5;
         }
 
         .transporte-especial .vent-titulo {
             color: #003f7f;
         }
 
-        .transporte-especial .vent-titulo span {
-            background: #003f7f; /* azul escuro */
+        .transporte-especial .vent-titulo .marca-principal {
+            background: #003f7f;
         }
 
         .observacoes-area {
@@ -211,7 +244,7 @@
         .footer-actions {
             background: white;
             padding: 20px 16px 24px 16px;
-            border-top: 4px solid #5c9ce5; /* azul claro */
+            border-top: 4px solid #5c9ce5;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -243,8 +276,11 @@
 
         @media (max-width: 400px) {
             .secao-titulo { font-size: 1rem; }
-            .vent-titulo { font-size: 0.9rem; }
+            .vent-titulo { font-size: 1rem; }
+            .vent-titulo .marca-principal { font-size: 0.75rem; padding: 3px 8px; }
             .header img { max-width: 180px; }
+            .controle-numero button { width: 28px; height: 28px; }
+            .controle-numero input[type="number"] { width: 45px; }
         }
     </style>
     <!-- Biblioteca jsPDF -->
@@ -253,7 +289,6 @@
 <body>
 <div class="app-container" id="appFormulario">
     <div class="header">
-        <!-- Logo real do CER Leblon -->
         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQe2oczhvgRwnprtUxFwiqZRnAMcO1E2dHH7vztsmvFVg&s" alt="Logo CER Leblon">
     </div>
 
@@ -261,20 +296,44 @@
     <div class="secao">
         <div class="secao-titulo">🩺 CTI 1</div>
         <div class="vent-item">
-            <div class="vent-titulo"><span>SV300</span> Mindray</div>
+            <div class="vent-titulo"><span class="marca-principal">MINDRAY</span> SV300</div>
             <div class="controles-duplos">
                 <div class="status-box">
-                    <div class="status-label">💨 EM USO <input type="number" id="cti1_mindray_uso" value="0" min="0" step="1"></div>
-                    <div class="status-label">⏳ STANDBY <input type="number" id="cti1_mindray_standby" value="0" min="0" step="1"></div>
+                    <div class="status-label">💨 EM USO 
+                        <div class="controle-numero">
+                            <button type="button" class="btn-minus" data-target="cti1_mindray_uso">−</button>
+                            <input type="number" id="cti1_mindray_uso" value="0" min="0" step="1" readonly>
+                            <button type="button" class="btn-plus" data-target="cti1_mindray_uso">+</button>
+                        </div>
+                    </div>
+                    <div class="status-label">⏳ STANDBY 
+                        <div class="controle-numero">
+                            <button type="button" class="btn-minus" data-target="cti1_mindray_standby">−</button>
+                            <input type="number" id="cti1_mindray_standby" value="0" min="0" step="1" readonly>
+                            <button type="button" class="btn-plus" data-target="cti1_mindray_standby">+</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="vent-item">
-            <div class="vent-titulo"><span>Savina 300</span> Dräger</div>
+            <div class="vent-titulo"><span class="marca-principal">SAVINA</span> 300 Dräger</div>
             <div class="controles-duplos">
                 <div class="status-box">
-                    <div class="status-label">💨 EM USO <input type="number" id="cti1_drager_uso" value="0" min="0" step="1"></div>
-                    <div class="status-label">⏳ STANDBY <input type="number" id="cti1_drager_standby" value="0" min="0" step="1"></div>
+                    <div class="status-label">💨 EM USO 
+                        <div class="controle-numero">
+                            <button type="button" class="btn-minus" data-target="cti1_drager_uso">−</button>
+                            <input type="number" id="cti1_drager_uso" value="0" min="0" step="1" readonly>
+                            <button type="button" class="btn-plus" data-target="cti1_drager_uso">+</button>
+                        </div>
+                    </div>
+                    <div class="status-label">⏳ STANDBY 
+                        <div class="controle-numero">
+                            <button type="button" class="btn-minus" data-target="cti1_drager_standby">−</button>
+                            <input type="number" id="cti1_drager_standby" value="0" min="0" step="1" readonly>
+                            <button type="button" class="btn-plus" data-target="cti1_drager_standby">+</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -284,29 +343,65 @@
     <div class="secao">
         <div class="secao-titulo">🚑 CTI 3</div>
         <div class="vent-item">
-            <div class="vent-titulo"><span>SV300</span> Mindray</div>
+            <div class="vent-titulo"><span class="marca-principal">MINDRAY</span> SV300</div>
             <div class="controles-duplos">
                 <div class="status-box">
-                    <div class="status-label">💨 EM USO <input type="number" id="cti3_mindray_uso" value="0" min="0" step="1"></div>
-                    <div class="status-label">⏳ STANDBY <input type="number" id="cti3_mindray_standby" value="0" min="0" step="1"></div>
+                    <div class="status-label">💨 EM USO 
+                        <div class="controle-numero">
+                            <button type="button" class="btn-minus" data-target="cti3_mindray_uso">−</button>
+                            <input type="number" id="cti3_mindray_uso" value="0" min="0" step="1" readonly>
+                            <button type="button" class="btn-plus" data-target="cti3_mindray_uso">+</button>
+                        </div>
+                    </div>
+                    <div class="status-label">⏳ STANDBY 
+                        <div class="controle-numero">
+                            <button type="button" class="btn-minus" data-target="cti3_mindray_standby">−</button>
+                            <input type="number" id="cti3_mindray_standby" value="0" min="0" step="1" readonly>
+                            <button type="button" class="btn-plus" data-target="cti3_mindray_standby">+</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="vent-item">
-            <div class="vent-titulo"><span>Savina 300</span> Dräger</div>
+            <div class="vent-titulo"><span class="marca-principal">SAVINA</span> 300 Dräger</div>
             <div class="controles-duplos">
                 <div class="status-box">
-                    <div class="status-label">💨 EM USO <input type="number" id="cti3_drager_uso" value="0" min="0" step="1"></div>
-                    <div class="status-label">⏳ STANDBY <input type="number" id="cti3_drager_standby" value="0" min="0" step="1"></div>
+                    <div class="status-label">💨 EM USO 
+                        <div class="controle-numero">
+                            <button type="button" class="btn-minus" data-target="cti3_drager_uso">−</button>
+                            <input type="number" id="cti3_drager_uso" value="0" min="0" step="1" readonly>
+                            <button type="button" class="btn-plus" data-target="cti3_drager_uso">+</button>
+                        </div>
+                    </div>
+                    <div class="status-label">⏳ STANDBY 
+                        <div class="controle-numero">
+                            <button type="button" class="btn-minus" data-target="cti3_drager_standby">−</button>
+                            <input type="number" id="cti3_drager_standby" value="0" min="0" step="1" readonly>
+                            <button type="button" class="btn-plus" data-target="cti3_drager_standby">+</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="transporte-especial">
-            <div class="vent-titulo"><span>🚐 TRANSPORTE</span> Mindray</div>
+            <div class="vent-titulo"><span class="marca-principal">MINDRAY</span> Transporte</div>
             <div class="controles-duplos">
                 <div class="status-box">
-                    <div class="status-label">💨 EM USO <input type="number" id="cti3_transporte_uso" value="0" min="0" step="1"></div>
-                    <div class="status-label">⏳ STANDBY <input type="number" id="cti3_transporte_standby" value="0" min="0" step="1"></div>
+                    <div class="status-label">💨 EM USO 
+                        <div class="controle-numero">
+                            <button type="button" class="btn-minus" data-target="cti3_transporte_uso">−</button>
+                            <input type="number" id="cti3_transporte_uso" value="0" min="0" step="1" readonly>
+                            <button type="button" class="btn-plus" data-target="cti3_transporte_uso">+</button>
+                        </div>
+                    </div>
+                    <div class="status-label">⏳ STANDBY 
+                        <div class="controle-numero">
+                            <button type="button" class="btn-minus" data-target="cti3_transporte_standby">−</button>
+                            <input type="number" id="cti3_transporte_standby" value="0" min="0" step="1" readonly>
+                            <button type="button" class="btn-plus" data-target="cti3_transporte_standby">+</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -316,20 +411,44 @@
     <div class="secao">
         <div class="secao-titulo">🆘 VERMELHA</div>
         <div class="vent-item">
-            <div class="vent-titulo"><span>SV300</span> Mindray</div>
+            <div class="vent-titulo"><span class="marca-principal">MINDRAY</span> SV300</div>
             <div class="controles-duplos">
                 <div class="status-box">
-                    <div class="status-label">💨 EM USO <input type="number" id="svermelha_mindray_uso" value="0" min="0" step="1"></div>
-                    <div class="status-label">⏳ STANDBY <input type="number" id="svermelha_mindray_standby" value="0" min="0" step="1"></div>
+                    <div class="status-label">💨 EM USO 
+                        <div class="controle-numero">
+                            <button type="button" class="btn-minus" data-target="svermelha_mindray_uso">−</button>
+                            <input type="number" id="svermelha_mindray_uso" value="0" min="0" step="1" readonly>
+                            <button type="button" class="btn-plus" data-target="svermelha_mindray_uso">+</button>
+                        </div>
+                    </div>
+                    <div class="status-label">⏳ STANDBY 
+                        <div class="controle-numero">
+                            <button type="button" class="btn-minus" data-target="svermelha_mindray_standby">−</button>
+                            <input type="number" id="svermelha_mindray_standby" value="0" min="0" step="1" readonly>
+                            <button type="button" class="btn-plus" data-target="svermelha_mindray_standby">+</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="vent-item">
-            <div class="vent-titulo"><span>Savina 300</span> Dräger</div>
+            <div class="vent-titulo"><span class="marca-principal">SAVINA</span> 300 Dräger</div>
             <div class="controles-duplos">
                 <div class="status-box">
-                    <div class="status-label">💨 EM USO <input type="number" id="svermelha_drager_uso" value="0" min="0" step="1"></div>
-                    <div class="status-label">⏳ STANDBY <input type="number" id="svermelha_drager_standby" value="0" min="0" step="1"></div>
+                    <div class="status-label">💨 EM USO 
+                        <div class="controle-numero">
+                            <button type="button" class="btn-minus" data-target="svermelha_drager_uso">−</button>
+                            <input type="number" id="svermelha_drager_uso" value="0" min="0" step="1" readonly>
+                            <button type="button" class="btn-plus" data-target="svermelha_drager_uso">+</button>
+                        </div>
+                    </div>
+                    <div class="status-label">⏳ STANDBY 
+                        <div class="controle-numero">
+                            <button type="button" class="btn-minus" data-target="svermelha_drager_standby">−</button>
+                            <input type="number" id="svermelha_drager_standby" value="0" min="0" step="1" readonly>
+                            <button type="button" class="btn-plus" data-target="svermelha_drager_standby">+</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -339,20 +458,44 @@
     <div class="secao">
         <div class="secao-titulo">🧸 PEDIÁTRICA</div>
         <div class="vent-item">
-            <div class="vent-titulo"><span>SV300</span> Mindray</div>
+            <div class="vent-titulo"><span class="marca-principal">MINDRAY</span> SV300</div>
             <div class="controles-duplos">
                 <div class="status-box">
-                    <div class="status-label">💨 EM USO <input type="number" id="spediatric_mindray_uso" value="0" min="0" step="1"></div>
-                    <div class="status-label">⏳ STANDBY <input type="number" id="spediatric_mindray_standby" value="0" min="0" step="1"></div>
+                    <div class="status-label">💨 EM USO 
+                        <div class="controle-numero">
+                            <button type="button" class="btn-minus" data-target="spediatric_mindray_uso">−</button>
+                            <input type="number" id="spediatric_mindray_uso" value="0" min="0" step="1" readonly>
+                            <button type="button" class="btn-plus" data-target="spediatric_mindray_uso">+</button>
+                        </div>
+                    </div>
+                    <div class="status-label">⏳ STANDBY 
+                        <div class="controle-numero">
+                            <button type="button" class="btn-minus" data-target="spediatric_mindray_standby">−</button>
+                            <input type="number" id="spediatric_mindray_standby" value="0" min="0" step="1" readonly>
+                            <button type="button" class="btn-plus" data-target="spediatric_mindray_standby">+</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="vent-item">
-            <div class="vent-titulo"><span>Savina 300</span> Dräger</div>
+            <div class="vent-titulo"><span class="marca-principal">SAVINA</span> 300 Dräger</div>
             <div class="controles-duplos">
                 <div class="status-box">
-                    <div class="status-label">💨 EM USO <input type="number" id="spediatric_drager_uso" value="0" min="0" step="1"></div>
-                    <div class="status-label">⏳ STANDBY <input type="number" id="spediatric_drager_standby" value="0" min="0" step="1"></div>
+                    <div class="status-label">💨 EM USO 
+                        <div class="controle-numero">
+                            <button type="button" class="btn-minus" data-target="spediatric_drager_uso">−</button>
+                            <input type="number" id="spediatric_drager_uso" value="0" min="0" step="1" readonly>
+                            <button type="button" class="btn-plus" data-target="spediatric_drager_uso">+</button>
+                        </div>
+                    </div>
+                    <div class="status-label">⏳ STANDBY 
+                        <div class="controle-numero">
+                            <button type="button" class="btn-minus" data-target="spediatric_drager_standby">−</button>
+                            <input type="number" id="spediatric_drager_standby" value="0" min="0" step="1" readonly>
+                            <button type="button" class="btn-plus" data-target="spediatric_drager_standby">+</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -372,6 +515,43 @@
 
 <script>
 (function() {
+    // Configurar botões + e -
+    function setupBotoes() {
+        // Botões de aumentar
+        document.querySelectorAll('.btn-plus').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                if (input) {
+                    let valor = parseInt(input.value, 10) || 0;
+                    input.value = valor + 1;
+                }
+            });
+        });
+
+        // Botões de diminuir
+        document.querySelectorAll('.btn-minus').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                if (input) {
+                    let valor = parseInt(input.value, 10) || 0;
+                    if (valor > 0) {
+                        input.value = valor - 1;
+                    }
+                }
+            });
+        });
+    }
+
+    // Inicializar inputs
+    document.querySelectorAll('input[type=number]').forEach(i => {
+        if (!i.value) i.value = '0';
+    });
+
+    setupBotoes();
+
+    // Geração de PDF
     if (typeof window.jspdf === 'undefined') {
         alert('Erro: Biblioteca jsPDF não carregada.');
         return;
@@ -446,24 +626,24 @@
 
             doc.setFont('Times', 'bold');
             doc.text('CTI 1', left, y); y += 18;
-            linha('Mindray SV300', c1mUso, c1mStd, y); y += 16;
-            linha('Dräger Savina 300', c1dUso, c1dStd, y); y += 16;
+            linha('MINDRAY SV300', c1mUso, c1mStd, y); y += 16;
+            linha('SAVINA 300 Dräger', c1dUso, c1dStd, y); y += 16;
             linhaTotal('→ Subtotal', totalCTI1.uso, totalCTI1.standby, y); y += 26;
 
             doc.text('CTI 3', left, y); y += 18;
-            linha('Mindray SV300', c3mUso, c3mStd, y); y += 16;
-            linha('Dräger Savina 300', c3dUso, c3dStd, y); y += 16;
-            linha('TRANSPORTE Mindray', c3tUso, c3tStd, y); y += 16;
+            linha('MINDRAY SV300', c3mUso, c3mStd, y); y += 16;
+            linha('SAVINA 300 Dräger', c3dUso, c3dStd, y); y += 16;
+            linha('MINDRAY Transporte', c3tUso, c3tStd, y); y += 16;
             linhaTotal('→ Subtotal', totalCTI3.uso, totalCTI3.standby, y); y += 26;
 
             doc.text('SALA VERMELHA', left, y); y += 18;
-            linha('Mindray SV300', svmUso, svmStd, y); y += 16;
-            linha('Dräger Savina 300', svdUso, svdStd, y); y += 16;
+            linha('MINDRAY SV300', svmUso, svmStd, y); y += 16;
+            linha('SAVINA 300 Dräger', svdUso, svdStd, y); y += 16;
             linhaTotal('→ Subtotal', totalVerm.uso, totalVerm.standby, y); y += 26;
 
             doc.text('PEDIÁTRICA', left, y); y += 18;
-            linha('Mindray SV300', pedmUso, pedmStd, y); y += 16;
-            linha('Dräger Savina 300', peddUso, peddStd, y); y += 16;
+            linha('MINDRAY SV300', pedmUso, pedmStd, y); y += 16;
+            linha('SAVINA 300 Dräger', peddUso, peddStd, y); y += 16;
             linhaTotal('→ Subtotal', totalPedi.uso, totalPedi.standby, y); y += 26;
 
             linhaTotal('TOTAL GERAL', totalUso, totalStd, y); y += 30;
@@ -486,12 +666,6 @@
         }
     });
 })();
-
-// Inicializa inputs com zero
-document.querySelectorAll('input[type=number]').forEach(i => {
-    if (!i.value) i.value = '0';
-    i.addEventListener('blur', function() { if (this.value === '') this.value = '0'; });
-});
 </script>
 </body>
-      </html>
+</html>
