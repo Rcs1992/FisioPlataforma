@@ -38,20 +38,6 @@
             font-weight: 600;
         }
 
-        h2 {
-            color: #2c3e50;
-            font-size: 1.4rem;
-            margin: 20px 0 15px 0;
-            font-weight: 500;
-        }
-
-        h3 {
-            color: #2c3e50;
-            font-size: 1.2rem;
-            margin: 15px 0 10px 0;
-            font-weight: 500;
-        }
-
         .form-row {
             display: flex;
             flex-direction: column;
@@ -122,15 +108,6 @@
             background: #357abd;
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(74, 144, 226, 0.3);
-        }
-
-        .btn-add:active {
-            transform: translateY(0);
-        }
-
-        .btn-add i {
-            font-size: 1.4rem;
-            font-style: normal;
         }
 
         .leitos-list {
@@ -282,7 +259,7 @@
 
         .totals-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
         }
 
@@ -295,14 +272,14 @@
         }
 
         .total-card h3 {
-            font-size: 1rem;
+            font-size: 0.9rem;
             margin-bottom: 8px;
             opacity: 0.9;
             font-weight: 400;
         }
 
         .total-card .total-value {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 700;
             line-height: 1.2;
         }
@@ -343,6 +320,7 @@
             font-weight: 700;
             color: #2c3e50;
             margin-bottom: 5px;
+            font-size: 0.9rem;
         }
 
         .falta-item .quantidade {
@@ -390,7 +368,6 @@
 
         tr.falta-row td {
             background: #fff5f5;
-            color: #c0392b;
         }
 
         .falta-indicator {
@@ -400,7 +377,6 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            margin-left: 8px;
         }
 
         .btn-pdf {
@@ -428,18 +404,9 @@
             box-shadow: 0 6px 12px rgba(39, 174, 96, 0.3);
         }
 
-        .btn-pdf:active {
-            transform: translateY(0);
-        }
-
-        .btn-pdf i {
-            font-style: normal;
-            font-size: 1.4rem;
-        }
-
         .empty-state {
             text-align: center;
-            color: #95a6a6;
+            color: #95a5a6;
             padding: 30px;
             font-style: italic;
         }
@@ -573,13 +540,11 @@
             leitos.push({
                 leito: leito,
                 dispositivo: dispositivo,
-                equipamentosEmFalta: [] // Inicia sem nenhum equipamento em falta
+                equipamentosEmFalta: []
             });
 
-            // Limpa o input
             leitoInput.value = '';
             
-            // Atualiza a interface
             atualizarLista();
             atualizarResumo();
             atualizarTabela();
@@ -601,14 +566,11 @@
                 const faltaIndex = item.equipamentosEmFalta.indexOf(equipamento);
                 
                 if (faltaIndex === -1) {
-                    // Adiciona equipamento à lista de falta
                     item.equipamentosEmFalta.push(equipamento);
                 } else {
-                    // Remove equipamento da lista de falta
                     item.equipamentosEmFalta.splice(faltaIndex, 1);
                 }
                 
-                // Atualiza a interface
                 atualizarLista();
                 atualizarResumo();
                 atualizarTabela();
@@ -627,7 +589,6 @@
             lista.innerHTML = leitos.map(item => {
                 const temFalta = item.equipamentosEmFalta && item.equipamentosEmFalta.length > 0;
                 
-                // Gera os checkboxes para cada equipamento
                 const checkboxes = equipamentosFalta.map(eq => {
                     const isMarcado = item.equipamentosEmFalta.includes(eq);
                     return `
@@ -709,7 +670,6 @@
             const faltaSection = document.getElementById('faltaSection');
             const faltaGrid = document.getElementById('faltaGrid');
             
-            // Contar equipamentos em falta
             const faltaCount = {};
             leitos.forEach(item => {
                 if (item.equipamentosEmFalta && item.equipamentosEmFalta.length > 0) {
@@ -773,29 +733,58 @@
             const doc = new jsPDF({
                 orientation: 'portrait',
                 unit: 'mm',
-                format: 'a4'
+                format: 'a4',
+                putOnlyUsedFonts: true,
+                compress: true
             });
 
-            // Configurações de fonte e cores
+            // Configuração de cores
+            const corPrimaria = [30, 60, 114]; // Azul escuro
+            const corFalta = [231, 76, 60];    // Vermelho
+            const corSucesso = [39, 174, 96];  // Verde
+            const corTexto = [51, 51, 51];      // Cinza escuro
+
+            // TÍTULO PRINCIPAL
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(22);
-            doc.setTextColor(30, 60, 114); // #1e3c72
+            doc.setFontSize(20);
+            doc.setTextColor(corPrimaria[0], corPrimaria[1], corPrimaria[2]);
+            doc.text('RELATÓRIO DE TROCA DE DISPOSITIVOS', 105, 20, { align: 'center' });
             
-            // Título
-            doc.text('CTI - Relatório de Troca de Dispositivos', 105, 20, { align: 'center' });
-            
-            // Data e hora
-            doc.setFontSize(10);
+            // SUBTÍTULO
+            doc.setFontSize(14);
             doc.setFont('helvetica', 'normal');
             doc.setTextColor(100, 100, 100);
-            const data = new Date().toLocaleString('pt-BR');
-            doc.text(`Gerado em: ${data}`, 105, 30, { align: 'center' });
+            doc.text('CTI - Unidade de Terapia Intensiva', 105, 28, { align: 'center' });
 
-            // Resumo dos totais
+            // LINHA SEPARADORA
+            doc.setDrawColor(corPrimaria[0], corPrimaria[1], corPrimaria[2]);
+            doc.setLineWidth(0.5);
+            doc.line(14, 32, 196, 32);
+
+            // DATA E HORA
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(120, 120, 120);
+            const data = new Date().toLocaleString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            doc.text(`Gerado em: ${data}`, 14, 40);
+
+            // TOTAL DE LEITOS
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(12);
+            doc.setTextColor(corPrimaria[0], corPrimaria[1], corPrimaria[2]);
+            doc.text(`Total de leitos: ${leitos.length}`, 14, 50);
+
+            // RESUMO POR DISPOSITIVO
             doc.setFontSize(14);
             doc.setFont('helvetica', 'bold');
-            doc.setTextColor(30, 60, 114);
-            doc.text('Resumo da Troca', 14, 45);
+            doc.setTextColor(corPrimaria[0], corPrimaria[1], corPrimaria[2]);
+            doc.text('Dispositivos para Troca', 14, 62);
 
             // Calcular totais por dispositivo
             const dispositivos = {};
@@ -803,20 +792,20 @@
                 dispositivos[item.dispositivo] = (dispositivos[item.dispositivo] || 0) + 1;
             });
 
-            let yPos = 55;
-            doc.setFontSize(10);
+            let yPos = 70;
+            doc.setFontSize(11);
             doc.setFont('helvetica', 'normal');
-            doc.setTextColor(0, 0, 0);
+            doc.setTextColor(corTexto[0], corTexto[1], corTexto[2]);
 
             Object.entries(dispositivos).forEach(([disp, qtd]) => {
-                doc.text(`• ${disp}: ${qtd} unidade(s)`, 20, yPos);
+                doc.text(`• ${disp}:`, 20, yPos);
+                doc.setFont('helvetica', 'bold');
+                doc.text(`${qtd}`, 120, yPos);
+                doc.setFont('helvetica', 'normal');
                 yPos += 7;
             });
 
-            doc.setFont('helvetica', 'bold');
-            doc.text(`Total de dispositivos: ${leitos.length}`, 20, yPos + 5);
-
-            // Seção de equipamentos em falta
+            // EQUIPAMENTOS EM FALTA
             const faltaCount = {};
             leitos.forEach(item => {
                 if (item.equipamentosEmFalta && item.equipamentosEmFalta.length > 0) {
@@ -827,68 +816,91 @@
             });
 
             if (Object.keys(faltaCount).length > 0) {
-                yPos += 15;
+                yPos += 5;
                 doc.setFontSize(14);
-                doc.setTextColor(192, 57, 43); // Vermelho para falta
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(corFalta[0], corFalta[1], corFalta[2]);
                 doc.text('⚠️ Equipamentos em Falta', 14, yPos);
                 
-                yPos += 7;
-                doc.setFontSize(10);
-                doc.setTextColor(0, 0, 0);
+                yPos += 8;
+                doc.setFontSize(11);
+                doc.setTextColor(corTexto[0], corTexto[1], corTexto[2]);
                 
                 Object.entries(faltaCount).forEach(([eq, qtd]) => {
-                    doc.text(`• ${eq}: ${qtd} unidade(s) em falta`, 20, yPos);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text(`• ${eq}:`, 20, yPos);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor(corFalta[0], corFalta[1], corFalta[2]);
+                    doc.text(`${qtd} unidade(s)`, 120, yPos);
+                    doc.setTextColor(corTexto[0], corTexto[1], corTexto[2]);
                     yPos += 7;
                 });
             }
 
-            // Tabela de leitos
+            // ESPAÇO ANTES DA TABELA
             yPos += 10;
-            doc.setFontSize(14);
-            doc.setTextColor(30, 60, 114);
-            doc.text('Detalhamento por Leito', 14, yPos);
 
-            // Dados para a tabela
-            const tableData = leitos.map(item => {
+            // TABELA DE LEITOS
+            const tableColumn = ["Leito", "Dispositivo", "Status"];
+            const tableRows = [];
+
+            leitos.forEach(item => {
                 const status = item.equipamentosEmFalta && item.equipamentosEmFalta.length > 0 
-                    ? `⚠️ Falta: ${item.equipamentosEmFalta.join(', ')}` 
-                    : '✓ OK';
-                return [item.leito, item.dispositivo, status];
+                    ? `FALTA: ${item.equipamentosEmFalta.join(', ')}` 
+                    : 'OK';
+                tableRows.push([item.leito, item.dispositivo, status]);
             });
-            
+
             doc.autoTable({
-                startY: yPos + 5,
-                head: [['Leito', 'Dispositivo', 'Status']],
-                body: tableData,
+                startY: yPos,
+                head: [tableColumn],
+                body: tableRows,
                 theme: 'grid',
                 headStyles: {
-                    fillColor: [30, 60, 114],
+                    fillColor: corPrimaria,
                     textColor: [255, 255, 255],
-                    fontStyle: 'bold'
+                    fontStyle: 'bold',
+                    fontSize: 11,
+                    halign: 'left',
+                    cellPadding: 6
                 },
                 styles: {
                     fontSize: 10,
-                    cellPadding: 5
+                    cellPadding: 5,
+                    lineColor: [200, 200, 200],
+                    lineWidth: 0.1,
+                    textColor: corTexto
                 },
                 columnStyles: {
-                    0: { cellWidth: 30 },
+                    0: { cellWidth: 30, fontStyle: 'bold' },
                     1: { cellWidth: 80 },
-                    2: { cellWidth: 60 }
+                    2: { cellWidth: 70 }
                 },
                 alternateRowStyles: {
-                    fillColor: [248, 250, 255]
+                    fillColor: [245, 245, 245]
                 },
                 didParseCell: function(data) {
-                    // Destacar linhas com falta em vermelho
-                    if (data.row.index >= 0 && data.section === 'body') {
-                        const item = leitos[data.row.index];
-                        if (item && item.equipamentosEmFalta && item.equipamentosEmFalta.length > 0) {
-                            data.cell.styles.textColor = [192, 57, 43];
-                            data.cell.styles.fontStyle = 'bold';
-                        }
+                    // Destacar células com falta
+                    if (data.column.index === 2 && data.cell.raw && data.cell.raw.toString().startsWith('FALTA:')) {
+                        data.cell.styles.textColor = corFalta;
+                        data.cell.styles.fontStyle = 'bold';
                     }
                 }
             });
+
+            // RODAPÉ
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.setTextColor(150, 150, 150);
+                doc.text(
+                    `Relatório gerado pelo sistema CTI - Página ${i} de ${pageCount}`,
+                    105,
+                    285,
+                    { align: 'center' }
+                );
+            }
 
             // Salvar PDF
             doc.save(`relatorio-cti-${new Date().toISOString().slice(0,10)}.pdf`);
