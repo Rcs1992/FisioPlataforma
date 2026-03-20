@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=yes">
-  <meta name="theme-color" content="#0a1f44">
+  <meta name="theme-color" content="#0B1120">
   <title>Fisio Plataforma | Centro de Ferramentas Clínicas</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- Fontes profissionais e modernas -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -15,27 +16,29 @@
     }
 
     :root {
-      --bg-deep: #0a1f44;
-      --accent-cyan: #00ffd5;
-      --accent-glow: rgba(0, 255, 213, 0.4);
-      --text-primary: #f0f4ff;
-      --glass-bg: rgba(10, 25, 55, 0.65);
-      --glass-border: rgba(0, 255, 213, 0.3);
-      --card-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.5);
-      --transition-fast: 0.2s ease;
-      --transition-smooth: 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      --bg-deep: #0B1120;
+      --surface-glass: rgba(18, 25, 45, 0.68);
+      --accent-primary: #3B82F6;
+      --accent-glow: rgba(59, 130, 246, 0.35);
+      --accent-secondary: #2DD4BF;
+      --text-primary: #F1F5F9;
+      --text-secondary: #CBD5E1;
+      --border-subtle: rgba(59, 130, 246, 0.25);
+      --card-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.6);
+      --transition-smooth: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
 
     body {
-      font-family: 'Rajdhani', 'Segoe UI', sans-serif;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
       background: var(--bg-deep);
       color: var(--text-primary);
       min-height: 100vh;
       overflow-x: hidden;
       position: relative;
+      line-height: 1.5;
     }
 
-    /* Canvas background otimizado */
+    /* Canvas background com animação refinada */
     #bg-canvas {
       position: fixed;
       top: 0;
@@ -48,26 +51,26 @@
       will-change: transform;
     }
 
-    /* Container principal responsivo */
+    /* Container principal */
     .container {
       position: relative;
       z-index: 2;
-      max-width: 580px;
+      max-width: 640px;
       width: 92%;
       margin: 2rem auto;
       padding: 1.8rem 1.5rem 2rem;
-      background: var(--glass-bg);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background: var(--surface-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border-radius: 2rem;
-      border: 1px solid var(--glass-border);
+      border: 1px solid rgba(59, 130, 246, 0.2);
       box-shadow: var(--card-shadow);
-      transition: transform var(--transition-smooth), box-shadow 0.3s;
+      transition: var(--transition-smooth);
     }
 
     @media (min-width: 768px) {
       .container {
-        max-width: 680px;
+        max-width: 720px;
         margin: 3rem auto;
         padding: 2rem 2rem 2.5rem;
       }
@@ -75,23 +78,35 @@
 
     @media (min-width: 1280px) {
       .container {
-        max-width: 780px;
+        max-width: 840px;
       }
     }
 
-    /* Título com efeito neon sutil */
+    /* Título profissional */
     h1 {
-      font-family: 'Orbitron', monospace;
+      font-family: 'Poppins', 'Inter', sans-serif;
       font-size: 1.9rem;
-      font-weight: 700;
+      font-weight: 600;
       text-align: center;
-      letter-spacing: 1px;
-      background: linear-gradient(135deg, var(--accent-cyan) 20%, #7efff0 80%);
+      background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      text-shadow: 0 0 6px rgba(0, 255, 213, 0.4);
+      letter-spacing: -0.3px;
       margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    h1::before {
+      content: "⚕️";
+      font-size: 1.8rem;
+      background: none;
+      -webkit-background-clip: unset;
+      background-clip: unset;
+      color: var(--accent-primary);
     }
 
     @media (min-width: 600px) {
@@ -101,142 +116,122 @@
       }
     }
 
-    /* Campo de busca aprimorado */
+    /* Barra de pesquisa refinada */
     .search-wrapper {
       position: relative;
-      margin-bottom: 1.8rem;
+      margin-bottom: 1.5rem;
     }
 
     .search-bar {
       width: 100%;
       padding: 0.85rem 1.2rem;
       border-radius: 3rem;
-      border: 1.5px solid var(--accent-cyan);
-      background: rgba(0, 0, 0, 0.45);
-      color: var(--accent-cyan);
-      font-size: 1rem;
-      font-family: 'Rajdhani', monospace;
+      border: 1px solid var(--border-subtle);
+      background: rgba(0, 0, 0, 0.35);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
       font-weight: 500;
       outline: none;
-      transition: all var(--transition-fast);
-      letter-spacing: 0.3px;
+      transition: all 0.2s ease;
       backdrop-filter: blur(4px);
     }
 
     .search-bar:focus {
-      border-color: var(--accent-cyan);
-      box-shadow: 0 0 0 3px rgba(0, 255, 213, 0.3), 0 0 12px var(--accent-glow);
-      transform: scale(1.01);
-      background: rgba(0, 0, 0, 0.6);
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+      background: rgba(0, 0, 0, 0.5);
     }
 
     .search-bar::placeholder {
-      color: rgba(0, 255, 213, 0.6);
+      color: var(--text-secondary);
       font-weight: 400;
     }
 
-    /* Contador de resultados */
     .result-stats {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       text-align: right;
-      margin-top: 0.4rem;
-      margin-bottom: 0.2rem;
-      color: var(--accent-cyan);
+      margin-top: 0.5rem;
+      color: var(--accent-secondary);
       font-weight: 500;
-      letter-spacing: 0.3px;
-      opacity: 0.9;
+      letter-spacing: 0.2px;
     }
 
-    /* Lista de botões - estilo grid responsivo */
+    /* Grade de botões */
     .buttons-grid {
       display: flex;
       flex-direction: column;
       gap: 0.9rem;
-      max-height: 62vh;
+      max-height: 60vh;
       overflow-y: auto;
       padding-right: 0.3rem;
       scroll-behavior: smooth;
     }
 
-    /* Para telas maiores, mantém coluna única para melhor legibilidade, 
-       mas com botões mais largos e confortáveis */
     @media (min-width: 540px) {
       .buttons-grid {
         gap: 1rem;
       }
     }
 
-    /* Estilo dos botões / links */
+    /* Estilo dos botões (links) */
     .app-btn {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
       gap: 1rem;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(0, 255, 213, 0.45);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(59, 130, 246, 0.3);
       border-radius: 1.2rem;
       padding: 0.9rem 1.2rem;
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--accent-cyan);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-primary);
       text-decoration: none;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      transition: all var(--transition-smooth);
-      backdrop-filter: blur(5px);
+      transition: var(--transition-smooth);
+      backdrop-filter: blur(4px);
       cursor: pointer;
       position: relative;
       overflow: hidden;
     }
 
-    /* Ícone decorativo antes do texto (pseudo-elemento) */
     .app-btn::before {
-      content: "⚡";
-      font-size: 1.25rem;
-      filter: drop-shadow(0 0 3px var(--accent-cyan));
+      content: "▹";
+      font-size: 1.1rem;
+      color: var(--accent-primary);
+      font-weight: 600;
       transition: transform 0.2s ease;
-      opacity: 0.85;
-    }
-
-    /* Personalização por categoria (opcional, mantém identidade) */
-    .app-btn:hover::before {
-      transform: scale(1.1) rotate(5deg);
     }
 
     .app-btn:hover {
-      background: rgba(0, 255, 213, 0.12);
-      border-color: var(--accent-cyan);
-      transform: translateY(-3px);
-      box-shadow: 0 12px 18px -10px rgba(0, 0, 0, 0.5);
+      background: rgba(59, 130, 246, 0.12);
+      border-color: var(--accent-primary);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.5);
     }
 
     .app-btn:active {
       transform: translateY(1px);
-      transition: 0.05s linear;
     }
 
-    /* Efeito de foco para acessibilidade via teclado */
     .app-btn:focus-visible {
-      outline: 2px solid var(--accent-cyan);
-      outline-offset: 3px;
-      background: rgba(0, 255, 213, 0.2);
+      outline: 2px solid var(--accent-primary);
+      outline-offset: 2px;
     }
 
-    /* Mensagem quando nenhum resultado */
+    /* Mensagem de nenhum resultado */
     .no-results {
       text-align: center;
       padding: 2rem 1rem;
       background: rgba(0, 0, 0, 0.3);
       border-radius: 1.5rem;
-      color: #b0d4ff;
-      font-size: 1rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
       font-weight: 500;
-      border: 1px dashed var(--accent-cyan);
-      backdrop-filter: blur(5px);
+      border: 1px dashed var(--accent-primary);
     }
 
-    /* Scrollbar customizada (moderna) */
+    /* Scrollbar elegante */
     .buttons-grid::-webkit-scrollbar {
       width: 5px;
     }
@@ -247,17 +242,16 @@
     }
 
     .buttons-grid::-webkit-scrollbar-thumb {
-      background: var(--accent-cyan);
+      background: var(--accent-primary);
       border-radius: 8px;
     }
 
-    /* Suporte para Firefox */
     .buttons-grid {
       scrollbar-width: thin;
-      scrollbar-color: var(--accent-cyan) rgba(255, 255, 255, 0.1);
+      scrollbar-color: var(--accent-primary) rgba(255, 255, 255, 0.1);
     }
 
-    /* Ajuste de responsividade geral */
+    /* Responsividade mobile */
     @media (max-width: 480px) {
       .container {
         width: 94%;
@@ -266,7 +260,7 @@
       }
 
       .app-btn {
-        padding: 0.75rem 1rem;
+        padding: 0.7rem 1rem;
         font-size: 0.85rem;
         gap: 0.75rem;
       }
@@ -280,40 +274,33 @@
       }
     }
 
-    /* Toque amigável */
-    @media (hover: none) and (pointer: coarse) {
-      .app-btn {
-        padding: 0.9rem 1.2rem;
-      }
-    }
-
-    /* Animação sutil de entrada */
-    @keyframes fadeSlideUp {
-      0% {
+    /* Animação de entrada */
+    @keyframes fadeInUp {
+      from {
         opacity: 0;
         transform: translateY(12px);
       }
-      100% {
+      to {
         opacity: 1;
         transform: translateY(0);
       }
     }
 
     .container {
-      animation: fadeSlideUp 0.5s ease-out;
+      animation: fadeInUp 0.5s ease-out;
     }
   </style>
 </head>
 <body>
   <canvas id="bg-canvas"></canvas>
   <div class="container">
-    <h1>⚕️ FISIO PLATAFORMA</h1>
+    <h1>Fisio Plataforma</h1>
     <div class="search-wrapper">
-      <input type="text" class="search-bar" id="searchInput" placeholder="🔍 Pesquisar ferramenta, score ou cálculo..." aria-label="Filtrar ferramentas clínicas">
+      <input type="text" class="search-bar" id="searchInput" placeholder="Pesquisar ferramenta, score ou protocolo..." aria-label="Filtrar ferramentas">
       <div class="result-stats" id="resultCount">Carregando...</div>
     </div>
     <div class="buttons-grid" id="buttonGrid">
-      <!-- Links dos aplicativos / ferramentas -->
+      <!-- Todos os links originais mantidos -->
       <a href="evolucao.html" class="app-btn" data-name="evolução fisioterapêutica">Evolução</a>
       <a href="recrutamento.html" class="app-btn" data-name="recrutamento alveolar mecânica ventilatória">Recrutamento Alveolar</a>
       <a href="desmame.html" class="app-btn" data-name="desmame ventilador weaning">Desmame</a>
@@ -337,163 +324,115 @@
 
   <script>
     (function() {
-      // --- Canvas background otimizado e performático ---
+      // --- ANIMAÇÃO DE FUNDO REFINADA ---
+      // Partículas com movimento fluido e linhas de conexão para um visual profissional e dinâmico
       const canvas = document.getElementById('bg-canvas');
       let ctx = canvas.getContext('2d');
+      let width, height;
       let particles = [];
       let animationId = null;
-      let bgColor = '#0a1f44'; // cor sólida fixa (evita getComputedStyle repetitivo)
       
-      // Parâmetros dinâmicos para performance em mobile vs desktop
-      let particleCount = 80;
+      // Configurações
+      const PARTICLE_COUNT = 70;
+      const CONNECTION_DISTANCE = 120;
+      const PARTICLE_SIZE_RANGE = [1.2, 3];
+      const SPEED_RANGE = [0.2, 0.6];
       
-      function updateParticleCount() {
-        particleCount = window.innerWidth < 640 ? 45 : (window.innerWidth < 1024 ? 70 : 90);
-      }
-      
-      function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        // Regenera partículas ao redimensionar para manter distribuição uniforme
-        initParticles();
-      }
+      // Cores suaves baseadas no tema
+      const colors = [
+        'rgba(59, 130, 246, 0.4)',   // azul primário
+        'rgba(45, 212, 191, 0.35)',  // teal
+        'rgba(139, 92, 246, 0.3)',   // roxo suave
+        'rgba(255, 255, 255, 0.2)'   // branco translúcido
+      ];
       
       function initParticles() {
-        updateParticleCount();
         particles = [];
-        const colors = ['rgba(255,255,245,0.45)', 'rgba(0,255,213,0.3)', 'rgba(210,255,245,0.25)'];
-        for (let i = 0; i < particleCount; i++) {
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
           particles.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            size: Math.random() * 2.5 + 1.2,
-            speedY: Math.random() * 0.35 + 0.15,
+            x: Math.random() * width,
+            y: Math.random() * height,
+            size: Math.random() * (PARTICLE_SIZE_RANGE[1] - PARTICLE_SIZE_RANGE[0]) + PARTICLE_SIZE_RANGE[0],
+            vx: (Math.random() - 0.5) * 0.25,
+            vy: (Math.random() - 0.8) * 0.3,
             color: colors[Math.floor(Math.random() * colors.length)],
-            opacity: Math.random() * 0.5 + 0.2
+            originalColor: colors[Math.floor(Math.random() * colors.length)]
           });
         }
       }
       
-      function drawParticles() {
+      function resizeCanvas() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+        initParticles();
+      }
+      
+      function draw() {
         if (!ctx) return;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = bgColor;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, width, height);
         
-        for (let p of particles) {
+        // Fundo gradiente sutil para dar profundidade
+        const grad = ctx.createLinearGradient(0, 0, width, height);
+        grad.addColorStop(0, '#0B1120');
+        grad.addColorStop(1, '#111827');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, width, height);
+        
+        // Atualizar e desenhar partículas
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          
+          // Border wrap suave (renascer do outro lado)
+          if (p.x < -20) p.x = width + 20;
+          if (p.x > width + 20) p.x = -20;
+          if (p.y < -20) p.y = height + 20;
+          if (p.y > height + 20) p.y = -20;
+          
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
           ctx.fillStyle = p.color;
           ctx.fill();
-          // movimento ascendente suave
-          p.y -= p.speedY;
-          if (p.y < -5) {
-            p.y = canvas.height + 5;
-            p.x = Math.random() * canvas.width;
+        }
+        
+        // Desenhar conexões entre partículas próximas (efeito de rede)
+        ctx.beginPath();
+        ctx.lineWidth = 0.6;
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < CONNECTION_DISTANCE) {
+              const opacity = (1 - distance / CONNECTION_DISTANCE) * 0.25;
+              ctx.strokeStyle = `rgba(59, 130, 246, ${opacity})`;
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.stroke();
+            }
           }
         }
-        animationId = requestAnimationFrame(drawParticles);
+        
+        animationId = requestAnimationFrame(draw);
       }
       
-      function startBackground() {
+      function startAnimation() {
         if (animationId) cancelAnimationFrame(animationId);
         resizeCanvas();
-        drawParticles();
+        draw();
       }
       
       window.addEventListener('resize', () => {
         resizeCanvas();
       });
       
-      startBackground();
+      startAnimation();
       
-      // --- Filtro de busca aprimorado (case insensitive + palavras chave)---
-      const searchInput = document.getElementById('searchInput');
-      const buttonGrid = document.getElementById('buttonGrid');
-      const resultSpan = document.getElementById('resultCount');
-      const allButtons = Array.from(document.querySelectorAll('.app-btn'));
-      
-      function updateSearchFilter() {
-        const searchTerm = searchInput.value.trim().toLowerCase();
-        let visibleCount = 0;
-        
-        allButtons.forEach(btn => {
-          const textContent = btn.textContent.trim().toLowerCase();
-          const dataName = btn.getAttribute('data-name') ? btn.getAttribute('data-name').toLowerCase() : '';
-          // Combina nome visível + atributo auxiliar para busca mais inteligente
-          const match = textContent.includes(searchTerm) || dataName.includes(searchTerm);
-          
-          if (match || searchTerm === '') {
-            btn.style.display = 'flex';
-            visibleCount++;
-          } else {
-            btn.style.display = 'none';
-          }
-        });
-        
-        // Exibe mensagem de nenhum resultado e atualiza contador
-        const existingMsg = document.getElementById('noResultsMsg');
-        if (visibleCount === 0 && searchTerm !== '') {
-          if (!existingMsg) {
-            const noResultsDiv = document.createElement('div');
-            noResultsDiv.id = 'noResultsMsg';
-            noResultsDiv.className = 'no-results';
-            noResultsDiv.innerHTML = `🔎 Nenhuma ferramenta encontrada para "<strong>${escapeHtml(searchTerm)}</strong>"<br>💡 Tente outra palavra ou verifique o nome`;
-            buttonGrid.appendChild(noResultsDiv);
-          } else {
-            existingMsg.innerHTML = `🔎 Nenhuma ferramenta encontrada para "<strong>${escapeHtml(searchTerm)}</strong>"<br>💡 Tente outra palavra ou verifique o nome`;
-            existingMsg.style.display = 'block';
-          }
-        } else {
-          if (existingMsg) existingMsg.style.display = 'none';
-        }
-        
-        // Atualiza contador de resultados
-        if (searchTerm === '') {
-          resultSpan.textContent = `${allButtons.length} ferramentas disponíveis`;
-        } else {
-          resultSpan.textContent = `${visibleCount} resultado${visibleCount !== 1 ? 's' : ''} encontrado${visibleCount !== 1 ? 's' : ''}`;
-        }
-      }
-      
-      // Escape básico para prevenir XSS na mensagem
-      function escapeHtml(str) {
-        return str.replace(/[&<>]/g, function(m) {
-          if (m === '&') return '&amp;';
-          if (m === '<') return '&lt;';
-          if (m === '>') return '&gt;';
-          return m;
-        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-          return c;
-        });
-      }
-      
-      // Debounce para melhor performance na busca
-      let debounceTimer;
-      searchInput.addEventListener('input', () => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-          updateSearchFilter();
-        }, 180);
-      });
-      
-      // Inicializa contagem
-      updateSearchFilter();
-      
-      // Pequeno detalhe: fechar mensagem de busca se o usuário clicar em qualquer botão? apenas UX extra.
-      // Adiciona suporte a tecla "Escape" para limpar busca
-      searchInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          searchInput.value = '';
-          updateSearchFilter();
-          searchInput.blur();
-        }
-      });
-      
-      // Garantir que ao clicar nos botões, a navegação mantenha a intenção (tudo ok)
-      // Pequeno log para eventos de clique - não interfere.
-      
-      // Otimização extra: reduzir carga da animação quando a aba não está visível
+      // Pausar animação quando a aba não estiver visível (economia de recursos)
       let hidden, visibilityChange;
       if (typeof document.hidden !== "undefined") {
         hidden = "hidden";
@@ -508,17 +447,16 @@
       
       function handleVisibilityChange() {
         if (document[hidden]) {
-          // Pausa a animação quando a aba está inativa para economia de CPU
           if (animationId) {
             cancelAnimationFrame(animationId);
             animationId = null;
           }
         } else {
           if (!animationId) {
-            animationId = requestAnimationFrame(function animateLoop() {
+            animationId = requestAnimationFrame(function loop() {
               if (!document[hidden]) {
-                drawParticles();
-                animationId = requestAnimationFrame(animateLoop);
+                draw();
+                animationId = requestAnimationFrame(loop);
               } else {
                 animationId = null;
               }
@@ -531,23 +469,69 @@
         document.addEventListener(visibilityChange, handleVisibilityChange);
       }
       
-      // Cleanup opcional (não crítico para essa página, mas boa prática)
-      window.addEventListener('beforeunload', () => {
-        if (animationId) cancelAnimationFrame(animationId);
+      // --- FILTRO DE BUSCA OTIMIZADO ---
+      const searchInput = document.getElementById('searchInput');
+      const buttonGrid = document.getElementById('buttonGrid');
+      const resultSpan = document.getElementById('resultCount');
+      const allButtons = Array.from(document.querySelectorAll('.app-btn'));
+      
+      function updateFilter() {
+        const term = searchInput.value.trim().toLowerCase();
+        let visible = 0;
+        
+        allButtons.forEach(btn => {
+          const text = btn.textContent.trim().toLowerCase();
+          const dataName = btn.getAttribute('data-name')?.toLowerCase() || '';
+          const match = text.includes(term) || dataName.includes(term);
+          btn.style.display = match ? 'flex' : 'none';
+          if (match) visible++;
+        });
+        
+        const existingMsg = document.getElementById('noResultsMsg');
+        if (visible === 0 && term !== '') {
+          if (!existingMsg) {
+            const msgDiv = document.createElement('div');
+            msgDiv.id = 'noResultsMsg';
+            msgDiv.className = 'no-results';
+            msgDiv.innerHTML = `🔍 Nenhuma ferramenta encontrada para "<strong>${escapeHtml(term)}</strong>"<br>💡 Tente outro termo ou verifique o nome`;
+            buttonGrid.appendChild(msgDiv);
+          } else {
+            existingMsg.style.display = 'block';
+            existingMsg.innerHTML = `🔍 Nenhuma ferramenta encontrada para "<strong>${escapeHtml(term)}</strong>"<br>💡 Tente outro termo ou verifique o nome`;
+          }
+        } else if (existingMsg) {
+          existingMsg.style.display = 'none';
+        }
+        
+        resultSpan.textContent = term === '' 
+          ? `${allButtons.length} ferramentas disponíveis` 
+          : `${visible} resultado${visible !== 1 ? 's' : ''} encontrado${visible !== 1 ? 's' : ''}`;
+      }
+      
+      function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+          if (m === '&') return '&amp;';
+          if (m === '<') return '&lt;';
+          if (m === '>') return '&gt;';
+          return m;
+        });
+      }
+      
+      let debounce;
+      searchInput.addEventListener('input', () => {
+        clearTimeout(debounce);
+        debounce = setTimeout(updateFilter, 150);
       });
       
-      // Ajuste de acessibilidade: adicionar role e atributos
-      allButtons.forEach(btn => {
-        btn.setAttribute('role', 'link');
+      searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          searchInput.value = '';
+          updateFilter();
+          searchInput.blur();
+        }
       });
       
-      // Correção sutil: garantir que os botões tenham pointer cursor
-      const styleFix = document.createElement('style');
-      styleFix.textContent = `.app-btn { cursor: pointer; }`;
-      document.head.appendChild(styleFix);
-      
-      // Se o container de botões tiver scroll, podemos adicionar um efeito de gradiente sutil no final (opcional)
-      // para melhor experiência visual.
+      updateFilter();
     })();
   </script>
 </body>
