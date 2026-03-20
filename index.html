@@ -2,207 +2,553 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Fisio Plataforma</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=yes">
+  <meta name="theme-color" content="#0a1f44">
+  <title>Fisio Plataforma | Centro de Ferramentas Clínicas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg-color: #0a1f44;
-      --accent: #00ffd5;
-      --text-light: #e0e0e0;
-      --btn-bg: rgba(255,255,255,0.1);
-      --btn-hover: rgba(255,255,255,0.2);
-    }
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
-    html, body {
-      min-height: 100%;
-      overflow-y: auto;
-      background: var(--bg-color);
+
+    :root {
+      --bg-deep: #0a1f44;
+      --accent-cyan: #00ffd5;
+      --accent-glow: rgba(0, 255, 213, 0.4);
+      --text-primary: #f0f4ff;
+      --glass-bg: rgba(10, 25, 55, 0.65);
+      --glass-border: rgba(0, 255, 213, 0.3);
+      --card-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.5);
+      --transition-fast: 0.2s ease;
+      --transition-smooth: 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
+
     body {
-      font-family: 'Rajdhani', sans-serif;
-      color: var(--text-light);
+      font-family: 'Rajdhani', 'Segoe UI', sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
       position: relative;
     }
+
+    /* Canvas background otimizado */
     #bg-canvas {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: -1;
+      display: block;
+      z-index: 0;
+      pointer-events: none;
+      will-change: transform;
     }
+
+    /* Container principal responsivo */
     .container {
       position: relative;
-      text-align: center;
-      width: 90vw;
-      max-width: 380px;
-      backdrop-filter: blur(10px);
-      padding: 2rem;
-      border-radius: 1.5rem;
-      background: rgba(0,0,0,0.3);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.6);
-      margin: 3rem auto;
+      z-index: 2;
+      max-width: 580px;
+      width: 92%;
+      margin: 2rem auto;
+      padding: 1.8rem 1.5rem 2rem;
+      background: var(--glass-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 2rem;
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--card-shadow);
+      transition: transform var(--transition-smooth), box-shadow 0.3s;
     }
+
+    @media (min-width: 768px) {
+      .container {
+        max-width: 680px;
+        margin: 3rem auto;
+        padding: 2rem 2rem 2.5rem;
+      }
+    }
+
+    @media (min-width: 1280px) {
+      .container {
+        max-width: 780px;
+      }
+    }
+
+    /* Título com efeito neon sutil */
     h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.8rem;
+      font-family: 'Orbitron', monospace;
+      font-size: 1.9rem;
       font-weight: 700;
+      text-align: center;
       letter-spacing: 1px;
-      margin-bottom: 1.5rem;
-      color: var(--accent);
-      text-shadow: 0 0 8px rgba(0,255,213,0.7);
+      background: linear-gradient(135deg, var(--accent-cyan) 20%, #7efff0 80%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 6px rgba(0, 255, 213, 0.4);
+      margin-bottom: 1.2rem;
     }
+
+    @media (min-width: 600px) {
+      h1 {
+        font-size: 2.3rem;
+        margin-bottom: 1.5rem;
+      }
+    }
+
+    /* Campo de busca aprimorado */
+    .search-wrapper {
+      position: relative;
+      margin-bottom: 1.8rem;
+    }
+
     .search-bar {
       width: 100%;
-      padding: 0.75rem 1rem;
-      border-radius: 1rem;
-      border: 2px solid var(--accent);
-      background: rgba(255,255,255,0.1);
-      color: var(--accent);
+      padding: 0.85rem 1.2rem;
+      border-radius: 3rem;
+      border: 1.5px solid var(--accent-cyan);
+      background: rgba(0, 0, 0, 0.45);
+      color: var(--accent-cyan);
       font-size: 1rem;
-      margin-bottom: 1.5rem;
+      font-family: 'Rajdhani', monospace;
+      font-weight: 500;
       outline: none;
-      transition: box-shadow 0.3s, transform 0.2s;
+      transition: all var(--transition-fast);
+      letter-spacing: 0.3px;
+      backdrop-filter: blur(4px);
     }
+
     .search-bar:focus {
-      box-shadow: 0 0 12px var(--accent);
-      transform: scale(1.02);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 0 3px rgba(0, 255, 213, 0.3), 0 0 12px var(--accent-glow);
+      transform: scale(1.01);
+      background: rgba(0, 0, 0, 0.6);
     }
-    .buttons {
+
+    .search-bar::placeholder {
+      color: rgba(0, 255, 213, 0.6);
+      font-weight: 400;
+    }
+
+    /* Contador de resultados */
+    .result-stats {
+      font-size: 0.8rem;
+      text-align: right;
+      margin-top: 0.4rem;
+      margin-bottom: 0.2rem;
+      color: var(--accent-cyan);
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      opacity: 0.9;
+    }
+
+    /* Lista de botões - estilo grid responsivo */
+    .buttons-grid {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
-      max-height: 65vh;
+      gap: 0.9rem;
+      max-height: 62vh;
       overflow-y: auto;
-      padding-right: 0.5rem;
+      padding-right: 0.3rem;
+      scroll-behavior: smooth;
     }
-    .btn {
+
+    /* Para telas maiores, mantém coluna única para melhor legibilidade, 
+       mas com botões mais largos e confortáveis */
+    @media (min-width: 540px) {
+      .buttons-grid {
+        gap: 1rem;
+      }
+    }
+
+    /* Estilo dos botões / links */
+    .app-btn {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 0.75rem;
-      background: var(--btn-bg);
-      border: 2px solid var(--accent);
-      border-radius: 1rem;
-      padding: 1rem;
+      justify-content: flex-start;
+      gap: 1rem;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(0, 255, 213, 0.45);
+      border-radius: 1.2rem;
+      padding: 0.9rem 1.2rem;
       font-family: 'Rajdhani', sans-serif;
       font-size: 1rem;
-      font-weight: 500;
-      color: var(--accent);
+      font-weight: 600;
+      color: var(--accent-cyan);
       text-decoration: none;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+      letter-spacing: 0.8px;
+      transition: all var(--transition-smooth);
+      backdrop-filter: blur(5px);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
     }
-    .btn:hover {
-      background: var(--btn-hover);
+
+    /* Ícone decorativo antes do texto (pseudo-elemento) */
+    .app-btn::before {
+      content: "⚡";
+      font-size: 1.25rem;
+      filter: drop-shadow(0 0 3px var(--accent-cyan));
+      transition: transform 0.2s ease;
+      opacity: 0.85;
+    }
+
+    /* Personalização por categoria (opcional, mantém identidade) */
+    .app-btn:hover::before {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .app-btn:hover {
+      background: rgba(0, 255, 213, 0.12);
+      border-color: var(--accent-cyan);
       transform: translateY(-3px);
-      box-shadow: 0 6px 10px rgba(0,0,0,0.6);
+      box-shadow: 0 12px 18px -10px rgba(0, 0, 0, 0.5);
     }
-    .btn:active {
-      transform: translateY(0);
-      box-shadow: 0 3px 5px rgba(0,0,0,0.4);
+
+    .app-btn:active {
+      transform: translateY(1px);
+      transition: 0.05s linear;
     }
-    .btn svg {
-      width: 1.2rem;
-      height: 1.2rem;
-      fill: var(--accent);
+
+    /* Efeito de foco para acessibilidade via teclado */
+    .app-btn:focus-visible {
+      outline: 2px solid var(--accent-cyan);
+      outline-offset: 3px;
+      background: rgba(0, 255, 213, 0.2);
     }
-    ::-webkit-scrollbar {
-      width: 6px;
+
+    /* Mensagem quando nenhum resultado */
+    .no-results {
+      text-align: center;
+      padding: 2rem 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 1.5rem;
+      color: #b0d4ff;
+      font-size: 1rem;
+      font-weight: 500;
+      border: 1px dashed var(--accent-cyan);
+      backdrop-filter: blur(5px);
     }
-    ::-webkit-scrollbar-thumb {
-      background: var(--accent);
-      border-radius: 10px;
+
+    /* Scrollbar customizada (moderna) */
+    .buttons-grid::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .buttons-grid::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+    }
+
+    .buttons-grid::-webkit-scrollbar-thumb {
+      background: var(--accent-cyan);
+      border-radius: 8px;
+    }
+
+    /* Suporte para Firefox */
+    .buttons-grid {
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent-cyan) rgba(255, 255, 255, 0.1);
+    }
+
+    /* Ajuste de responsividade geral */
+    @media (max-width: 480px) {
+      .container {
+        width: 94%;
+        padding: 1.3rem 1rem 1.5rem;
+        margin: 1.2rem auto;
+      }
+
+      .app-btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+        gap: 0.75rem;
+      }
+
+      .app-btn::before {
+        font-size: 1rem;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+    }
+
+    /* Toque amigável */
+    @media (hover: none) and (pointer: coarse) {
+      .app-btn {
+        padding: 0.9rem 1.2rem;
+      }
+    }
+
+    /* Animação sutil de entrada */
+    @keyframes fadeSlideUp {
+      0% {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .container {
+      animation: fadeSlideUp 0.5s ease-out;
     }
   </style>
 </head>
 <body>
   <canvas id="bg-canvas"></canvas>
   <div class="container">
-    <h1>Fisio Plataforma</h1>
-    <input type="text" class="search-bar" id="search" placeholder="Pesquisar...">
-    <div class="buttons" id="button-list">
-      <!-- Seus botões existentes -->
-      <a href="evolucao.html" class="btn">Evolução</a>
-      <a href="recrutamento.html" class="btn">Recrutamento Alveolar</a>
-      <a href="desmame.html" class="btn">Desmame</a>
-      <a href="gasometria.html" class="btn">Gasometria</a>
-      <a href="escalacoma.html" class="btn">Escala de Coma</a>
-      <a href="rehab.html" class="btn">Reabilitação Cardíaca</a>
-      <a href="alturaestimada.html" class="btn">Altura Estimada</a>
-      <a href="peso-predito.html" class="btn">Calcular Peso Predito</a>
-      <a href="barthel.html" class="btn">Índice de Barthel</a>
-      <a href="mif.html" class="btn">Medida da Independência Funcional</a>
-      <a href="hacor.html" class="btn">HACOR Score</a>
-      <a href="indice-rox.html" class="btn">Índice de ROX</a>
-      <a href="news2.html" class="btn">NEWS2</a>
-      <a href="acsm.html" class="btn">Risco Cardiovascular (ACSM)</a>
-      <a href="vmcer.html" class="btn">Relatório de Ventiladores</a>
-      <a href="relatorio.html" class="btn">Relatório de Troca de Dispositivo</a>
-      <a href="sobre.html" class="btn">Sobre</a>
+    <h1>⚕️ FISIO PLATAFORMA</h1>
+    <div class="search-wrapper">
+      <input type="text" class="search-bar" id="searchInput" placeholder="🔍 Pesquisar ferramenta, score ou cálculo..." aria-label="Filtrar ferramentas clínicas">
+      <div class="result-stats" id="resultCount">Carregando...</div>
+    </div>
+    <div class="buttons-grid" id="buttonGrid">
+      <!-- Links dos aplicativos / ferramentas -->
+      <a href="evolucao.html" class="app-btn" data-name="evolução fisioterapêutica">Evolução</a>
+      <a href="recrutamento.html" class="app-btn" data-name="recrutamento alveolar mecânica ventilatória">Recrutamento Alveolar</a>
+      <a href="desmame.html" class="app-btn" data-name="desmame ventilador weaning">Desmame</a>
+      <a href="gasometria.html" class="app-btn" data-name="gasometria arterial ph sangue">Gasometria</a>
+      <a href="escalacoma.html" class="app-btn" data-name="escala de coma glasgow neuro">Escala de Coma</a>
+      <a href="rehab.html" class="app-btn" data-name="reabilitação cardíaca cardiovascular">Reabilitação Cardíaca</a>
+      <a href="alturaestimada.html" class="app-btn" data-name="altura estimada estatura predição">Altura Estimada</a>
+      <a href="peso-predito.html" class="app-btn" data-name="peso predito ideal corporal">Calcular Peso Predito</a>
+      <a href="barthel.html" class="app-btn" data-name="índice de barthel atividades diárias">Índice de Barthel</a>
+      <a href="mif.html" class="app-btn" data-name="medida independência funcional reabilitação">Medida da Independência Funcional</a>
+      <a href="hacor.html" class="app-btn" data-name="hacor score insuficiência respiratoria">HACOR Score</a>
+      <a href="indice-rox.html" class="app-btn" data-name="índice de rox oxigenação">Índice de ROX</a>
+      <a href="news2.html" class="app-btn" data-name="news2 escore alerta precoce">NEWS2</a>
+      <a href="acsm.html" class="app-btn" data-name="risco cardiovascular acsm exercício">Risco Cardiovascular (ACSM)</a>
+      <a href="vmcer.html" class="app-btn" data-name="relatório ventiladores mecânicos">Relatório de Ventiladores</a>
+      <a href="relatorio.html" class="app-btn" data-name="troca dispositivo relatório">Relatório de Troca de Dispositivo</a>
+      <a href="ata.html" class="app-btn" data-name="gerador ata reunião registro">Gerador de Ata</a>
+      <a href="sobre.html" class="app-btn" data-name="sobre informações contato">Sobre</a>
     </div>
   </div>
 
   <script>
-    const canvas = document.getElementById('bg-canvas');
-    const ctx = canvas.getContext('2d');
-    let particles = [];
-    const colors = ['rgba(255,255,255,0.5)', 'rgba(255,255,255,0.3)'];
-
-    function resize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    function createParticles() {
-      particles = [];
-      for (let i = 0; i < 100; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          size: Math.random() * 3 + 1,
-          speed: Math.random() * 0.5 + 0.2,
-          color: colors[Math.floor(Math.random() * colors.length)]
+    (function() {
+      // --- Canvas background otimizado e performático ---
+      const canvas = document.getElementById('bg-canvas');
+      let ctx = canvas.getContext('2d');
+      let particles = [];
+      let animationId = null;
+      let bgColor = '#0a1f44'; // cor sólida fixa (evita getComputedStyle repetitivo)
+      
+      // Parâmetros dinâmicos para performance em mobile vs desktop
+      let particleCount = 80;
+      
+      function updateParticleCount() {
+        particleCount = window.innerWidth < 640 ? 45 : (window.innerWidth < 1024 ? 70 : 90);
+      }
+      
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        // Regenera partículas ao redimensionar para manter distribuição uniforme
+        initParticles();
+      }
+      
+      function initParticles() {
+        updateParticleCount();
+        particles = [];
+        const colors = ['rgba(255,255,245,0.45)', 'rgba(0,255,213,0.3)', 'rgba(210,255,245,0.25)'];
+        for (let i = 0; i < particleCount; i++) {
+          particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 2.5 + 1.2,
+            speedY: Math.random() * 0.35 + 0.15,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            opacity: Math.random() * 0.5 + 0.2
+          });
+        }
+      }
+      
+      function drawParticles() {
+        if (!ctx) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        for (let p of particles) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.fill();
+          // movimento ascendente suave
+          p.y -= p.speedY;
+          if (p.y < -5) {
+            p.y = canvas.height + 5;
+            p.x = Math.random() * canvas.width;
+          }
+        }
+        animationId = requestAnimationFrame(drawParticles);
+      }
+      
+      function startBackground() {
+        if (animationId) cancelAnimationFrame(animationId);
+        resizeCanvas();
+        drawParticles();
+      }
+      
+      window.addEventListener('resize', () => {
+        resizeCanvas();
+      });
+      
+      startBackground();
+      
+      // --- Filtro de busca aprimorado (case insensitive + palavras chave)---
+      const searchInput = document.getElementById('searchInput');
+      const buttonGrid = document.getElementById('buttonGrid');
+      const resultSpan = document.getElementById('resultCount');
+      const allButtons = Array.from(document.querySelectorAll('.app-btn'));
+      
+      function updateSearchFilter() {
+        const searchTerm = searchInput.value.trim().toLowerCase();
+        let visibleCount = 0;
+        
+        allButtons.forEach(btn => {
+          const textContent = btn.textContent.trim().toLowerCase();
+          const dataName = btn.getAttribute('data-name') ? btn.getAttribute('data-name').toLowerCase() : '';
+          // Combina nome visível + atributo auxiliar para busca mais inteligente
+          const match = textContent.includes(searchTerm) || dataName.includes(searchTerm);
+          
+          if (match || searchTerm === '') {
+            btn.style.display = 'flex';
+            visibleCount++;
+          } else {
+            btn.style.display = 'none';
+          }
+        });
+        
+        // Exibe mensagem de nenhum resultado e atualiza contador
+        const existingMsg = document.getElementById('noResultsMsg');
+        if (visibleCount === 0 && searchTerm !== '') {
+          if (!existingMsg) {
+            const noResultsDiv = document.createElement('div');
+            noResultsDiv.id = 'noResultsMsg';
+            noResultsDiv.className = 'no-results';
+            noResultsDiv.innerHTML = `🔎 Nenhuma ferramenta encontrada para "<strong>${escapeHtml(searchTerm)}</strong>"<br>💡 Tente outra palavra ou verifique o nome`;
+            buttonGrid.appendChild(noResultsDiv);
+          } else {
+            existingMsg.innerHTML = `🔎 Nenhuma ferramenta encontrada para "<strong>${escapeHtml(searchTerm)}</strong>"<br>💡 Tente outra palavra ou verifique o nome`;
+            existingMsg.style.display = 'block';
+          }
+        } else {
+          if (existingMsg) existingMsg.style.display = 'none';
+        }
+        
+        // Atualiza contador de resultados
+        if (searchTerm === '') {
+          resultSpan.textContent = `${allButtons.length} ferramentas disponíveis`;
+        } else {
+          resultSpan.textContent = `${visibleCount} resultado${visibleCount !== 1 ? 's' : ''} encontrado${visibleCount !== 1 ? 's' : ''}`;
+        }
+      }
+      
+      // Escape básico para prevenir XSS na mensagem
+      function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+          if (m === '&') return '&amp;';
+          if (m === '<') return '&lt;';
+          if (m === '>') return '&gt;';
+          return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+          return c;
         });
       }
-    }
-
-    function animate() {
-      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--bg-color');
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => {
-        p.y -= p.speed;
-        if (p.y < 0) p.y = canvas.height;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.fill();
+      
+      // Debounce para melhor performance na busca
+      let debounceTimer;
+      searchInput.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          updateSearchFilter();
+        }, 180);
       });
-      requestAnimationFrame(animate);
-    }
-    createParticles();
-    animate();
-
-    // Filtro de pesquisa
-    document.getElementById("search").addEventListener("input", function() {
-      const filter = this.value.toLowerCase();
-      const buttons = document.querySelectorAll("#button-list .btn");
-      buttons.forEach(btn => {
-        const text = btn.textContent.toLowerCase();
-        btn.style.display = text.includes(filter) ? "flex" : "none";
+      
+      // Inicializa contagem
+      updateSearchFilter();
+      
+      // Pequeno detalhe: fechar mensagem de busca se o usuário clicar em qualquer botão? apenas UX extra.
+      // Adiciona suporte a tecla "Escape" para limpar busca
+      searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          searchInput.value = '';
+          updateSearchFilter();
+          searchInput.blur();
+        }
       });
-    });
+      
+      // Garantir que ao clicar nos botões, a navegação mantenha a intenção (tudo ok)
+      // Pequeno log para eventos de clique - não interfere.
+      
+      // Otimização extra: reduzir carga da animação quando a aba não está visível
+      let hidden, visibilityChange;
+      if (typeof document.hidden !== "undefined") {
+        hidden = "hidden";
+        visibilityChange = "visibilitychange";
+      } else if (typeof document.msHidden !== "undefined") {
+        hidden = "msHidden";
+        visibilityChange = "msvisibilitychange";
+      } else if (typeof document.webkitHidden !== "undefined") {
+        hidden = "webkitHidden";
+        visibilityChange = "webkitvisibilitychange";
+      }
+      
+      function handleVisibilityChange() {
+        if (document[hidden]) {
+          // Pausa a animação quando a aba está inativa para economia de CPU
+          if (animationId) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+          }
+        } else {
+          if (!animationId) {
+            animationId = requestAnimationFrame(function animateLoop() {
+              if (!document[hidden]) {
+                drawParticles();
+                animationId = requestAnimationFrame(animateLoop);
+              } else {
+                animationId = null;
+              }
+            });
+          }
+        }
+      }
+      
+      if (visibilityChange) {
+        document.addEventListener(visibilityChange, handleVisibilityChange);
+      }
+      
+      // Cleanup opcional (não crítico para essa página, mas boa prática)
+      window.addEventListener('beforeunload', () => {
+        if (animationId) cancelAnimationFrame(animationId);
+      });
+      
+      // Ajuste de acessibilidade: adicionar role e atributos
+      allButtons.forEach(btn => {
+        btn.setAttribute('role', 'link');
+      });
+      
+      // Correção sutil: garantir que os botões tenham pointer cursor
+      const styleFix = document.createElement('style');
+      styleFix.textContent = `.app-btn { cursor: pointer; }`;
+      document.head.appendChild(styleFix);
+      
+      // Se o container de botões tiver scroll, podemos adicionar um efeito de gradiente sutil no final (opcional)
+      // para melhor experiência visual.
+    })();
   </script>
 </body>
 </html>
-
-
