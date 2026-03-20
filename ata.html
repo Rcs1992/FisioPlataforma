@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Ata Online - Transcrição ao Vivo com Identificação de Falantes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .transcript-card { transition: all 0.2s; }
+        #statusBadge.listening { background-color: #dcfce7; color: #166534; }
+        #statusBadge.paused { background-color: #fef9c3; color: #854d0e; }
+        #statusBadge.inactive { background-color: #f1f5f9; color: #334155; }
+        #statusBadge.error { background-color: #fee2e2; color: #b91c1c; }
+        .speaker-btn-active {
+            background-color: #2563eb !important;
+            color: white !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans antialiased">
+
+<div class="max-w-5xl mx-auto px-4 py-6 md:py-10">
+    <div class="text-center mb-6">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 flex justify-center items-center gap-3">
+            <i class="fas fa-microphone-alt text-red-500"></i> Ata em Tempo Real
+        </h1>
+        <p class="text-gray-600 mt-2">Transcrição ao vivo com identificação manual de falantes. Cadastre os participantes e atribua as falas em tempo real.</p>
+        <div class="inline-flex items-center bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full mt-2">
+            <i class="fas fa-globe mr-1"></i> Funciona 100% no navegador · Sem custos · Sem uploads
+        </div>
+    </div>
+
+    <!-- Configuração da Reunião -->
+    <div class="bg-white rounded-xl shadow-md p-5 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Título da Ata</label>
+                <input type="text" id="meetingTitle" class="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1 focus:ring-blue-500" placeholder="Ex: Reunião Semanal - Marketing">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Data / Responsável</label>
+                <input type="text" id="meetingDate" class="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1" placeholder="Ex: 20 de Março de 2026">
+            </div>
+        </div>
+        
+        <!-- Gerenciamento de Participantes -->
+        <div class="border-t pt-4 mt-2">
+            <label class="block text-sm font-medium text-gray-700 mb-2">👥 Participantes da Reunião</label>
+            <div class="flex flex-wrap items-center gap-3 mb-3">
+                <div id="speakersContainer" class="flex flex-wrap gap-2 flex-1">
+                    <!-- Participantes serão adicionados dinamicamente -->
+                </div>
+                <button id="addSpeakerBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm flex items-center gap-1 shadow">
+                    <i class="fas fa-user-plus"></i> Adicionar Participante
+                </button>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-3 text-sm flex flex-wrap items-center justify-between gap-2">
+                <div>
+                    <span class="font-medium">Falante atual:</span>
+                    <span id="currentSpeakerLabel" class="inline-block ml-2 px-3 py-1 bg-blue-100 text-blue-800 rounded-full font-semibold">Nenhum</span>
+                </div>
+                <div class="text-gray-500 text-xs">
+                    <i class="fas fa-info-circle"></i> Clique no nome do participante para definir quem está falando. As frases serão atribuídas automaticamente a ele.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controles de Transcrição -->
+    <div class="bg-white rounded-xl shadow-md p-5 mb-6">
+        <div class="flex flex-wrap items-center gap-4">
+            <button id="startBtn" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-medium flex items-center gap-2 shadow">
+                <i class="fas fa-play"></i> Iniciar Transcrição
+            </button>
+            <button id="pauseBtn" disabled class="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-lg font-medium flex items-center gap-2 shadow disabled:opacity-50">
+                <i class="fas fa-pause"></i> Pausar
+            </button>
+            <button id="stopBtn" disabled class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg font-medium flex items-center gap-2 shadow disabled:opacity-50">
+                <i class="fas fa-stop"></i> Finalizar Ata
+            </button>
+            <div id="statusBadge" class="ml-auto px-4 py-2 rounded-full text-sm font-medium bg-gray-200 text-gray-700">
+                <i class="fas fa-microphone-slash mr-1"></i> Parado
+            </div>
+        </div>
+        <p class="text-xs text-gray-500 mt-3">
+            <i class="fas fa-info-circle"></i> <strong>Como usar:</strong> 1) Adicione os participantes com seus nomes. 2) Clique no nome de quem vai falar (ele ficará azul). 3) Inicie a transcrição e comece a falar. 4) Para trocar de falante, basta clicar em outro nome durante a reunião. Cada fala será atribuída ao falante ativo no momento.
+            <span class="block text-amber-600 mt-1"><i class="fas fa-wifi"></i> Em caso de instabilidade de rede, o sistema tentará reconectar automaticamente.</span>
+        </p>
+    </div>
+
+    <!-- Área de Transcrição ao Vivo -->
+    <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+        <div class="bg-gray-50 px-5 py-3 border-b flex justify-between items-center">
+            <h2 class="text-xl font-semibold text-gray-800 flex items-center gap-2">
+                <i class="fas fa-comment-dots text-indigo-500"></i> Diálogo da Reunião
+            </h2>
+            <button id="generatePdfBtn" disabled class="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition disabled:opacity-50 flex items-center gap-2">
+                <i class="fas fa-file-pdf"></i> Gerar PDF da Ata
+            </button>
+        </div>
+        <div id="transcriptArea" class="p-5 h-96 overflow-y-auto bg-white space-y-3">
+            <div class="text-center text-gray-400 py-12">
+                <i class="fas fa-microphone-alt text-3xl mb-2 opacity-50"></i>
+                <p>Nenhuma transcrição ainda.<br>Adicione participantes e inicie a captura de voz.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-xs text-gray-400 text-center mt-6 border-t pt-5">
+        <i class="fas fa-shield-alt"></i> A transcrição usa a API de reconhecimento de fala do seu navegador (Google Chrome, Edge, Safari). 
+        Nenhum áudio é enviado para servidores externos. Os dados ficam apenas nesta página.
+    </div>
+</div>
+
+<script>
+    // Elementos
+    const startBtn = document.getElementById('startBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const generatePdfBtn = document.getElementById('generatePdfBtn');
+    const transcriptArea = document.getElementById('transcriptArea');
+    const speakersContainer = document.getElementById('speakersContainer');
+    const currentSpeakerSpan = document.getElementById('currentSpeakerLabel');
+    const statusBadge = document.getElementById('statusBadge');
+    const meetingTitleInput = document.getElementById('meetingTitle');
+    const meetingDateInput = document.getElementById('meetingDate');
+    const addSpeakerBtn = document.getElementById('addSpeakerBtn');
+    
+    // Dados da ata
+    let speakers = [];           // array de objetos { id, name }
+    let currentSpeakerId = null;
+    let transcriptLines = [];    // cada linha: { speakerId, speakerName, text, timestamp, isSystem? }
+    let recognition = null;
+    let isListening = false;
+    let reconnectAttempts = 0;
+    let reconnectTimeout = null;
+    const MAX_RECONNECT_ATTEMPTS = 3;
+    const RECONNECT_DELAY = 3000;
+    
+    // Funções de gerenciamento de participantes
+    function renderSpeakers() {
+        speakersContainer.innerHTML = '';
+        if (speakers.length === 0) {
+            speakersContainer.innerHTML = '<div class="text-gray-400 text-sm italic">Nenhum participante adicionado. Clique em "Adicionar Participante".</div>';
+            currentSpeakerSpan.innerText = 'Nenhum';
+            return;
+        }
+        speakers.forEach(speaker => {
+            const btn = document.createElement('button');
+            btn.className = `px-3 py-1.5 rounded-full text-sm font-medium transition-all ${currentSpeakerId === speaker.id ? 'speaker-btn-active bg-blue-600 text-white shadow' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`;
+            btn.innerHTML = `<i class="fas fa-user mr-1"></i> ${escapeHtml(speaker.name)}`;
+            btn.onclick = () => {
+                setCurrentSpeaker(speaker.id);
+                if (isListening) {
+                    addSystemMessage(`🎤 Falante alterado para: ${speaker.name}`);
+                }
+            };
+            speakersContainer.appendChild(btn);
+        });
+        const activeSpeaker = speakers.find(s => s.id === currentSpeakerId);
+        currentSpeakerSpan.innerText = activeSpeaker ? activeSpeaker.name : 'Nenhum';
+    }
+    
+    function setCurrentSpeaker(id) {
+        currentSpeakerId = id;
+        renderSpeakers();
+    }
+    
+    function addSpeaker() {
+        let name = prompt('Nome do participante (ex: Ana, Carlos, Dr. João):');
+        if (!name || name.trim() === '') return;
+        name = name.trim();
+        const newId = 's' + Date.now() + Math.random().toString(36).substr(2, 5);
+        speakers.push({ id: newId, name: name });
+        if (speakers.length === 1) {
+            setCurrentSpeaker(newId);
+        } else {
+            renderSpeakers();
+        }
+        addSystemMessage(`➕ Participante adicionado: ${name}`);
+    }
+    
+    function editSpeaker(id) {
+        const speaker = speakers.find(s => s.id === id);
+        if (!speaker) return;
+        const newName = prompt('Editar nome do participante:', speaker.name);
+        if (newName && newName.trim()) {
+            const oldName = speaker.name;
+            speaker.name = newName.trim();
+            renderSpeakers();
+            addSystemMessage(`✏️ Participante "${oldName}" agora é "${speaker.name}"`);
+            // Atualizar o nome nas falas já existentes (para manter coerência no PDF)
+            transcriptLines.forEach(line => {
+                if (line.speakerId === id && !line.isSystem) {
+                    line.speakerName = speaker.name;
+                }
+            });
+            renderTranscript();
+        }
+    }
+    
+    function removeSpeaker(id) {
+        const speaker = speakers.find(s => s.id === id);
+        if (!speaker) return;
+        if (confirm(`Remover "${speaker.name}" da lista de participantes? As falas já atribuídas a ele permanecerão, mas não será possível selecioná-lo novamente.`)) {
+            speakers = speakers.filter(s => s.id !== id);
+            if (currentSpeakerId === id) {
+                currentSpeakerId = speakers.length > 0 ? speakers[0].id : null;
+            }
+            renderSpeakers();
+            addSystemMessage(`🗑️ Participante removido: ${speaker.name}`);
+        }
+    }
+    
+    // Funções de transcrição
+    function addUtterance(text, speakerId) {
+        if (!text.trim()) return;
+        const speaker = speakers.find(s => s.id === speakerId);
+        const speakerName = speaker ? speaker.name : 'Desconhecido';
+        const line = {
+            speakerId: speakerId,
+            speakerName: speakerName,
+            text: text.trim(),
+            timestamp: new Date(),
+            isSystem: false
+        };
+        transcriptLines.push(line);
+        renderTranscript();
+    }
+    
+    function addSystemMessage(msg) {
+        const line = {
+            speakerId: null,
+            speakerName: '📌 Sistema',
+            text: msg,
+            timestamp: new Date(),
+            isSystem: true
+        };
+        transcriptLines.push(line);
+        renderTranscript();
+    }
+    
+    function renderTranscript() {
+        if (transcriptLines.length === 0) {
+            transcriptArea.innerHTML = `<div class="text-center text-gray-400 py-12">
+                <i class="fas fa-comment-slash text-3xl mb-2"></i>
+                <p>Nenhuma fala registrada. Inicie a transcrição e comece a falar.</p>
+            </div>`;
+            return;
+        }
+        let html = '';
+        for (let line of transcriptLines) {
+            const timeStr = line.timestamp ? line.timestamp.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
+            if (line.isSystem) {
+                html += `
+                    <div class="text-xs text-center text-gray-400 py-1 border-b border-gray-100">
+                        <i class="far fa-clock mr-1"></i> ${timeStr} · ${escapeHtml(line.text)}
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="transcript-card p-3 rounded-lg bg-gray-50 border border-gray-200 shadow-sm hover:shadow transition">
+                        <div class="flex items-start gap-2">
+                            <span class="font-bold text-blue-700 min-w-[100px]"><i class="fas fa-user-circle mr-1"></i> ${escapeHtml(line.speakerName)}</span>
+                            <div class="flex-1 text-gray-800">${escapeHtml(line.text)}</div>
+                            <span class="text-xs text-gray-400 whitespace-nowrap">${timeStr}</span>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        transcriptArea.innerHTML = html;
+        transcriptArea.scrollTop = transcriptArea.scrollHeight;
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    // Configuração do Web Speech API
+    function initRecognition() {
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            alert('Seu navegador não suporta reconhecimento de fala. Use Google Chrome, Edge ou Safari.');
+            return false;
+        }
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.lang = 'pt-BR';
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
+        
+        recognition.onstart = () => {
+            isListening = true;
+            reconnectAttempts = 0;
+            if (reconnectTimeout) clearTimeout(reconnectTimeout);
+            statusBadge.innerHTML = '<i class="fas fa-microphone-alt mr-1"></i> Ouvindo...';
+            statusBadge.className = 'ml-auto px-4 py-2 rounded-full text-sm font-medium bg-green-100 text-green-800';
+            startBtn.disabled = true;
+            pauseBtn.disabled = false;
+            stopBtn.disabled = false;
+            generatePdfBtn.disabled = true;
+        };
+        
+        recognition.onend = () => {
+            isListening = false;
+            statusBadge.innerHTML = '<i class="fas fa-microphone-slash mr-1"></i> Parado';
+            statusBadge.className = 'ml-auto px-4 py-2 rounded-full text-sm font-medium bg-gray-200 text-gray-700';
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            stopBtn.disabled = false;
+            generatePdfBtn.disabled = (transcriptLines.length === 0);
+        };
+        
+        recognition.onerror = (event) => {
+            console.error('Erro no reconhecimento:', event.error);
+            if (event.error === 'network') {
+                addSystemMessage('⚠️ Instabilidade de rede detectada. Tentando reconectar automaticamente...');
+                statusBadge.innerHTML = '<i class="fas fa-sync-alt fa-spin mr-1"></i> Reconectando...';
+                statusBadge.className = 'ml-auto px-4 py-2 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800';
+                attemptReconnect();
+            } else if (event.error === 'not-allowed') {
+                addSystemMessage('❌ Permissão de microfone negada. Ative o acesso ao microfone.');
+                recognition.stop();
+            } else {
+                addSystemMessage(`⚠️ Erro na captura: ${event.error}. Tente reiniciar a transcrição.`);
+                recognition.stop();
+            }
+        };
+        
+        recognition.onresult = (event) => {
+            let finalTranscript = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const result = event.results[i];
+                if (result.isFinal) {
+                    finalTranscript += result[0].transcript + ' ';
+                }
+            }
+            if (finalTranscript.trim() !== '') {
+                if (currentSpeakerId) {
+                    addUtterance(finalTranscript.trim(), currentSpeakerId);
+                } else {
+                    addSystemMessage('🎙️ Nenhum falante selecionado. A fala não foi atribuída: "' + finalTranscript.trim() + '"');
+                }
+            }
+        };
+        return true;
+    }
+    
+    function attemptReconnect() {
+        if (reconnectTimeout) clearTimeout(reconnectTimeout);
+        if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
+            addSystemMessage(`❌ Não foi possível reconectar após ${MAX_RECONNECT_ATTEMPTS} tentativas. Clique em "Iniciar" manualmente.`);
+            statusBadge.innerHTML = '<i class="fas fa-exclamation-triangle mr-1"></i> Falha na conexão';
+            statusBadge.className = 'ml-auto px-4 py-2 rounded-full text-sm font-medium bg-red-100 text-red-800';
+            return;
+        }
+        reconnectAttempts++;
+        addSystemMessage(`🔄 Tentativa de reconexão ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS} em ${RECONNECT_DELAY/1000}s...`);
+        reconnectTimeout = setTimeout(() => {
+            if (recognition && !isListening) {
+                try {
+                    recognition.start();
+                } catch (e) {
+                    addSystemMessage(`Erro ao reiniciar: ${e.message}`);
+                    attemptReconnect();
+                }
+            } else if (isListening) {
+                reconnectAttempts = 0;
+            }
+        }, RECONNECT_DELAY);
+    }
+    
+    function startTranscription() {
+        if (recognition === null) {
+            if (!initRecognition()) return;
+        }
+        if (isListening) {
+            addSystemMessage('Já está gravando. Para pausar, clique em "Pausar".');
+            return;
+        }
+        if (!currentSpeakerId) {
+            addSystemMessage('⚠️ Selecione um falante antes de iniciar (clique no nome do participante).');
+            return;
+        }
+        try {
+            recognition.start();
+            addSystemMessage('🎙️ Transcrição iniciada. O microfone está ativo. Fale normalmente e altere o falante conforme necessário.');
+        } catch (e) {
+            console.error(e);
+            addSystemMessage('Erro ao iniciar: ' + e.message);
+        }
+    }
+    
+    function pauseTranscription() {
+        if (recognition && isListening) {
+            recognition.stop();
+            addSystemMessage('⏸️ Transcrição pausada. Clique em "Iniciar" para continuar.');
+        } else {
+            addSystemMessage('Nenhuma transcrição ativa para pausar.');
+        }
+    }
+    
+    function stopTranscription(finalize = true) {
+        if (recognition && isListening) {
+            recognition.stop();
+            if (finalize) {
+                addSystemMessage('🏁 Transcrição finalizada. Agora você pode gerar o PDF da ata.');
+                generatePdfBtn.disabled = false;
+            }
+        } else {
+            if (finalize) addSystemMessage('Nenhuma transcrição ativa. A ata atual pode ser gerada.');
+            generatePdfBtn.disabled = (transcriptLines.length === 0);
+        }
+        if (reconnectTimeout) {
+            clearTimeout(reconnectTimeout);
+            reconnectTimeout = null;
+        }
+        reconnectAttempts = 0;
+    }
+    
+    async function generatePDF() {
+        if (transcriptLines.length === 0) {
+            alert('Não há transcrição para gerar o PDF. Inicie a reunião e fale algo.');
+            return;
+        }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        const margin = 15;
+        let y = margin;
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const maxLineWidth = pageWidth - margin * 2;
+        const lineHeight = 6;
+        
+        function addText(text, fontSize = 10, isBold = false, indent = 0) {
+            doc.setFontSize(fontSize);
+            doc.setFont('helvetica', isBold ? 'bold' : 'normal');
+            const lines = doc.splitTextToSize(text, maxLineWidth - indent);
+            for (let line of lines) {
+                if (y + lineHeight > doc.internal.pageSize.getHeight() - margin) {
+                    doc.addPage();
+                    y = margin;
+                }
+                doc.text(line, margin + indent, y);
+                y += lineHeight;
+            }
+            y += 1;
+        }
+        
+        doc.setFontSize(18);
+        doc.setFont('helvetica', 'bold');
+        doc.text('ATA DE REUNIÃO', pageWidth / 2, y, { align: 'center' });
+        y += 10;
+        doc.setFontSize(11);
+        const title = meetingTitleInput.value.trim() || 'Reunião - Ata Online';
+        const date = meetingDateInput.value.trim() || new Date().toLocaleDateString('pt-BR');
+        addText(`Título: ${title}`, 11);
+        addText(`Data: ${date}`, 11);
+        addText(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 10);
+        addText('--------------------------------------------------', 9);
+        
+        addText('📝 DIÁLOGO COMPLETO', 12, true);
+        y += 2;
+        
+        for (let line of transcriptLines) {
+            if (line.isSystem) {
+                addText(`[SISTEMA] ${line.text}`, 9, false, 0);
+            } else {
+                const timeStr = line.timestamp ? line.timestamp.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
+                addText(`${line.speakerName}:`, 10, true);
+                addText(`${line.text}`, 10, false, 5);
+                addText(`⏱️ ${timeStr}`, 8, false, 5);
+                y += 1;
+            }
+        }
+        
+        addText(`\nTotal de intervenções: ${transcriptLines.filter(l => !l.isSystem).length}`, 9);
+        doc.save(`ata_${title.replace(/\s+/g, '_')}.pdf`);
+    }
+    
+    // Event listeners
+    addSpeakerBtn.addEventListener('click', addSpeaker);
+    startBtn.addEventListener('click', startTranscription);
+    pauseBtn.addEventListener('click', pauseTranscription);
+    stopBtn.addEventListener('click', () => stopTranscription(true));
+    generatePdfBtn.addEventListener('click', generatePDF);
+    
+    // Inicialização sem falantes padrão
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        addSystemMessage('❌ Seu navegador não suporta transcrição por voz. Use Chrome, Edge ou Safari.');
+        startBtn.disabled = true;
+    } else {
+        initRecognition();
+    }
+    
+    if (!meetingDateInput.value) {
+        meetingDateInput.value = new Date().toLocaleDateString('pt-BR');
+    }
+    
+    // Opcional: permitir editar/remover participantes com clique direito (para melhor usabilidade)
+    speakersContainer.addEventListener('contextmenu', (e) => {
+        // Implementação simples: detectar botão do participante
+        const target = e.target.closest('button');
+        if (target && target.id !== 'addSpeakerBtn') {
+            e.preventDefault();
+            const speakerName = target.innerText.trim();
+            const speaker = speakers.find(s => s.name === speakerName);
+            if (speaker) {
+                const action = confirm(`O que deseja fazer com "${speaker.name}"?\n\nOK para editar nome, Cancelar para remover.`);
+                if (action) {
+                    editSpeaker(speaker.id);
+                } else {
+                    removeSpeaker(speaker.id);
+                }
+            }
+        }
+    });
+</script>
+</body>
+</html>
