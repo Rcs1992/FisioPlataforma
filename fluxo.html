@@ -409,26 +409,99 @@
         </div>
     </div>
 
-    <!-- TAB 4: Algoritmo prático + ROX index interativo -->
+ <!-- TAB 4: NOVO ALGORITMO CLÍNICO (substituído conforme solicitado) -->
     <div id="tab4" class="tab-content">
         <div class="card">
-            <div class="card-title"><i class="fas fa-project-diagram"></i> Algoritmo de decisão CNAF vs VNI (ESICM/ERS adaptado)</div>
-            <div class="algorithm-step"><i class="fas fa-1"></i> <strong>Passo 1 – Fenótipo?</strong> EAP, DPOC ou SHO? → <span class="risk-badge">Iniciar VNI imediatamente</span> (CPAP se EAP; Bilevel para DPOC/SHO).</div>
-            <div class="algorithm-step"><i class="fas fa-2"></i> <strong>Passo 2 – Gravidade severa?</strong> PaO₂/FiO₂ <150 + FR>30 + uso grave de acessórios → <span class="risk-badge">Consultar intensivista urgente. Considerar VNI sob supervisão ou IOT.</span></div>
-            <div class="algorithm-step"><i class="fas fa-3"></i> <strong>Passo 3 – Tolerância / imunossupressão?</strong> Agitado, imunocomprometido, requer higiene brônquica → <span class="risk-badge">Iniciar CNAF (40-60 L/min)</span>; caso contrário, ambas opções aceitáveis.</div>
-            <div class="algorithm-step"><i class="fas fa-4"></i> <strong>Passo 4a – Monitorização com ROX (se CNAF):</strong> Calcular ROX = (SpO₂/FiO₂)/FR. Avaliar em 2h, 6h e 12h: <br>
-            ➜ ROX ≥4,88 → baixo risco, continuar CNAF.<br>
-            ➜ ROX 3,85–4,88 → risco intermediário, intensificar monitorização, considerar escalar para VNI.<br>
-            ➜ ROX <3,85 → muito alto risco → intubar ou escalar urgente.
+            <div class="card-title"><i class="fas fa-project-diagram"></i> 4. Clinical Decision Algorithm</div>
+            <p><strong>Aplicar o seguinte fluxo passo a passo na apresentação inicial. Reavaliar cada etapa antes de prosseguir.</strong></p>
+            <div class="algorithm-container">
+                
+                <!-- STEP 1 -->
+                <div class="step-card">
+                    <div class="step-title"><i class="fas fa-1"></i> STEP 1 — Identify Clinical Phenotype</div>
+                    <div class="decision-row">
+                        <span class="yes-badge"><i class="fas fa-check-circle"></i> YES</span> Diagnóstico = EAP, DPOC ou Síndrome da Hipoventilação em Obesos?<br>
+                        → Iniciar VNI imediatamente (CPAP para EAP; bilevel para DPOC/SHO). <strong>Nenhum passo adicional necessário.</strong>
+                    </div>
+                    <div class="decision-row" style="margin-top: 8px;">
+                        <span class="no-badge"><i class="fas fa-times-circle"></i> NO / Uncertain</span> → Prossiga para <strong>STEP 2</strong>.
+                    </div>
+                </div>
+                
+                <div class="arrow-down"><i class="fas fa-arrow-down"></i></div>
+                
+                <!-- STEP 2 -->
+                <div class="step-card">
+                    <div class="step-title"><i class="fas fa-2"></i> STEP 2 — Severity Assessment</div>
+                    <div class="decision-row">
+                        <span class="yes-badge"><i class="fas fa-check-circle"></i> YES</span> Apresentação GRAVE? (PaO₂/FiO₂ < 150, AND FR > 30/min, AND uso acentuado de musculatura acessória)<br>
+                        → Consultar intensivista imediatamente. Considerar VNI precoce com monitorização rigorosa ou progredir para intubação. Definir ceiling de não-intubação se aplicável.
+                    </div>
+                    <div class="decision-row" style="margin-top: 8px;">
+                        <span class="no-badge"><i class="fas fa-times-circle"></i> NO (Leve–Moderada)</span> → Prossiga para <strong>STEP 3</strong>.
+                    </div>
+                </div>
+                
+                <div class="arrow-down"><i class="fas fa-arrow-down"></i></div>
+                
+                <!-- STEP 3 -->
+                <div class="step-card">
+                    <div class="step-title"><i class="fas fa-3"></i> STEP 3 — Tolerance & Comorbidity Screen</div>
+                    <div class="decision-row">
+                        <span class="yes-badge"><i class="fas fa-check-circle"></i> YES</span> Paciente: Agitado / Imunocomprometido / Necessita de higiene brônquica / Intolerante à máscara apertada?<br>
+                        → Iniciar <strong>CNAF (40–60 L/min, FiO₂ titulada para SpO₂ 92–96%)</strong>. Monitorizar com ROX Index (Step 4a).
+                    </div>
+                    <div class="decision-row" style="margin-top: 8px;">
+                        <span class="no-badge"><i class="fas fa-times-circle"></i> NO</span> → Tanto CNAF quanto VNI são aceitáveis. Decisão baseada em protocolo local, disponibilidade e experiência clínica.
+                    </div>
+                </div>
+                
+                <div class="arrow-down"><i class="fas fa-arrow-down"></i></div>
+                
+                <!-- STEP 4a CNAF -->
+                <div class="step-card">
+                    <div class="step-title"><i class="fas fa-4"></i> STEP 4a — Em CNAF: Monitorizar ROX Index</div>
+                    <p><strong>ROX = (SpO₂ / FiO₂) ÷ Frequência Respiratória</strong><br>Avaliar em 2h, 6h e 12h:</p>
+                    <ul class="bullet-list">
+                        <li><i class="fas fa-chart-line" style="color:#2b8c5e;"></i> <strong>ROX ≥ 4,88:</strong> Baixo risco de falha — continuar CNAF, reavaliar no próximo intervalo.</li>
+                        <li><i class="fas fa-chart-line" style="color:#e68a2e;"></i> <strong>ROX &lt; 4,88 às 2h ou 6h:</strong> Risco intermediário — reavaliar frequentemente, considerar escalonar para VNI.</li>
+                        <li><i class="fas fa-chart-line" style="color:#c7254e;"></i> <strong>ROX &lt; 3,85 às 12h:</strong> Risco de falha muito alto — escalar para VNI ou preparar intubação.</li>
+                    </ul>
+                </div>
+                
+                <!-- STEP 4b VNI -->
+                <div class="step-card">
+                    <div class="step-title"><i class="fas fa-4b"></i> STEP 4b — On VNI: Assess Response at 1 Hour</div>
+                    <p>Monitorar: FR, uso de musculatura acessória, SpO₂, volume corrente expirado (Vt alvo &lt; 8 mL/kg PBW), sincronia paciente, conforto.</p>
+                    <ul class="bullet-list">
+                        <li><strong>✓ Melhorando:</strong> Continuar VNI. Titular IPAP 12–20 cmH₂O, EPAP 5–10 cmH₂O. Reavaliar a cada 1–2h.</li>
+                        <li><strong>✗ Sem melhora em 1–2h ou Vt &gt; 9 mL/kg PBW:</strong> Progredir para intubação sem demora.</li>
+                    </ul>
+                </div>
+                
+                <div class="arrow-down"><i class="fas fa-arrow-down"></i></div>
+                
+                <!-- STEP 5 -->
+                <div class="step-card">
+                    <div class="step-title"><i class="fas fa-5"></i> STEP 5 — Absolute Indications for Intubation</div>
+                    <p><strong>Intubar independentemente da modalidade atual se QUALQUER um dos seguintes:</strong></p>
+                    <ul class="bullet-list">
+                        <li>• Parada respiratória ou cardíaca</li>
+                        <li>• GCS ≤ 8 / incapacidade de proteger vias aéreas</li>
+                        <li>• Instabilidade hemodinâmica refratária à ressuscitação</li>
+                        <li>• Secreção maciça ou hemoptise incontrolável</li>
+                        <li>• Falência de ambas CNAF e VNI dentro de 2–4 horas</li>
+                        <li>• Não adesão ou recusa do paciente ao suporte não invasivo</li>
+                    </ul>
+                </div>
             </div>
-            <div class="algorithm-step"><i class="fas fa-5"></i> <strong>Passo 4b – Se em VNI:</strong> Após 1-2h: melhora FR, SpO₂, Vt<8 mL/kg → continuar. Se Vt >9 mL/kg ou piora → intubação.</div>
-            <div class="algorithm-step"><i class="fas fa-6"></i> <strong>Passo 5 – Critérios absolutos de intubação:</strong> PCR, Glasgow ≤8, instabilidade hemodinâmica refratária, hemoptise maciça, falha de ambas CNAF/VNI.</div>
+            <div class="footnote">Adaptado das diretrizes ESICM/ERS 2023-2025, RENOVATE trial, infográfico ECCCP. Reavaliação clínica contínua é mandatória.</div>
         </div>
 
-        <!-- ROX index calculator interativo -->
+        <!-- ROX index calculator interativo (alinhado com STEP 4a) -->
         <div class="rox-calc">
-            <h3><i class="fas fa-calculator"></i> ROX index (predictor de falha da CNAF)</h3>
-            <p>Fórmula: <strong>ROX = (SpO₂ / FiO₂) ÷ Frequência Respiratória</strong>. Avaliar em 2-6 horas de CNAF. Valores <4,88 indicam necessidade de reavaliação e possível escalonamento.</p>
+            <h3><i class="fas fa-calculator"></i> ROX index (predictor de falha do CNAF)</h3>
+            <p>Fórmula: <strong>ROX = (SpO₂ / FiO₂) ÷ Frequência Respiratória</strong>. Avaliar em 2, 6 e 12 horas de CNAF. Conforme Step 4a.</p>
             <div class="input-group">
                 <div class="input-field">
                     <label>SpO₂ (%)</label>
@@ -447,7 +520,7 @@
             <div id="roxResult" class="result-box">
                 <strong>Resultado:</strong> Preencha os valores acima.
             </div>
-            <div class="footnote">Interpretação: ROX ≥4,88 → baixo risco de falha; ROX 3,85-4,88 → risco intermediário (repetir em 1-2h); ROX <3,85 → alto risco, considerar intubação/VNI urgente. Referência Roca O. et al. AJRCCM 2019</div>
+            <div class="footnote">Interpretação baseada no algoritmo Step 4a: ROX ≥4,88 = baixo risco; entre 3,85 e 4,88 = risco intermediário (reavaliar em 2-6h); <3,85 = alto risco (considerar escalonamento). Referência: Roca O. et al. AJRCCM 2019 + adaptação ECCCP.</div>
         </div>
     </div>
 
