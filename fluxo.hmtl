@@ -1,0 +1,555 @@
+This is a complete, ready-to-use HTML document that creates a didactic web app comparing HFNC and NIV for hypoxemic respiratory failure, based on the provided infographic and evidence-based guidelines. You can save and open it in any modern browser.```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>HFNC vs NIV: Guia Didático para Insuficiência Respiratória Hipoxêmica</title>
+    <!-- Font Awesome 6 (free icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts: Inter + Open Sans for readability -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Open+Sans:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Open Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f4f9fe;
+            color: #1a2c3e;
+            line-height: 1.5;
+            scroll-behavior: smooth;
+        }
+
+        /* container principal */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem 1.8rem;
+        }
+
+        /* header com gradiente inspirado em evidência clínica */
+        .hero {
+            background: linear-gradient(135deg, #0b2b3f 0%, #1a4a6f 100%);
+            border-radius: 2rem;
+            padding: 2rem 2rem 1.8rem;
+            margin-bottom: 2.5rem;
+            color: white;
+            box-shadow: 0 12px 25px -10px rgba(0,0,0,0.2);
+        }
+
+        .hero h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .hero h1 i {
+            background: #ffcd7e;
+            color: #0b2b3f;
+            padding: 12px;
+            border-radius: 60px;
+            font-size: 1.4rem;
+        }
+
+        .badge-evidence {
+            background: #ffcd7e;
+            color: #0b2b3f;
+            font-weight: 600;
+            font-size: 0.8rem;
+            padding: 0.3rem 0.9rem;
+            border-radius: 30px;
+            display: inline-block;
+            margin-top: 12px;
+        }
+
+        /* cartões e navegação por abas (mobile-first) */
+        .tabs-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #cbdde9;
+            padding-bottom: 0.8rem;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.75rem 1.3rem;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+            color: #2c4e6e;
+            background: #eaf2f9;
+            margin-right: 0.3rem;
+        }
+
+        .tab-btn i {
+            margin-right: 8px;
+        }
+
+        .tab-btn.active {
+            background: #1a6b8f;
+            color: white;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        /* cards e tabelas responsivas */
+        .card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.8rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.05);
+            border: 1px solid #e2edf2;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            border-left: 5px solid #1a6b8f;
+            padding-left: 1rem;
+            color: #1a3b4e;
+        }
+
+        .comparison-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .comparison-col {
+            flex: 1;
+            min-width: 250px;
+            background: #fefcf5;
+            border-radius: 1.2rem;
+            padding: 1.2rem;
+            border-top: 5px solid;
+        }
+
+        .col-hfnc {
+            border-top-color: #2b8c5e;
+        }
+        .col-niv {
+            border-top-color: #dc843a;
+        }
+
+        .pill {
+            display: inline-block;
+            background: #eef2f5;
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 0.7rem;
+        }
+
+        .rox-calc {
+            background: #eef5fc;
+            border-radius: 1.2rem;
+            padding: 1.8rem;
+            margin: 1rem 0;
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1.2rem 0;
+        }
+        .input-field {
+            flex: 1;
+            min-width: 140px;
+        }
+        .input-field label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-field input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 28px;
+            border: 1px solid #bdd4e4;
+            font-size: 1rem;
+        }
+
+        button.calc-btn {
+            background: #1a6b8f;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .result-box {
+            background: white;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-left: 8px solid #1a6b8f;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        th, td {
+            padding: 12px 8px;
+            text-align: left;
+            border-bottom: 1px solid #dee7ef;
+            vertical-align: top;
+        }
+        th {
+            background: #e6f0f7;
+            font-weight: 700;
+        }
+
+        .footnote {
+            font-size: 0.8rem;
+            color: #4b6f8c;
+            border-top: 1px solid #cde0ec;
+            margin-top: 1.2rem;
+            padding-top: 0.8rem;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 1rem;
+            }
+            .hero h1 {
+                font-size: 1.5rem;
+            }
+            .tab-btn {
+                font-size: 0.8rem;
+                padding: 0.5rem 1rem;
+            }
+        }
+        .algorithm-step {
+            background: #f9fafc;
+            margin-bottom: 1rem;
+            border-radius: 1rem;
+            padding: 1rem 1.2rem;
+            border-left: 4px solid #2b8c5e;
+        }
+        .risk-badge {
+            background: #fee2e2;
+            color: #b91c1c;
+            border-radius: 20px;
+            padding: 0.2rem 0.7rem;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- cabeçalho principal -->
+    <div class="hero">
+        <h1>
+            <i class="fas fa-lungs"></i> 
+            HFNC <span style="font-weight:400">vs</span> NIV
+        </h1>
+        <p style="font-size:1.1rem; margin: 0.5rem 0 0.2rem 0;">Comparação na Insuficiência Respiratória Hipoxêmica (IRH)</p>
+        <div class="badge-evidence">
+            <i class="fas fa-book-open"></i> Baseado em ESICM 2023 · ERS Guidelines · RENOVATE 2024 · Meta-análise CHEST 2025
+        </div>
+        <p style="margin-top: 1rem; opacity:0.9; font-size:0.9rem;"><i class="fas fa-stethoscope"></i> Abordagem didática para tomada de decisão clínica</p>
+    </div>
+
+    <!-- Navegação por abas (conteúdo modular) -->
+    <div class="tabs-nav">
+        <button class="tab-btn active" data-tab="tab1"><i class="fas fa-info-circle"></i> Visão geral</button>
+        <button class="tab-btn" data-tab="tab2"><i class="fas fa-balance-scale"></i> Comparação HFNC vs NIV</button>
+        <button class="tab-btn" data-tab="tab3"><i class="fas fa-stethoscope"></i> Indicações clínicas</button>
+        <button class="tab-btn" data-tab="tab4"><i class="fas fa-chart-line"></i> Algoritmo + ROX index</button>
+        <button class="tab-btn" data-tab="tab5"><i class="fas fa-chalkboard-user"></i> Guia prático</button>
+    </div>
+
+    <!-- TAB 1: Visão geral, fisiopatologia e apresentação -->
+    <div id="tab1" class="tab-content active">
+        <div class="card">
+            <div class="card-title"><i class="fas fa-brain"></i> O que é Insuficiência Respiratória Hipoxêmica?</div>
+            <p><strong>Definição:</strong> Incapacidade de manter oxigenação adequada (PaO₂ < 60 mmHg ou SpO₂ < 90% em ar ambiente), com PaCO₂ normal ou baixo (diferente da hipercápnica).</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
+                <div style="flex:1; background:#F0F6FA; border-radius:1rem; padding:1rem;">
+                    <i class="fas fa-chart-simple"></i> <strong>Gravidade (PaO₂/FiO₂)</strong><br>
+                    • <strong>Leve:</strong> 201–300 → HFNC, monitorização.<br>
+                    • <strong>Moderada:</strong> 101–200 → HFNC ou NIV, admissão em UTI.<br>
+                    • <strong>Grave (ARDS):</strong> ≤100 → intubação precoce, NIV com cautela.
+                </div>
+                <div style="flex:1; background:#F0F6FA; border-radius:1rem; padding:1rem;">
+                    <i class="fas fa-heartbeat"></i> <strong>Quadro clínico típico</strong><br>
+                    Dispneia aguda, taquipneia (FR >24 irpm), uso de musculatura acessória, SpO₂ <90%, cianose, taquicardia, e em casos graves confusão mental.
+                </div>
+            </div>
+            <div class="footnote">Baseado em ESICM/ERS 2023-2024</div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title"><i class="fas fa-microscope"></i> Principais mecanismos da hipoxemia aguda</div>
+            <ul style="margin-left: 1.5rem;">
+                <li><strong>Desequilíbrio V/Q (shunt + espaço morto):</strong> causa mais comum em pneumonia, edema pulmonar, ARDS.</li>
+                <li><strong>Distúrbio difusivo:</strong> espessamento da membrana alvéolo-capilar (edema, doenças intersticiais).</li>
+            </ul>
+            <p><strong>Etiologias comuns:</strong> Pneumonia (bacteriana/viral), SDRA, edema pulmonar cardiogênico, embolia pulmonar, TROMBOEMBOLISMO, atelectasia pós-operatória, sepse.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><i class="fas fa-file-prescription"></i> Manejo inicial (escala terapêutica)</div>
+            <ul>
+                <li><i class="fas fa-chart-line"></i> <strong>Oxigênio alvo:</strong> SpO₂ 92–96% (94-98% se IAM ou intoxicação por CO). Evitar oxigênio liberal.</li>
+                <li><i class="fas fa-bed"></i> Posicionamento: semi-recumbente (30-45°) ou pronação consciente na SDRA.</li>
+                <li><i class="fas fa-tools"></i> Escolha da estratégia não invasiva (HFNC ou NIV) baseada no fenótipo.</li>
+                <li><i class="fas fa-syringe"></i> Tratar etiologia subjacente (antibióticos, broncodilatadores, diuréticos).</li>
+                <li><i class="fas fa-exclamation-triangle"></i> Definir precocemente critérios de intubação.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- TAB 2: Comparação detalhada HFNC vs NIV -->
+    <div id="tab2" class="tab-content">
+        <div class="card">
+            <div class="card-title"><i class="fas fa-exchange-alt"></i> Mecanismos de ação & parâmetros principais</div>
+            <div class="comparison-grid">
+                <div class="comparison-col col-hfnc">
+                    <span class="pill"><i class="fas fa-wind"></i> HFNC (Cânula nasal de alto fluxo)</span>
+                    <ul style="margin-left: 1rem;">
+                        <li>Fluxo 20–60 L/min, FiO₂ 21–100%</li>
+                        <li>Gás aquecido/umidificado a 37°C</li>
+                        <li>Gera PEEP variável ~1–2 cmH₂O a cada 10 L/min (boca fechada)</li>
+                        <li>Lavagem do espaço morto anatômico → ↓ trabalho respiratório</li>
+                        <li>Excelente conforto, permite falar/comer/tosse</li>
+                    </ul>
+                </div>
+                <div class="comparison-col col-niv">
+                    <span class="pill"><i class="fas fa-microphone-alt"></i> NIV (Ventilação não invasiva - Bilevel/CPAP)</span>
+                    <ul style="margin-left: 1rem;">
+                        <li>IPAP: 12–20 cmH₂O, EPAP: 5–10 cmH₂O (ajustável)</li>
+                        <li>Pressão positiva verdadeira → recrutamento alveolar</li>
+                        <li>Descarga dos músculos respiratórios (reduz trabalho)</li>
+                        <li>Redução de mortalidade na DPOC e edema pulmonar cardiogênico</li>
+                        <li>Pode causar claustrofobia, aerofagia, lesão de pele</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><i class="fas fa-thumbs-up"></i> Vantagens e evidências (resumo comparativo)</div>
+            <table>
+                <thead><tr><th>Característica</th><th>HFNC</th><th>NIV</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Conforto / tolerabilidade</td><td>✓ Superior (menos claustrofobia)</td><td>✗ Tolerância limitada, máscara apertada</td></tr>
+                    <tr><td>PEEP ajustável</td><td>✗ Baixa e variável (1-3 cmH₂O)</td><td>✓ EPAP independente, 5-12 cmH₂O</td></tr>
+                    <tr><td>Redução do trabalho respiratório</td><td>✓ Lavagem do espaço morto, ↓FR</td><td>✓ Descarga muscular ativa via pressão de suporte</td></tr>
+                    <tr><td>Eficácia em hipercapnia</td><td>✗ Limitada (não indicado se acidose hipercápnica)</td><td>✓ Indicado se DPOC com pH<7.35</td></tr>
+                    <tr><td>Mortalidade / intubação</td><td>Não inferior, menor tempo de internação (meta-análise CHEST 2025)</td><td>Superior na DPOC agudizada e edema pulmonar cardiogênico</td></tr>
+                </tbody>
+            </table>
+            <div class="footnote">FLORALI trial, RENOVATE 2024, Munroe 2024, CHEST 2025 meta-análise</div>
+        </div>
+    </div>
+
+    <!-- TAB 3: Quando favorecer HFNC ou NIV (guidelines) -->
+    <div id="tab3" class="tab-content">
+        <div class="card">
+            <div class="card-title"><i class="fas fa-flag-checkered"></i> Quando favorecer HFNC (primeira linha)</div>
+            <ul>
+                <li><i class="fas fa-shield-virus"></i> <strong>Imunocomprometidos:</strong> reduz risco de pneumonia associada à ventilação (VAP) e infecções relacionadas à máscara.</li>
+                <li><i class="fas fa-smile"></i> Paciente agitado / má tolerância a máscara (HFNC como suporte de primeira linha).</li>
+                <li><i class="fas fa-lungs"></i> Falência de extubação de baixo risco (ERS favorece HFNC sobre oxigênio convencional).</li>
+                <li><i class="fas fa-chart-line"></i> IRH leve a moderada (PaO₂/FiO₂ 150-300, sem hipercapnia).</li>
+                <li><i class="fas fa-hand-holding-medical"></i> Permite nebulização, higiene brônquica e intervalo entre sessões de NIV.</li>
+            </ul>
+        </div>
+        <div class="card">
+            <div class="card-title"><i class="fas fa-heartbeat"></i> Quando favorecer NIV (indicações robustas)</div>
+            <ul>
+                <li><strong>Edema pulmonar cardiogênico (EAP):</strong> CPAP ou NIV são primeira linha (↓ pós-carga, recrutamento alveolar).</li>
+                <li><strong>DPOC exacerbada com acidose respiratória (pH<7.35, PaCO₂>45):</strong> NIV reduz mortalidade e intubação – GOLD 2023.</li>
+                <li><strong>Síndrome da hipoventilação por obesidade (SHO):</strong> NIV com alto IPAP necessário.</li>
+                <li><strong>Asma grave com fadiga muscular:</strong> descarga diafragmática.</li>
+                <li><strong>Alto risco pós-extubação</strong> (hipercapnia, ICC, obesidade, múltiplas comorbidades).</li>
+            </ul>
+            <div class="footnote">Cuidado: na IRH pura / SDRA, a NIV pode causar P-SILI (lesão pulmonar autoinfligida) se Vt >8 mL/kg.</div>
+        </div>
+    </div>
+
+    <!-- TAB 4: Algoritmo prático + ROX index interativo -->
+    <div id="tab4" class="tab-content">
+        <div class="card">
+            <div class="card-title"><i class="fas fa-project-diagram"></i> Algoritmo de decisão HFNC vs NIV (ESICM/ERS adaptado)</div>
+            <div class="algorithm-step"><i class="fas fa-1"></i> <strong>Passo 1 – Fenótipo?</strong> EAP, DPOC ou SHO? → <span class="risk-badge">Iniciar NIV imediatamente</span> (CPAP se EAP; Bilevel para DPOC/SHO).</div>
+            <div class="algorithm-step"><i class="fas fa-2"></i> <strong>Passo 2 – Gravidade severa?</strong> PaO₂/FiO₂ <150 + FR>30 + uso grave de acessórios → <span class="risk-badge">Consultar intensivista urgente. Considerar NIV sob supervisão ou IOT.</span></div>
+            <div class="algorithm-step"><i class="fas fa-3"></i> <strong>Passo 3 – Tolerância / imunossupressão?</strong> Agitado, imunocomprometido, requer higiene brônquica → <span class="risk-badge">Iniciar HFNC (40-60 L/min)</span>; caso contrário, ambas opções aceitáveis.</div>
+            <div class="algorithm-step"><i class="fas fa-4"></i> <strong>Passo 4a – Monitorização com ROX (se HFNC):</strong> Calcular ROX = (SpO₂/FiO₂)/FR. Avaliar em 2h, 6h e 12h: <br>
+            ➜ ROX ≥4,88 → baixo risco, continuar HFNC.<br>
+            ➜ ROX 3,85–4,88 → risco intermediário, intensificar monitorização, considerar escalar para NIV.<br>
+            ➜ ROX <3,85 → muito alto risco → intubar ou escalar urgente.
+            </div>
+            <div class="algorithm-step"><i class="fas fa-5"></i> <strong>Passo 4b – Se em NIV:</strong> Após 1-2h: melhora FR, SpO₂, Vt<8 mL/kg → continuar. Se Vt >9 mL/kg ou piora → intubação.</div>
+            <div class="algorithm-step"><i class="fas fa-6"></i> <strong>Passo 5 – Critérios absolutos de intubação:</strong> PCR, Glasgow ≤8, instabilidade hemodinâmica refratária, hemoptise maciça, falha de ambas HFNC/NIV.</div>
+        </div>
+
+        <!-- ROX index calculator interativo -->
+        <div class="rox-calc">
+            <h3><i class="fas fa-calculator"></i> ROX index (predictor de falha da HFNC)</h3>
+            <p>Fórmula: <strong>ROX = (SpO₂ / FiO₂) ÷ Frequência Respiratória</strong>. Avaliar em 2-6 horas de HFNC. Valores <4,88 indicam necessidade de reavaliação e possível escalonamento.</p>
+            <div class="input-group">
+                <div class="input-field">
+                    <label>SpO₂ (%)</label>
+                    <input type="number" id="spO2" placeholder="ex: 92" step="0.1" value="94">
+                </div>
+                <div class="input-field">
+                    <label>FiO₂ (0.21 - 1.0)</label>
+                    <input type="number" id="fio2" placeholder="ex: 0.5" step="0.01" value="0.5">
+                </div>
+                <div class="input-field">
+                    <label>Frequência Respiratória (irpm)</label>
+                    <input type="number" id="rr" placeholder="ex: 28" value="28">
+                </div>
+                <div><button class="calc-btn" id="calcRoxBtn"><i class="fas fa-chart-line"></i> Calcular ROX</button></div>
+            </div>
+            <div id="roxResult" class="result-box">
+                <strong>Resultado:</strong> Preencha os valores acima.
+            </div>
+            <div class="footnote">Interpretação: ROX ≥4,88 → baixo risco de falha; ROX 3,85-4,88 → risco intermediário (repetir em 1-2h); ROX <3,85 → alto risco, considerar intubação/NIV urgente. Referência Roca O. et al. AJRCCM 2019</div>
+        </div>
+    </div>
+
+    <!-- TAB 5: Guia prático de implementação (nursing / equipe) -->
+    <div id="tab5" class="tab-content">
+        <div class="card">
+            <div class="card-title"><i class="fas fa-clinic-medical"></i> Guia rápido: configuração inicial (bedside)</div>
+            <ul>
+                <li><strong>HFNC:</strong> iniciar com fluxo 40-60 L/min, FiO₂ titulada para SpO₂ 92-96%. Monitorar desconforto, interface e ROX index após 2 horas. Diminuir fluxo se paciente estável.</li>
+                <li><strong>NIV:</strong> iniciar EPAP 5 cmH₂O, IPAP 10 cmH₂O. Titular IPAP até 15-20 para melhorar volume corrente (alvo 6-8 mL/kg). Evitar PEEP >10 se risco de hiperinsuflação.</li>
+                <li><strong>Alternância HFNC/NIV:</strong> Em pacientes com necessidade prolongada de suporte, intercalar 2-4h de NIV com 30-60 min de HFNC a 50-60 L/min para alimentação, higiene e descanso facial. Manter SpO₂ ≥92%.</li>
+                <li><strong>Desmame da HFNC:</strong> ROX >6 por 12-24h, redução gradual de fluxo (em 5 L/min) e FiO₂. Padrão sugerido: quando fluxo ≤20 L/min e FiO₂ ≤0,3, transição para cânula nasal de baixo fluxo.</li>
+            </ul>
+        </div>
+        <div class="card">
+            <div class="card-title"><i class="fas fa-tablets"></i> Pontos de segurança e armadilhas</div>
+            <ul>
+                <li><i class="fas fa-ban"></i> <strong>Contraindicações HFNC:</strong> fratura de base de crânio, epistaxe grave, pneumotórax não drenado, obstrução nasal importante.</li>
+                <li><i class="fas fa-ban"></i> <strong>Contraindicações relativas NIV:</strong> rebaixamento do nível de consciência, aspiracão, secreções excessivas, instabilidade hemodinâmica.</li>
+                <li><i class="fas fa-chart-simple"></i> <strong>Falha da HFNC:</strong> se ROX persistente <3,85 após 2-6h ou piora clínica, progredir para NIV ou IOT sem demora.</li>
+                <li><i class="fas fa-lungs"></i> <strong>Síndrome de P-SILI na NIV:</strong> em pacientes não hipercápnicos, volumes correntes elevados (>9 mL/kg) podem lesar o pulmão. Considerar intubação se Vt não controlável.</li>
+            </ul>
+        </div>
+        <div class="card">
+            <div class="card-title"><i class="fas fa-newspaper"></i> Evidências principais (atualização 2025)</div>
+            <ul>
+                <li>FLORALI trial: HFNC não inferior ao NIV, com menor mortalidade em 90 dias no subgrupo grave.</li>
+                <li>RENOVATE 2024 (JAMA): HFNC não inferior ao NIV na IRH de novo.</li>
+                <li>Meta-análise CHEST 2025 (9 RCTs, n=1.743): sem diferença em intubação/mortalidade; HFNC associado a redução de 1 dia de internação hospitalar.</li>
+                <li>ESICM 2023: forte recomendação para NIV na DPOC e edema pulmonar cardiogênico; e HFNC preferível para imunocomprometidos.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem; font-size: 0.75rem; color: #3d6a8c; border-top: 1px solid #cee0ea; padding-top: 1.5rem;">
+        <i class="fas fa-graduation-cap"></i> Web App educacional baseado nas diretrizes ERS/ESICM 2023-2025, infográfico do ECCCP e estudos RENOVATE, FLORALI, Munroe. Ferramenta didática para profissionais de saúde. <br> ⚠️ Sempre associar à avaliação clínica individualizada.
+    </div>
+</div>
+
+<script>
+    // Abas interativas
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    function activateTab(tabId) {
+        tabContents.forEach(content => {
+            content.classList.remove('active');
+        });
+        const activeContent = document.getElementById(tabId);
+        if(activeContent) activeContent.classList.add('active');
+        
+        tabBtns.forEach(btn => {
+            btn.classList.remove('active');
+            if(btn.getAttribute('data-tab') === tabId) {
+                btn.classList.add('active');
+            }
+        });
+    }
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const targetTab = btn.getAttribute('data-tab');
+            if(targetTab) activateTab(targetTab);
+        });
+    });
+
+    // ROX index calculator
+    const spO2Input = document.getElementById('spO2');
+    const fio2Input = document.getElementById('fio2');
+    const rrInput = document.getElementById('rr');
+    const roxBtn = document.getElementById('calcRoxBtn');
+    const roxResultDiv = document.getElementById('roxResult');
+
+    function computeROX() {
+        let spo2 = parseFloat(spO2Input.value);
+        let fio2 = parseFloat(fio2Input.value);
+        let rr = parseFloat(rrInput.value);
+        
+        if (isNaN(spo2) || isNaN(fio2) || isNaN(rr) || spo2 < 50 || spo2 > 100 || fio2 <= 0 || fio2 > 1.0 || rr <= 5 || rr > 70) {
+            roxResultDiv.innerHTML = `<strong>⚠️ Valores inválidos</strong><br>Verifique SpO₂ (70-100%), FiO₂ (0.21-1.0) e FR (12-60). Exemplo: SpO₂ 94%, FiO₂ 0.5, FR 28 → ROX ≈ 6.71.`;
+            return;
+        }
+        
+        let rox = (spo2 / fio2) / rr;
+        rox = Math.round(rox * 100) / 100;
+        let interpretation = "";
+        if (rox >= 4.88) interpretation = "✅ Baixo risco de falha da HFNC. Continue suporte e reavalie em 6-12h.";
+        else if (rox >= 3.85 && rox < 4.88) interpretation = "⚠️ Risco intermediário. Repetir ROX em 1-2h, considerar escalonar para NIV.";
+        else interpretation = "🔴 Alto risco de falha (ROX <3.85). Forte considerar intubação ou escalada rápida para NIV + intensivista.";
+        
+        roxResultDiv.innerHTML = `<strong>ROX index = ${rox}</strong><br>${interpretation}<br><span style="font-size:0.8rem;">Base: Roca et al. AJRCCM 2019; ROX ≥4,88 prediz sucesso.</span>`;
+    }
+    
+    roxBtn.addEventListener('click', computeROX);
+    // cálculo inicial ao carregar a página
+    window.addEventListener('DOMContentLoaded', () => {
+        computeROX();
+        // garantir que a primeira aba está ativa
+        activateTab('tab1');
+    });
+</script>
+</body>
+</html>
+```
