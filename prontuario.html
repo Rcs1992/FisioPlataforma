@@ -350,14 +350,14 @@
 
             <!-- Via Aérea Artificial (TOT/TQT) -->
             <div class="bg-white rounded-2xl shadow-md p-6 card-modern">
-                <h3 class="font-bold text-gray-800">🩺 Via Aérea Artificial</h3>
+                <h3 class="font-bold text-gray-800"> Via Aérea Artificial</h3>
                 <div class="flex gap-4 my-3"><label><input type="radio" name="viaArtificial" value="nenhum" checked> Nenhum</label><label><input type="radio" name="viaArtificial" value="TOT"> TOT</label><label><input type="radio" name="viaArtificial" value="TQT"> TQT</label></div>
                 <div id="detalhesTOT" class="hidden space-y-4 bg-gray-50 p-4 rounded-2xl">
                     <div class="grid md:grid-cols-2 gap-3">
                         <div><label>Data IOT</label><input type="date" id="dataIOT" class="border rounded-xl p-2 w-full"></div>
                         <div><label>Data extubação (última)</label><input type="date" id="dataExtubacao" class="border rounded-xl p-2 w-full"></div>
                     </div>
-                    <div><label class="font-semibold">📌 Reintubações e respectivas extubações</label>
+                    <div><label class="font-semibold"> Reintubações e respectivas extubações</label>
                         <div id="reintubacoesContainer" class="space-y-2 mt-1"></div>
                         <button type="button" id="addReintubacaoBtn" class="mt-2 bg-amber-100 text-amber-800 px-3 py-1.5 rounded-xl text-sm"><i class="fas fa-plus"></i> Adicionar reintubação+extubação</button>
                     </div>
@@ -424,7 +424,7 @@
 
             <!-- Diagnóstico (somente Avaliação) -->
             <div id="diagnosticoWrapper" class="bg-white rounded-2xl shadow-md p-6 card-modern">
-                <label class="font-bold text-gray-800">📌 Diagnóstico Fisioterapêutico (CBDF)</label>
+                <label class="font-bold text-gray-800"> Diagnóstico Fisioterapêutico (CBDF)</label>
                 <textarea id="diagnosticoFisio" rows="2" class="w-full border rounded-xl p-2 mt-1"></textarea>
                 <div class="mt-1 text-sm"><a href="https://cbdf.coffito.gov.br/cbdf" target="_blank" class="text-blue-600 underline">Acessar CBDF</a></div>
             </div>
@@ -435,14 +435,14 @@
 
                 <!-- Objetivos Terapêuticos com Autocomplete -->
                 <div class="bg-white rounded-2xl shadow p-5">
-                    <label class="font-bold text-gray-800">🎯 Objetivos Terapêuticos</label>
+                    <label class="font-bold text-gray-800"> Objetivos Terapêuticos</label>
                     <div id="objetivosContainer" class="space-y-2 mt-2"></div>
                     <button type="button" id="addObjetivoBtn" class="mt-2 bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-xl text-sm font-medium hover:bg-indigo-200"><i class="fas fa-plus mr-1"></i> Adicionar Objetivo</button>
                 </div>
 
                 <!-- Recursos Físicos com Autocomplete -->
                 <div class="bg-white rounded-2xl shadow p-5">
-                    <label class="font-bold text-gray-800">🔧 Recursos Fisioterapêuticos</label>
+                    <label class="font-bold text-gray-800"> Recursos Fisioterapêuticos</label>
                     <div id="recursosContainer" class="space-y-2 mt-2"></div>
                     <button type="button" id="addRecursoBtn" class="mt-2 bg-teal-100 text-teal-700 px-3 py-1.5 rounded-xl text-sm font-medium hover:bg-teal-200"><i class="fas fa-plus mr-1"></i> Adicionar Recurso</button>
                 </div>
@@ -1594,11 +1594,11 @@
                     <!-- Objetivos e Recursos -->
                     <div class="section grid-2">
                         <div>
-                            <div class="section-title-pdf">🎯 OBJETIVOS TERAPÊUTICOS</div>
+                            <div class="section-title-pdf"> OBJETIVOS TERAPÊUTICOS</div>
                             <div style="font-size: 9.5px; white-space: pre-wrap;">${objetivosTexto}</div>
                         </div>
                         <div>
-                            <div class="section-title-pdf">🔧 RECURSOS FISIOTERAPÊUTICOS</div>
+                            <div class="section-title-pdf"> RECURSOS FISIOTERAPÊUTICOS</div>
                             <div style="font-size: 9.5px; white-space: pre-wrap;">${recursosTexto}</div>
                         </div>
                     </div>
@@ -1828,8 +1828,8 @@
                 lines.push("PROGNÓSTICO, OBJETIVOS E RECURSOS");
                 lines.push(subSep);
                 lines.push(`Prognóstico: ${document.getElementById('prognostico').value || '---'}`);
-                lines.push(`\n🎯 OBJETIVOS TERAPÊUTICOS:\n${objetivosTexto}`);
-                lines.push(`\n🔧 RECURSOS FISIOTERAPÊUTICOS:\n${recursosTexto}`);
+                lines.push(`\n OBJETIVOS TERAPÊUTICOS:\n${objetivosTexto}`);
+                lines.push(`\n RECURSOS FISIOTERAPÊUTICOS:\n${recursosTexto}`);
                 lines.push(`\nAtendimentos: ${document.getElementById('qtdAtendimentos').value}`);
                 lines.push(sep);
             }
