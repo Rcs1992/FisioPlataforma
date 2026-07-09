@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>CNAF vs VNI: Guia Didático para Insuficiência Respiratória Hipoxêmica</title>
     <!-- Font Awesome 6 (free icons) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Google Fonts: Inter + Open Sans for readability -->
+    <!-- Google Fonts: Inter + Open Sans -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Open+Sans:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     <style>
         * {
@@ -16,21 +16,19 @@
         }
 
         body {
-            font-family: 'Inter', 'Open Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', 'Open Sans', system-ui, sans-serif;
             background: #f4f9fe;
             color: #1a2c3e;
             line-height: 1.5;
             scroll-behavior: smooth;
         }
 
-        /* container principal */
         .container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 1.5rem 1.8rem;
         }
 
-        /* header com gradiente inspirado em evidência clínica */
         .hero {
             background: linear-gradient(135deg, #0b2b3f 0%, #1a4a6f 100%);
             border-radius: 2rem;
@@ -69,7 +67,6 @@
             margin-top: 12px;
         }
 
-        /* cartões e navegação por abas (mobile-first) */
         .tabs-nav {
             display: flex;
             flex-wrap: wrap;
@@ -118,7 +115,6 @@
             to { opacity: 1; transform: translateY(0);}
         }
 
-        /* cards e tabelas responsivas */
         .card {
             background: white;
             border-radius: 1.5rem;
@@ -210,6 +206,10 @@
             font-weight: bold;
             cursor: pointer;
             font-size: 1rem;
+            transition: 0.2s;
+        }
+        button.calc-btn:hover {
+            background: #0e4a66;
         }
 
         .result-box {
@@ -256,20 +256,131 @@
                 padding: 0.5rem 1rem;
             }
         }
-        .algorithm-step {
-            background: #f9fafc;
-            margin-bottom: 1rem;
-            border-radius: 1rem;
-            padding: 1rem 1.2rem;
-            border-left: 4px solid #2b8c5e;
+
+        /* ===== ALGORITMO INTERATIVO ===== */
+        .algorithm-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
         }
-        .risk-badge {
-            background: #fee2e2;
-            color: #b91c1c;
-            border-radius: 20px;
-            padding: 0.2rem 0.7rem;
-            font-size: 0.75rem;
-            font-weight: bold;
+
+        .step-card {
+            background: #f8fcff;
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            border-left: 6px solid #1a6b8f;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            margin-bottom: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .step-card .step-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            color: #0b2b3f;
+        }
+
+        .step-card .step-title i {
+            margin-right: 10px;
+            color: #1a6b8f;
+        }
+
+        .step-card p {
+            margin-bottom: 0.8rem;
+        }
+
+        .choice-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 0.8rem;
+        }
+
+        .choice-btn {
+            background: white;
+            border: 2px solid #cbdde9;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.15s;
+            font-family: inherit;
+            color: #1a3b4e;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .choice-btn:hover {
+            background: #e6f0f7;
+            border-color: #1a6b8f;
+            transform: translateY(-1px);
+        }
+
+        .choice-btn.primary {
+            background: #1a6b8f;
+            border-color: #1a6b8f;
+            color: white;
+        }
+        .choice-btn.primary:hover {
+            background: #0e4a66;
+        }
+
+        .choice-btn.success {
+            background: #2b8c5e;
+            border-color: #2b8c5e;
+            color: white;
+        }
+        .choice-btn.success:hover {
+            background: #1f6a47;
+        }
+
+        .choice-btn.warning {
+            background: #dc843a;
+            border-color: #dc843a;
+            color: white;
+        }
+        .choice-btn.warning:hover {
+            background: #b86b2b;
+        }
+
+        .choice-btn.danger {
+            background: #c7254e;
+            border-color: #c7254e;
+            color: white;
+        }
+        .choice-btn.danger:hover {
+            background: #a01d3e;
+        }
+
+        .step-card .highlight {
+            background: #fef9e7;
+            padding: 0.8rem 1rem;
+            border-radius: 0.8rem;
+            border-left: 4px solid #f1c40f;
+            margin: 0.5rem 0;
+        }
+
+        .reset-btn {
+            background: #eaf2f9;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #1a3b4e;
+            transition: 0.15s;
+            font-size: 0.9rem;
+        }
+
+        .reset-btn:hover {
+            background: #d5e4ef;
+        }
+
+        .step-hidden {
+            display: none !important;
         }
     </style>
 </head>
@@ -289,16 +400,16 @@
         <p style="margin-top: 1rem; opacity:0.9; font-size:0.9rem;"><i class="fas fa-stethoscope"></i> Abordagem didática para tomada de decisão clínica</p>
     </div>
 
-    <!-- Navegação por abas (conteúdo modular) -->
+    <!-- Navegação por abas -->
     <div class="tabs-nav">
         <button class="tab-btn active" data-tab="tab1"><i class="fas fa-info-circle"></i> Visão geral</button>
         <button class="tab-btn" data-tab="tab2"><i class="fas fa-balance-scale"></i> Comparação CNAF vs VNI</button>
         <button class="tab-btn" data-tab="tab3"><i class="fas fa-stethoscope"></i> Indicações clínicas</button>
-        <button class="tab-btn" data-tab="tab4"><i class="fas fa-chart-line"></i> Algoritmo + ROX index</button>
+        <button class="tab-btn" data-tab="tab4"><i class="fas fa-project-diagram"></i> Algoritmo interativo</button>
         <button class="tab-btn" data-tab="tab5"><i class="fas fa-chalkboard-user"></i> Guia prático</button>
     </div>
 
-    <!-- TAB 1: Visão geral, fisiopatologia e apresentação -->
+    <!-- ========== TAB 1: Visão geral ========== -->
     <div id="tab1" class="tab-content active">
         <div class="card">
             <div class="card-title"><i class="fas fa-brain"></i> O que é Insuficiência Respiratória Hipoxêmica?</div>
@@ -339,7 +450,7 @@
         </div>
     </div>
 
-    <!-- TAB 2: Comparação detalhada CNAF vs VNI -->
+    <!-- ========== TAB 2: Comparação ========== -->
     <div id="tab2" class="tab-content">
         <div class="card">
             <div class="card-title"><i class="fas fa-exchange-alt"></i> Mecanismos de ação & parâmetros principais</div>
@@ -384,7 +495,7 @@
         </div>
     </div>
 
-    <!-- TAB 3: Quando favorecer CNAF ou VNI (guidelines) -->
+    <!-- ========== TAB 3: Indicações ========== -->
     <div id="tab3" class="tab-content">
         <div class="card">
             <div class="card-title"><i class="fas fa-flag-checkered"></i> Quando favorecer CNAF (primeira linha)</div>
@@ -409,122 +520,160 @@
         </div>
     </div>
 
- <!-- TAB 4: NOVO ALGORITMO CLÍNICO (substituído conforme solicitado) -->
+    <!-- ========== TAB 4: ALGORITMO INTERATIVO (NOVO) ========== -->
     <div id="tab4" class="tab-content">
         <div class="card">
-            <div class="card-title"><i class="fas fa-project-diagram"></i> 4. Clinical Decision Algorithm</div>
-            <p><strong>Aplicar o seguinte fluxo passo a passo na apresentação inicial. Reavaliar cada etapa antes de prosseguir.</strong></p>
+            <div class="card-title"><i class="fas fa-route"></i> Fluxograma condicional – Decisão terapêutica</div>
+            <p><strong>Clique nas opções para navegar pelo algoritmo. Use a calculadora ROX abaixo quando indicado.</strong></p>
+
+            <!-- Container do algoritmo -->
             <div class="algorithm-container">
-                
-                <!-- STEP 1 -->
-                <div class="step-card">
-                    <div class="step-title"><i class="fas fa-1"></i> STEP 1 — Identify Clinical Phenotype</div>
-                    <div class="decision-row">
-                        <span class="yes-badge"><i class="fas fa-check-circle"></i> YES</span> Diagnóstico = EAP, DPOC ou Síndrome da Hipoventilação em Obesos?<br>
-                        → Iniciar VNI imediatamente (CPAP para EAP; bilevel para DPOC/SHO). <strong>Nenhum passo adicional necessário.</strong>
-                    </div>
-                    <div class="decision-row" style="margin-top: 8px;">
-                        <span class="no-badge"><i class="fas fa-times-circle"></i> NO / Uncertain</span> → Prossiga para <strong>STEP 2</strong>.
-                    </div>
-                </div>
-                
-                <div class="arrow-down"><i class="fas fa-arrow-down"></i></div>
-                
-                <!-- STEP 2 -->
-                <div class="step-card">
-                    <div class="step-title"><i class="fas fa-2"></i> STEP 2 — Severity Assessment</div>
-                    <div class="decision-row">
-                        <span class="yes-badge"><i class="fas fa-check-circle"></i> YES</span> Apresentação GRAVE? (PaO₂/FiO₂ < 150, AND FR > 30/min, AND uso acentuado de musculatura acessória)<br>
-                        → Consultar intensivista imediatamente. Considerar VNI precoce com monitorização rigorosa ou progredir para intubação. Definir ceiling de não-intubação se aplicável.
-                    </div>
-                    <div class="decision-row" style="margin-top: 8px;">
-                        <span class="no-badge"><i class="fas fa-times-circle"></i> NO (Leve–Moderada)</span> → Prossiga para <strong>STEP 3</strong>.
-                    </div>
-                </div>
-                
-                <div class="arrow-down"><i class="fas fa-arrow-down"></i></div>
-                
-                <!-- STEP 3 -->
-                <div class="step-card">
-                    <div class="step-title"><i class="fas fa-3"></i> STEP 3 — Tolerance & Comorbidity Screen</div>
-                    <div class="decision-row">
-                        <span class="yes-badge"><i class="fas fa-check-circle"></i> YES</span> Paciente: Agitado / Imunocomprometido / Necessita de higiene brônquica / Intolerante à máscara apertada?<br>
-                        → Iniciar <strong>CNAF (40–60 L/min, FiO₂ titulada para SpO₂ 92–96%)</strong>. Monitorizar com ROX Index (Step 4a).
-                    </div>
-                    <div class="decision-row" style="margin-top: 8px;">
-                        <span class="no-badge"><i class="fas fa-times-circle"></i> NO</span> → Tanto CNAF quanto VNI são aceitáveis. Decisão baseada em protocolo local, disponibilidade e experiência clínica.
-                    </div>
-                </div>
-                
-                <div class="arrow-down"><i class="fas fa-arrow-down"></i></div>
-                
-                <!-- STEP 4a CNAF -->
-                <div class="step-card">
-                    <div class="step-title"><i class="fas fa-4"></i> STEP 4a — Em CNAF: Monitorizar ROX Index</div>
-                    <p><strong>ROX = (SpO₂ / FiO₂) ÷ Frequência Respiratória</strong><br>Avaliar em 2h, 6h e 12h:</p>
-                    <ul class="bullet-list">
-                        <li><i class="fas fa-chart-line" style="color:#2b8c5e;"></i> <strong>ROX ≥ 4,88:</strong> Baixo risco de falha — continuar CNAF, reavaliar no próximo intervalo.</li>
-                        <li><i class="fas fa-chart-line" style="color:#e68a2e;"></i> <strong>ROX &lt; 4,88 às 2h ou 6h:</strong> Risco intermediário — reavaliar frequentemente, considerar escalonar para VNI.</li>
-                        <li><i class="fas fa-chart-line" style="color:#c7254e;"></i> <strong>ROX &lt; 3,85 às 12h:</strong> Risco de falha muito alto — escalar para VNI ou preparar intubação.</li>
-                    </ul>
-                </div>
-                
-                <!-- STEP 4b VNI -->
-                <div class="step-card">
-                    <div class="step-title"><i class="fas fa-4b"></i> STEP 4b — On VNI: Assess Response at 1 Hour</div>
-                    <p>Monitorar: FR, uso de musculatura acessória, SpO₂, volume corrente expirado (Vt alvo &lt; 8 mL/kg PBW), sincronia paciente, conforto.</p>
-                    <ul class="bullet-list">
-                        <li><strong>✓ Melhorando:</strong> Continuar VNI. Titular IPAP 12–20 cmH₂O, EPAP 5–10 cmH₂O. Reavaliar a cada 1–2h.</li>
-                        <li><strong>✗ Sem melhora em 1–2h ou Vt &gt; 9 mL/kg PBW:</strong> Progredir para intubação sem demora.</li>
-                    </ul>
-                </div>
-                
-                <div class="arrow-down"><i class="fas fa-arrow-down"></i></div>
-                
-                <!-- STEP 5 -->
-                <div class="step-card">
-                    <div class="step-title"><i class="fas fa-5"></i> STEP 5 — Absolute Indications for Intubation</div>
-                    <p><strong>Intubar independentemente da modalidade atual se QUALQUER um dos seguintes:</strong></p>
-                    <ul class="bullet-list">
-                        <li>• Parada respiratória ou cardíaca</li>
-                        <li>• GCS ≤ 8 / incapacidade de proteger vias aéreas</li>
-                        <li>• Instabilidade hemodinâmica refratária à ressuscitação</li>
-                        <li>• Secreção maciça ou hemoptise incontrolável</li>
-                        <li>• Falência de ambas CNAF e VNI dentro de 2–4 horas</li>
-                        <li>• Não adesão ou recusa do paciente ao suporte não invasivo</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footnote">Adaptado das diretrizes ESICM/ERS 2023-2025, RENOVATE trial, infográfico ECCCP. Reavaliação clínica contínua é mandatória.</div>
-        </div>
 
-        <!-- ROX index calculator interativo (alinhado com STEP 4a) -->
-        <div class="rox-calc">
-            <h3><i class="fas fa-calculator"></i> ROX index (predictor de falha do CNAF)</h3>
-            <p>Fórmula: <strong>ROX = (SpO₂ / FiO₂) ÷ Frequência Respiratória</strong>. Avaliar em 2, 6 e 12 horas de CNAF. Conforme Step 4a.</p>
-            <div class="input-group">
-                <div class="input-field">
-                    <label>SpO₂ (%)</label>
-                    <input type="number" id="spO2" placeholder="ex: 92" step="0.1" value="94">
+                <!-- NÓ 1: Fenótipo -->
+                <div id="step1" class="step-card">
+                    <div class="step-title"><i class="fas fa-1"></i> 1. Identifique o fenótipo clínico</div>
+                    <p>O paciente apresenta <strong>diagnóstico definido</strong> de Edema Pulmonar Cardiogênico (EAP), DPOC exacerbada ou Síndrome da Hipoventilação por Obesidade (SHO)?</p>
+                    <div class="choice-group">
+                        <button class="choice-btn success" onclick="showStep('step2')"><i class="fas fa-check"></i> Sim – EAP/DPOC/SHO</button>
+                        <button class="choice-btn" onclick="showStep('step3')"><i class="fas fa-times"></i> Não / Incerto</button>
+                    </div>
                 </div>
-                <div class="input-field">
-                    <label>FiO₂ (0.21 - 1.0)</label>
-                    <input type="number" id="fio2" placeholder="ex: 0.5" step="0.01" value="0.5">
-                </div>
-                <div class="input-field">
-                    <label>Frequência Respiratória (irpm)</label>
-                    <input type="number" id="rr" placeholder="ex: 28" value="28">
-                </div>
-                <div><button class="calc-btn" id="calcRoxBtn"><i class="fas fa-chart-line"></i> Calcular ROX</button></div>
-            </div>
-            <div id="roxResult" class="result-box">
-                <strong>Resultado:</strong> Preencha os valores acima.
-            </div>
-            <div class="footnote">Interpretação baseada no algoritmo Step 4a: ROX ≥4,88 = baixo risco; entre 3,85 e 4,88 = risco intermediário (reavaliar em 2-6h); <3,85 = alto risco (considerar escalonamento). Referência: Roca O. et al. AJRCCM 2019 + adaptação ECCCP.</div>
-        </div>
-    </div>
 
-    <!-- TAB 5: Guia prático de implementação (nursing / equipe) -->
+                <!-- NÓ 2: VNI (EAP/DPOC/SHO) -->
+                <div id="step2" class="step-card step-hidden">
+                    <div class="step-title"><i class="fas fa-2"></i> 2. Iniciar VNI imediatamente</div>
+                    <div class="highlight">
+                        <i class="fas fa-info-circle"></i> <strong>Conduta:</strong> Inicie CPAP (EAP) ou Bilevel (DPOC/SHO). Ajuste IPAP 12–20 cmH₂O, EPAP 5–10 cmH₂O. Monitore SpO₂, FR e sincronia.
+                    </div>
+                    <p><strong>Avalie a resposta em 1 hora:</strong></p>
+                    <div class="choice-group">
+                        <button class="choice-btn success" onclick="showStep('step2a')"><i class="fas fa-thumbs-up"></i> Melhora clínica</button>
+                        <button class="choice-btn danger" onclick="showStep('step2b')"><i class="fas fa-exclamation-triangle"></i> Sem melhora / piora</button>
+                    </div>
+                    <div style="margin-top: 0.8rem;">
+                        <button class="reset-btn" onclick="showStep('step1')"><i class="fas fa-undo-alt"></i> Reiniciar</button>
+                    </div>
+                </div>
+
+                <!-- NÓ 2a: VNI com melhora -->
+                <div id="step2a" class="step-card step-hidden">
+                    <div class="step-title"><i class="fas fa-check-circle" style="color:#2b8c5e;"></i> Continuar VNI</div>
+                    <p>Paciente respondeu bem. Mantenha a VNI, reavalie a cada 2–4 horas. Planeje desmame conforme melhora da gasometria e da mecânica respiratória.</p>
+                    <button class="reset-btn" onclick="showStep('step1')"><i class="fas fa-undo-alt"></i> Reiniciar</button>
+                </div>
+
+                <!-- NÓ 2b: VNI sem melhora -->
+                <div id="step2b" class="step-card step-hidden">
+                    <div class="step-title"><i class="fas fa-exclamation-circle" style="color:#c7254e;"></i> Falha da VNI</div>
+                    <p>Sem resposta em 1 hora ou piora dos parâmetros (FR, SpO₂, conforto, Vt >9 mL/kg). <strong>Considere intubação orotraqueal imediata.</strong> Se houver dúvida, consulte o intensivista.</p>
+                    <button class="reset-btn" onclick="showStep('step1')"><i class="fas fa-undo-alt"></i> Reiniciar</button>
+                </div>
+
+                <!-- NÓ 3: Gravidade (se não EAP/DPOC/SHO) -->
+                <div id="step3" class="step-card step-hidden">
+                    <div class="step-title"><i class="fas fa-2"></i> 2. Avalie a gravidade</div>
+                    <p>A apresenta <strong>sinais de gravidade</strong>? (PaO₂/FiO₂ < 150 <strong>E</strong> FR > 30 irpm <strong>E</strong> uso acentuado de musculatura acessória)</p>
+                    <div class="choice-group">
+                        <button class="choice-btn danger" onclick="showStep('step4')"><i class="fas fa-exclamation-triangle"></i> Sim – Grave</button>
+                        <button class="choice-btn" onclick="showStep('step5')"><i class="fas fa-check"></i> Não – Leve a moderada</button>
+                    </div>
+                    <button class="reset-btn" onclick="showStep('step1')"><i class="fas fa-undo-alt"></i> Reiniciar</button>
+                </div>
+
+                <!-- NÓ 4: Grave -->
+                <div id="step4" class="step-card step-hidden">
+                    <div class="step-title"><i class="fas fa-exclamation-triangle" style="color:#c7254e;"></i> Paciente grave</div>
+                    <div class="highlight">
+                        <i class="fas fa-phone-alt"></i> <strong>Conduta:</strong> Consulte o intensivista imediatamente. Considere VNI precoce com monitorização rigorosa ou preparo para intubação. Defina o ceiling de não-intubação, se aplicável.
+                    </div>
+                    <button class="reset-btn" onclick="showStep('step1')"><i class="fas fa-undo-alt"></i> Reiniciar</button>
+                </div>
+
+                <!-- NÓ 5: Leve-moderada -> tolerância -->
+                <div id="step5" class="step-card step-hidden">
+                    <div class="step-title"><i class="fas fa-3"></i> 3. Avalie tolerância e comorbidades</div>
+                    <p>O paciente é <strong>agitado, imunocomprometido, necessita de higiene brônquica frequente ou é intolerante à máscara facial</strong>?</p>
+                    <div class="choice-group">
+                        <button class="choice-btn" onclick="showStep('step6')"><i class="fas fa-check"></i> Sim – favorece CNAF</button>
+                        <button class="choice-btn" onclick="showStep('step7')"><i class="fas fa-times"></i> Não – ambas são aceitáveis</button>
+                    </div>
+                    <button class="reset-btn" onclick="showStep('step1')"><i class="fas fa-undo-alt"></i> Reiniciar</button>
+                </div>
+
+                <!-- NÓ 6: CNAF (favorecido) -->
+                <div id="step6" class="step-card step-hidden">
+                    <div class="step-title"><i class="fas fa-4"></i> 4. Iniciar CNAF</div>
+                    <div class="highlight">
+                        <i class="fas fa-wind"></i> <strong>Configuração:</strong> Fluxo 40–60 L/min, FiO₂ titulada para SpO₂ 92–96%. Monitore conforto e sinais vitais.
+                    </div>
+                    <p><strong>Calcule o índice ROX (use a calculadora abaixo) e selecione a faixa de resultado:</strong></p>
+                    <div class="choice-group">
+                        <button class="choice-btn success" onclick="showStep('step8a')"><i class="fas fa-chart-line"></i> ROX ≥ 4,88</button>
+                        <button class="choice-btn warning" onclick="showStep('step8b')"><i class="fas fa-chart-line"></i> ROX 3,85 – 4,88</button>
+                        <button class="choice-btn danger" onclick="showStep('step8c')"><i class="fas fa-chart-line"></i> ROX &lt; 3,85</button>
+                    </div>
+                    <button class="reset-btn" onclick="showStep('step1')"><i class="fas fa-undo-alt"></i> Reiniciar</button>
+                </div>
+
+                <!-- NÓ 7: Ambas aceitáveis -->
+                <div id="step7" class="step-card step-hidden">
+                    <div class="step-title"><i class="fas fa-balance-scale"></i> Ambas as estratégias são aceitáveis</div>
+                    <p>A decisão entre CNAF e VNI pode ser baseada em protocolo local, disponibilidade de equipamentos e experiência da equipe. Monitore rigorosamente a resposta em até 1–2 horas.</p>
+                    <button class="reset-btn" onclick="showStep('step1')"><i class="fas fa-undo-alt"></i> Reiniciar</button>
+                </div>
+
+                <!-- NÓ 8a: ROX ≥4,88 -->
+                <div id="step8a" class="step-card step-hidden">
+                    <div class="step-title"><i class="fas fa-check-circle" style="color:#2b8c5e;"></i> Baixo risco de falha</div>
+                    <p>ROX ≥ 4,88 – Continue com CNAF. Reavalie o índice em 6–12 horas. Se mantiver estável, inicie o desmame gradual (redução de fluxo e FiO₂).</p>
+                    <button class="reset-btn" onclick="showStep('step1')"><i class="fas fa-undo-alt"></i> Reiniciar</button>
+                </div>
+
+                <!-- NÓ 8b: ROX 3,85–4,88 -->
+                <div id="step8b" class="step-card step-hidden">
+                    <div class="step-title"><i class="fas fa-exclamation-triangle" style="color:#dc843a;"></i> Risco intermediário</div>
+                    <p>ROX entre 3,85 e 4,88 – Repita o ROX em 1–2 horas. Se mantiver ou piorar, considere escalonar para VNI ou preparar intubação.</p>
+                    <button class="reset-btn" onclick="showStep('step1')"><i class="fas fa-undo-alt"></i> Reiniciar</button>
+                </div>
+
+                <!-- NÓ 8c: ROX <3,85 -->
+                <div id="step8c" class="step-card step-hidden">
+                    <div class="step-title"><i class="fas fa-times-circle" style="color:#c7254e;"></i> Alto risco de falha</div>
+                    <p>ROX &lt; 3,85 – Falha da CNAF muito provável. <strong>Escalone rapidamente para VNI</strong> ou, se houver piora, prepare a intubação orotraqueal.</p>
+                    <button class="reset-btn" onclick="showStep('step1')"><i class="fas fa-undo-alt"></i> Reiniciar</button>
+                </div>
+
+            </div><!-- fim algorithm-container -->
+
+            <!-- Calculadora ROX (integrada) -->
+            <div class="rox-calc" style="margin-top: 2rem;">
+                <h3><i class="fas fa-calculator"></i> Calculadora do índice ROX</h3>
+                <p>Fórmula: <strong>ROX = (SpO₂ / FiO₂) ÷ Frequência Respiratória</strong>. Use para monitorar a resposta à CNAF (em 2, 6 e 12 horas).</p>
+                <div class="input-group">
+                    <div class="input-field">
+                        <label>SpO₂ (%)</label>
+                        <input type="number" id="spO2" placeholder="ex: 92" step="0.1" value="94">
+                    </div>
+                    <div class="input-field">
+                        <label>FiO₂ (0.21 - 1.0)</label>
+                        <input type="number" id="fio2" placeholder="ex: 0.5" step="0.01" value="0.5">
+                    </div>
+                    <div class="input-field">
+                        <label>Frequência Respiratória (irpm)</label>
+                        <input type="number" id="rr" placeholder="ex: 28" value="28">
+                    </div>
+                    <div><button class="calc-btn" id="calcRoxBtn"><i class="fas fa-chart-line"></i> Calcular ROX</button></div>
+                </div>
+                <div id="roxResult" class="result-box">
+                    <strong>Resultado:</strong> Preencha os valores acima.
+                </div>
+                <div class="footnote">Interpretação: ROX ≥4,88 = baixo risco; 3,85–4,88 = intermediário; &lt;3,85 = alto risco (Roca et al. AJRCCM 2019).</div>
+            </div>
+
+        </div><!-- fim card -->
+    </div><!-- fim tab4 -->
+
+    <!-- ========== TAB 5: Guia prático ========== -->
     <div id="tab5" class="tab-content">
         <div class="card">
             <div class="card-title"><i class="fas fa-clinic-medical"></i> Guia rápido: configuração inicial (bedside)</div>
@@ -539,7 +688,7 @@
             <div class="card-title"><i class="fas fa-tablets"></i> Pontos de segurança e armadilhas</div>
             <ul>
                 <li><i class="fas fa-ban"></i> <strong>Contraindicações CNAF:</strong> fratura de base de crânio, epistaxe grave, pneumotórax não drenado, obstrução nasal importante.</li>
-                <li><i class="fas fa-ban"></i> <strong>Contraindicações relativas VNI:</strong> rebaixamento do nível de consciência, aspiracão, secreções excessivas, instabilidade hemodinâmica.</li>
+                <li><i class="fas fa-ban"></i> <strong>Contraindicações relativas VNI:</strong> rebaixamento do nível de consciência, aspiração, secreções excessivas, instabilidade hemodinâmica.</li>
                 <li><i class="fas fa-chart-simple"></i> <strong>Falha da CNAF:</strong> se ROX persistente <3,85 após 2-6h ou piora clínica, progredir para VNI ou IOT sem demora.</li>
                 <li><i class="fas fa-lungs"></i> <strong>Síndrome de P-SILI na VNI:</strong> em pacientes não hipercápnicos, volumes correntes elevados (>9 mL/kg) podem lesar o pulmão. Considerar intubação se Vt não controlável.</li>
             </ul>
@@ -561,14 +710,12 @@
 </div>
 
 <script>
-    // Abas interativas
+    // ===== Gerenciamento das abas =====
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
 
     function activateTab(tabId) {
-        tabContents.forEach(content => {
-            content.classList.remove('active');
-        });
+        tabContents.forEach(content => content.classList.remove('active'));
         const activeContent = document.getElementById(tabId);
         if(activeContent) activeContent.classList.add('active');
         
@@ -587,7 +734,22 @@
         });
     });
 
-    // ROX index calculator
+    // ===== Algoritmo interativo =====
+    function showStep(stepId) {
+        // Esconde todos os steps
+        document.querySelectorAll('.step-card').forEach(el => {
+            el.classList.add('step-hidden');
+        });
+        // Mostra o step desejado
+        const target = document.getElementById(stepId);
+        if(target) {
+            target.classList.remove('step-hidden');
+            // Rola suavemente para o step (opcional)
+            target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }
+
+    // ===== ROX Calculator =====
     const spO2Input = document.getElementById('spO2');
     const fio2Input = document.getElementById('fio2');
     const rrInput = document.getElementById('rr');
@@ -615,12 +777,14 @@
     }
     
     roxBtn.addEventListener('click', computeROX);
-    // cálculo inicial ao carregar a página
     window.addEventListener('DOMContentLoaded', () => {
         computeROX();
-        // garantir que a primeira aba está ativa
+        // Garantir que a aba 1 está ativa
         activateTab('tab1');
+        // Mostrar apenas o step1 inicialmente
+        showStep('step1');
     });
 </script>
+
 </body>
 </html>
