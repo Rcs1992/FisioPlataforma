@@ -1423,321 +1423,367 @@
         });
 
         // ========== GERAR PDF COM MÚLTIPLAS PÁGINAS ==========
-        async function gerarPDF() {
-            let estado = coletarEstadoCompleto();
+       async function gerarPDF() {
+    // ========== COLETA DE DADOS (igual ao seu código original) ==========
+    let estado = coletarEstadoCompleto();
 
-            // Coleta de dados
-            const nome = document.getElementById('nome').value || '---';
-            const idade = document.getElementById('idade').value || '---';
-            const sexo = document.getElementById('sexo').value || '---';
-            const prontuario = document.getElementById('prontuario').value || '---';
-            const dataInternacao = document.getElementById('dataInternacao').value || '---';
-            const dataAvaliacao = document.getElementById('dataAvaliacao').value || new Date().toLocaleDateString();
-            const unidade = document.getElementById('unidade').value || '---';
-            const leito = document.getElementById('leito').value || '---';
-            const historiaClinica = document.getElementById('historiaClinica').value || '---';
-            const hpp = estado.hpp.length ? estado.hpp.join(', ') : 'Nenhuma';
-            const altura = document.getElementById('altura').value || '---';
-            const paSist = document.getElementById('paSist').value || '---';
-            const paDiast = document.getElementById('paDiast').value || '---';
-            const fc = document.getElementById('fc').value || '---';
-            const fr = document.getElementById('fr').value || '---';
-            const sato2 = document.getElementById('sato2').value || '---';
-            const vtIdeal = document.getElementById('vtIdealDisplay').innerHTML || '---';
-            const consc = tipoConsc.value === 'glasgow' ? document.getElementById('totalGlasgow').innerText :
-                `RASS ${document.getElementById('rassValor').value}`;
-            const drogasTexto = estado.drogas.map(d => `${d.droga} ${d.dose} mL/h`).join('; ') || 'Nenhuma';
-            const ausculta = document.getElementById('ausculta').value || '---';
-            const viaAereaVal = viaAerea.value || '---';
-            let suporteResp = viaAereaVal;
-            if (viaAereaVal === 'VMI') {
-                const modo = document.getElementById('vmiModo').value || '---';
-                const vt = document.getElementById('vmiVt').value || '---';
-                const frVmi = document.getElementById('vmiFr').value || '---';
-                const peep = document.getElementById('vmiPeep').value || '---';
-                const fio2 = document.getElementById('vmiFio2').value || '---';
-                const pinsp = document.getElementById('vmiPinsp').value || '---';
-                const ppico = document.getElementById('vmiPpico').value || '---';
-                suporteResp =
-                    `${viaAereaVal} | Modo: ${modo} | VT: ${vt}ml | FR: ${frVmi} | PEEP: ${peep} | FiO2: ${fio2}% | PINSP: ${pinsp} | PPICO: ${ppico}`;
-            }
-            const viaArtificial = document.querySelector('input[name="viaArtificial"]:checked').value || 'nenhum';
-            const dataIOT = document.getElementById('dataIOT').value || '---';
-            const dataExtubacao = document.getElementById('dataExtubacao').value || '---';
-            let reintList = [];
-            document.querySelectorAll('#reintubacoesContainer .dynamic-reintubacao').forEach(div => {
-                let d = div.querySelectorAll('input[type="date"]');
-                reintList.push(`${d[0].value} → ${d[1].value||'?'}`);
-            });
-            const reintText = reintList.length ? reintList.join('; ') : 'nenhuma';
-            const diasVM = document.getElementById('diasVMAutomatico').innerText || '0';
-            const dataTQT = document.getElementById('dataTQT').value || '---';
-            const dataDesmameTQT = document.getElementById('dataDesmameTQT').value || '---';
-            const abdomen = document.getElementById('abdomen').value || '---';
-            const panturrilhas = document.getElementById('panturrilhas').value || '---';
-            const obsAbdPant = document.getElementById('obsAbdPant').value || '---';
-            const mrc = document.getElementById('mrc').value || '---';
-            const ims = document.getElementById('ims').value || '---';
-            const obsMotora = document.getElementById('obsMotora').value || '---';
-            const gasoPh = document.getElementById('gasoPh').value || '---';
-            const gasoPaco2 = document.getElementById('gasoPaco2').value || '---';
-            const gasoPao2 = document.getElementById('gasoPao2').value || '---';
-            const gasoHco3 = document.getElementById('gasoHco3').value || '---';
-            const gasoBe = document.getElementById('gasoBe').value || '---';
-            const diagnostico = document.getElementById('diagnosticoFisio').value || '---';
-            const prognostico = document.getElementById('prognostico').value || '---';
-            const objetivosTexto = estado.objetivos.length ? estado.objetivos.map(o => `• ${o}`).join('\n') :
-                'Nenhum objetivo registrado.';
-            const recursosTexto = estado.recursos.length ? estado.recursos.map(r => `• ${r}`).join('\n') :
-                'Nenhum recurso registrado.';
-            const qtdAtendimentos = document.getElementById('qtdAtendimentos').value || '---';
-            const condutasTexto = estado.condutas.length ? estado.condutas.map(c => `• ${c}`).join('\n') :
-                'Nenhuma conduta registrada.';
-            const observacoesLivres = document.getElementById('observacoesLivres').value || '---';
-            const assinatura = document.getElementById('assinatura').value || '---';
-            const carimbo = document.getElementById('carimbo').value || '---';
+    const nome = document.getElementById('nome').value || '---';
+    const idade = document.getElementById('idade').value || '---';
+    const sexo = document.getElementById('sexo').value || '---';
+    const prontuario = document.getElementById('prontuario').value || '---';
+    const dataInternacao = document.getElementById('dataInternacao').value || '---';
+    const dataAvaliacao = document.getElementById('dataAvaliacao').value || new Date().toLocaleDateString();
+    const unidade = document.getElementById('unidade').value || '---';
+    const leito = document.getElementById('leito').value || '---';
+    const historiaClinica = document.getElementById('historiaClinica').value || '---';
+    const hpp = estado.hpp.length ? estado.hpp.join(', ') : 'Nenhuma';
+    const altura = document.getElementById('altura').value || '---';
+    const paSist = document.getElementById('paSist').value || '---';
+    const paDiast = document.getElementById('paDiast').value || '---';
+    const fc = document.getElementById('fc').value || '---';
+    const fr = document.getElementById('fr').value || '---';
+    const sato2 = document.getElementById('sato2').value || '---';
+    const vtIdeal = document.getElementById('vtIdealDisplay').innerHTML || '---';
+    const consc = tipoConsc.value === 'glasgow' ? document.getElementById('totalGlasgow').innerText : `RASS ${document.getElementById('rassValor').value}`;
+    const drogasTexto = estado.drogas.map(d => `${d.droga} ${d.dose} mL/h`).join('; ') || 'Nenhuma';
+    const ausculta = document.getElementById('ausculta').value || '---';
+    const viaAereaVal = viaAerea.value || '---';
+    let suporteResp = viaAereaVal;
+    if (viaAereaVal === 'VMI') {
+        const modo = document.getElementById('vmiModo').value || '---';
+        const vt = document.getElementById('vmiVt').value || '---';
+        const frVmi = document.getElementById('vmiFr').value || '---';
+        const peep = document.getElementById('vmiPeep').value || '---';
+        const fio2 = document.getElementById('vmiFio2').value || '---';
+        const pinsp = document.getElementById('vmiPinsp').value || '---';
+        const ppico = document.getElementById('vmiPpico').value || '---';
+        suporteResp = `${viaAereaVal} | Modo: ${modo} | VT: ${vt}ml | FR: ${frVmi} | PEEP: ${peep} | FiO2: ${fio2}% | PINSP: ${pinsp} | PPICO: ${ppico}`;
+    }
+    const viaArtificial = document.querySelector('input[name="viaArtificial"]:checked').value || 'nenhum';
+    const dataIOT = document.getElementById('dataIOT').value || '---';
+    const dataExtubacao = document.getElementById('dataExtubacao').value || '---';
+    let reintList = [];
+    document.querySelectorAll('#reintubacoesContainer .dynamic-reintubacao').forEach(div => {
+        let d = div.querySelectorAll('input[type="date"]');
+        reintList.push(`${d[0].value} → ${d[1].value||'?'}`);
+    });
+    const reintText = reintList.length ? reintList.join('; ') : 'nenhuma';
+    const diasVM = document.getElementById('diasVMAutomatico').innerText || '0';
+    const dataTQT = document.getElementById('dataTQT').value || '---';
+    const dataDesmameTQT = document.getElementById('dataDesmameTQT').value || '---';
+    const abdomen = document.getElementById('abdomen').value || '---';
+    const panturrilhas = document.getElementById('panturrilhas').value || '---';
+    const obsAbdPant = document.getElementById('obsAbdPant').value || '---';
+    const mrc = document.getElementById('mrc').value || '---';
+    const ims = document.getElementById('ims').value || '---';
+    const obsMotora = document.getElementById('obsMotora').value || '---';
+    const gasoPh = document.getElementById('gasoPh').value || '---';
+    const gasoPaco2 = document.getElementById('gasoPaco2').value || '---';
+    const gasoPao2 = document.getElementById('gasoPao2').value || '---';
+    const gasoHco3 = document.getElementById('gasoHco3').value || '---';
+    const gasoBe = document.getElementById('gasoBe').value || '---';
+    const diagnostico = document.getElementById('diagnosticoFisio').value || '---';
+    const prognostico = document.getElementById('prognostico').value || '---';
+    const objetivosTexto = estado.objetivos.length ? estado.objetivos.map(o => `• ${o}`).join('\n') : 'Nenhum objetivo registrado.';
+    const recursosTexto = estado.recursos.length ? estado.recursos.map(r => `• ${r}`).join('\n') : 'Nenhum recurso registrado.';
+    const qtdAtendimentos = document.getElementById('qtdAtendimentos').value || '---';
+    const condutasTexto = estado.condutas.length ? estado.condutas.map(c => `• ${c}`).join('\n') : 'Nenhuma conduta registrada.';
+    const observacoesLivres = document.getElementById('observacoesLivres').value || '---';
+    const assinatura = document.getElementById('assinatura').value || '---';
+    const carimbo = document.getElementById('carimbo').value || '---';
 
-            // Construção do HTML para o PDF
-            const htmlContent = `
-                <div class="pdf-content">
-                    <div class="header-line">
-                        <img src="https://www.ghc.com.br/files/img.ptg.2.1.01.35392.jpg" style="height: 55px; display: block; margin: 0 auto 3px;">
-                        <h1>GRUPO HOSPITALAR CONCEIÇÃO - HOSPITAL GERAL DE BONSUCESSO</h1>
-                        <h2>SERVIÇO DE FISIOTERAPIA — ${currentMode === 'avaliacao' ? 'AVALIAÇÃO' : 'EVOLUÇÃO'} FISIOTERAPÊUTICA</h2>
-                        <div style="font-size: 10px; color: #475569;">Data do registro: ${dataAvaliacao}</div>
-                    </div>
+    // ========== CONTEÚDO HTML PARA IMPRESSÃO ==========
+    // Use a URL da sua imagem (coloque a que funcionar)
+    const LOGO_URL = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTX1H4aZIvufnmA3gQh7mAgGBmAXVB1Prwsdav56AJeMMWAjf3F-Fn_Ghk&s=10'; // Substitua pelo link da sua imagem
+    // Ou use o Base64 se preferir:
+    // const LOGO_URL = 'data:image/png;base64,iVBORw0...';
 
-                    <!-- Identificação -->
-                    <div class="section bg-soft">
-                        <div class="section-title-pdf">IDENTIFICAÇÃO DO PACIENTE</div>
-                        <div class="grid-4">
-                            <div><span class="label">Nome:</span> ${nome}</div>
-                            <div><span class="label">Idade:</span> ${idade}</div>
-                            <div><span class="label">Sexo:</span> ${sexo}</div>
-                            <div><span class="label">Prontuário:</span> ${prontuario}</div>
-                            <div><span class="label">Internação:</span> ${dataInternacao}</div>
-                            <div><span class="label">Unidade:</span> ${unidade}</div>
-                            <div><span class="label">Leito:</span> ${leito}</div>
-                        </div>
-                    </div>
-
-                    <!-- História e HPP -->
-                    <div class="section grid-2">
-                        <div>
-                            <div class="section-title-pdf">HISTÓRIA CLÍNICA</div>
-                            <div style="font-size: 9.5px;">${historiaClinica}</div>
-                        </div>
-                        <div>
-                            <div class="section-title-pdf">HPP (Comorbidades)</div>
-                            <div style="font-size: 9.5px;">${hpp}</div>
-                        </div>
-                    </div>
-
-                    <!-- Parâmetros Clínicos -->
-                    <div class="section bg-soft">
-                        <div class="section-title-pdf">PARÂMETROS CLÍNICOS</div>
-                        <div class="grid-5">
-                            <div><span class="label">Altura:</span> ${altura}m</div>
-                            <div><span class="label">PA:</span> ${paSist}/${paDiast}</div>
-                            <div><span class="label">FC:</span> ${fc} bpm</div>
-                            <div><span class="label">FR:</span> ${fr} irpm</div>
-                            <div><span class="label">SatO₂:</span> ${sato2}%</div>
-                        </div>
-                        <div style="margin-top: 3px; font-size: 9.5px;"><span class="label">VT ideal:</span> ${vtIdeal}</div>
-                    </div>
-
-                    <!-- Consciência e Drogas -->
-                    <div class="section grid-2">
-                        <div>
-                            <div class="section-title-pdf">NÍVEL DE CONSCIÊNCIA</div>
-                            <div style="font-size: 9.5px;">${consc}</div>
-                        </div>
-                        <div>
-                            <div class="section-title-pdf">DROGAS EM USO</div>
-                            <div style="font-size: 9.5px;">${drogasTexto}</div>
-                        </div>
-                    </div>
-
-                    <!-- Ausculta e Ventilação -->
-                    <div class="section bg-soft">
-                        <div class="section-title-pdf">AUSCULTA E SUPORTE RESPIRATÓRIO</div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px;">
-                            <div><span class="label">Ausculta:</span> ${ausculta}</div>
-                            <div><span class="label">Suporte:</span> ${suporteResp}</div>
-                        </div>
-                    </div>
-
-                    <!-- Via Aérea Artificial -->
-                    <div class="section" style="display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px;">
-                        <div>
-                            <div class="section-title-pdf">VIA AÉREA ARTIFICIAL</div>
-                            <div style="font-size: 9.5px;">
-                                <div><span class="label">Tipo:</span> ${viaArtificial}</div>
-                                <div><span class="label">IOT:</span> ${dataIOT}</div>
-                                <div><span class="label">Extubação:</span> ${dataExtubacao}</div>
-                                <div><span class="label">Reintubações:</span> ${reintText}</div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="section-title-pdf" style="border-bottom: none;">&nbsp;</div>
-                            <div style="font-size: 9.5px;">
-                                <div><span class="label">TQT:</span> ${dataTQT}</div>
-                                <div><span class="label">Desmame TQT:</span> ${dataDesmameTQT}</div>
-                                <div><span class="label">Dias de VM:</span> <strong>${diasVM}</strong> dias</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Avaliação Física -->
-                    <div class="section bg-soft">
-                        <div class="section-title-pdf">AVALIAÇÃO FÍSICA</div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px;">
-                            <div><span class="label">Abdômen:</span> ${abdomen}</div>
-                            <div><span class="label">Panturrilhas:</span> ${panturrilhas}</div>
-                            <div style="grid-column: span 2;"><span class="label">Obs.:</span> ${obsAbdPant}</div>
-                        </div>
-                        <div class="grid-3" style="margin-top: 3px;">
-                            <div><span class="label">MRC:</span> ${mrc}</div>
-                            <div><span class="label">IMS:</span> ${ims}</div>
-                            <div><span class="label">Obs. Motoras:</span> ${obsMotora}</div>
-                        </div>
-                    </div>
-
-                    <!-- Gasometria -->
-                    <div class="section">
-                        <div class="section-title-pdf">GASOMETRIA ARTERIAL</div>
-                        <div class="grid-5">
-                            <div><span class="label">pH:</span> ${gasoPh}</div>
-                            <div><span class="label">PaCO₂:</span> ${gasoPaco2}</div>
-                            <div><span class="label">PaO₂:</span> ${gasoPao2}</div>
-                            <div><span class="label">HCO₃:</span> ${gasoHco3}</div>
-                            <div><span class="label">BE:</span> ${gasoBe}</div>
-                        </div>
-                    </div>
-
-                    ${currentMode === 'avaliacao' ? `
-                    <!-- Diagnóstico -->
-                    <div class="section bg-blue-soft">
-                        <div class="section-title-pdf">DIAGNÓSTICO FISIOTERAPÊUTICO (CBDF)</div>
-                        <div style="font-size: 9.5px;">${diagnostico}</div>
-                    </div>
-
-                    <!-- Prognóstico -->
-                    <div class="section">
-                        <div class="section-title-pdf">PROGNÓSTICO</div>
-                        <div style="font-size: 9.5px;">${prognostico}</div>
-                    </div>
-
-                    <!-- Objetivos e Recursos -->
-                    <div class="section grid-2">
-                        <div>
-                            <div class="section-title-pdf"> OBJETIVOS TERAPÊUTICOS</div>
-                            <div style="font-size: 9.5px; white-space: pre-wrap;">${objetivosTexto}</div>
-                        </div>
-                        <div>
-                            <div class="section-title-pdf"> RECURSOS FISIOTERAPÊUTICOS</div>
-                            <div style="font-size: 9.5px; white-space: pre-wrap;">${recursosTexto}</div>
-                        </div>
-                    </div>
-
-                    <!-- Atendimentos -->
-                    <div class="section bg-soft">
-                        <div class="section-title-pdf">QUANTIDADE DE ATENDIMENTOS</div>
-                        <div style="font-size: 9.5px;">${qtdAtendimentos}</div>
-                    </div>
-                    ` : ''}
-
-                    <!-- Condutas -->
-                    <div class="section bg-soft">
-                        <div class="section-title-pdf">CONDUTAS FISIOTERAPÊUTICAS</div>
-                        <div style="font-size: 9.5px; white-space: pre-wrap;">${condutasTexto}</div>
-                    </div>
-
-                    <!-- Observações Livres -->
-                    <div class="section bg-blue-soft">
-                        <div class="section-title-pdf"> OBSERVAÇÕES LIVRES</div>
-                        <div style="font-size: 9.5px; white-space: pre-wrap;">${observacoesLivres}</div>
-                    </div>
-
-                    <!-- Assinatura -->
-                    <div class="border-top" style="display: flex; justify-content: space-between; font-size: 9.5px;">
-                        <div><span class="label">Assinatura:</span> ${assinatura}</div>
-                        <div><span class="label">Carimbo:</span> ${carimbo}</div>
-                    </div>
-
-                    <div style="text-align: center; font-size: 7.5px; color: #64748b; margin-top: 8px; border-top: 1px solid #e2e8f0; padding-top: 5px;">
-                        Documento gerado eletronicamente — GHC Fisioterapia — Conforme resoluções COFFITO.
-                    </div>
-                </div>
-            `;
-
-            // Cria container para renderização
-            const container = document.createElement('div');
-            container.innerHTML = htmlContent;
-            container.style.cssText = 'position: absolute; left: -9999px; top: 0; width: 800px; background: white; padding: 0;';
-            document.body.appendChild(container);
-
-            try {
-                // Aguarda o carregamento da imagem
-                await new Promise(resolve => setTimeout(resolve, 500));
-
-                // Captura todo o conteúdo
-                const canvas = await html2canvas(container, {
-                    scale: 2.5,
-                    useCORS: true,
-                    backgroundColor: '#ffffff',
-                    logging: false,
-                    width: 800,
-                    height: container.scrollHeight,
-                });
-
-                // Configurações do PDF
-                const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
-                const pdfWidth = 210;
-                const pdfHeight = 297; // Altura A4 em mm
-                const margin = 8;
-                const usableWidth = pdfWidth - (margin * 2);
-                const imgWidth = usableWidth;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-                // Calcula quantas páginas serão necessárias
-                const pageHeightPx = (pdfHeight - (margin * 2)) / (imgWidth / canvas.width);
-                const totalPages = Math.ceil(canvas.height / pageHeightPx);
-
-                for (let page = 0; page < totalPages; page++) {
-                    if (page > 0) {
-                        pdf.addPage();
-                    }
-
-                    const yStart = page * pageHeightPx;
-                    const yEnd = Math.min((page + 1) * pageHeightPx, canvas.height);
-                    const sliceHeight = yEnd - yStart;
-
-                    // Cria um canvas temporário para o slice
-                    const sliceCanvas = document.createElement('canvas');
-                    sliceCanvas.width = canvas.width;
-                    sliceCanvas.height = sliceHeight;
-                    const ctx = sliceCanvas.getContext('2d');
-                    ctx.drawImage(canvas, 0, yStart, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
-
-                    const sliceData = sliceCanvas.toDataURL('image/jpeg', 0.92);
-
-                    // Calcula a altura em mm para esta página
-                    const pageImgHeight = (sliceHeight * imgWidth) / canvas.width;
-
-                    pdf.addImage(sliceData, 'JPEG', margin, margin, imgWidth, pageImgHeight);
-                }
-
-                pdf.save(`${currentMode === 'avaliacao' ? 'Avaliacao' : 'Evolucao'}_${Date.now()}.pdf`);
-            } catch (e) {
-                console.error('Erro ao gerar PDF:', e);
-                alert('Erro ao gerar PDF: ' + e.message);
-            } finally {
-                document.body.removeChild(container);
-            }
+    const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório Fisioterapêutico</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: white;
+            padding: 20px 25px;
+            color: #1a1a1a;
+            font-size: 10.5px;
+            line-height: 1.4;
         }
+        .page {
+            max-width: 210mm;
+            margin: 0 auto;
+            background: white;
+            padding: 10px 0;
+        }
+        .header-line {
+            text-align: center;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+        }
+        .header-line img {
+            height: 55px;
+            display: block;
+            margin: 0 auto 5px;
+        }
+        h1 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+        h2 {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1e40af;
+            margin: 3px 0;
+        }
+        .section {
+            margin-bottom: 8px;
+            padding: 5px 8px;
+            border-radius: 4px;
+        }
+        .section-title {
+            font-weight: 600;
+            color: #0f172a;
+            font-size: 11px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 2px;
+            margin-bottom: 4px;
+        }
+        .label { font-weight: 600; color: #334155; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px 10px; }
+        .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 4px 10px; }
+        .grid-5 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 4px; }
+        .bg-soft { background: #f8fafc; }
+        .bg-blue-soft { background: #eef2ff; }
+        .border-top { border-top: 1px dashed #cbd5e1; margin-top: 8px; padding-top: 8px; }
+        .text-center { text-align: center; }
+        .mt-1 { margin-top: 4px; }
+        .mb-1 { margin-bottom: 4px; }
+        .footer { text-align: center; font-size: 7.5px; color: #64748b; margin-top: 10px; border-top: 1px solid #e2e8f0; padding-top: 5px; }
+        .page-break { page-break-after: always; border-bottom: 2px dashed #e2e8f0; margin: 10px 0; padding-bottom: 10px; }
+        /* Ajustes para impressão */
+        @media print {
+            body { padding: 0; }
+            .no-print { display: none; }
+            .page { max-width: 100%; }
+            .page-break { border-bottom: none; margin: 0; padding: 0; }
+        }
+        /* Estilo para listas */
+        ul { margin: 2px 0; padding-left: 16px; }
+        ul li { margin: 1px 0; }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- Cabeçalho -->
+        <div class="header-line">
+            <img src="${LOGO_URL}" alt="Logo GHC" onerror="this.style.display='none'; this.parentNode.innerHTML += '<span style=\"font-size:20px;font-weight:bold;\">GHC</span>';" />
+            <h1>GRUPO HOSPITALAR CONCEIÇÃO - HOSPITAL GERAL DE BONSUCESSO</h1>
+            <h2>SERVIÇO DE FISIOTERAPIA — ${currentMode === 'avaliacao' ? 'AVALIAÇÃO' : 'EVOLUÇÃO'} FISIOTERAPÊUTICA</h2>
+            <div style="font-size: 10px; color: #475569;">Data do registro: ${dataAvaliacao}</div>
+        </div>
 
-        document.getElementById('gerarPdfBtn').addEventListener('click', gerarPDF);
+        <!-- Identificação -->
+        <div class="section bg-soft">
+            <div class="section-title">IDENTIFICAÇÃO DO PACIENTE</div>
+            <div class="grid-4">
+                <div><span class="label">Nome:</span> ${nome}</div>
+                <div><span class="label">Idade:</span> ${idade}</div>
+                <div><span class="label">Sexo:</span> ${sexo}</div>
+                <div><span class="label">Prontuário:</span> ${prontuario}</div>
+                <div><span class="label">Internação:</span> ${dataInternacao}</div>
+                <div><span class="label">Unidade:</span> ${unidade}</div>
+                <div><span class="label">Leito:</span> ${leito}</div>
+            </div>
+        </div>
+
+        <!-- História e HPP -->
+        <div class="section grid-2">
+            <div>
+                <div class="section-title">HISTÓRIA CLÍNICA</div>
+                <div style="font-size: 9.5px;">${historiaClinica}</div>
+            </div>
+            <div>
+                <div class="section-title">HPP (Comorbidades)</div>
+                <div style="font-size: 9.5px;">${hpp}</div>
+            </div>
+        </div>
+
+        <!-- Parâmetros Clínicos -->
+        <div class="section bg-soft">
+            <div class="section-title">PARÂMETROS CLÍNICOS</div>
+            <div class="grid-5">
+                <div><span class="label">Altura:</span> ${altura}m</div>
+                <div><span class="label">PA:</span> ${paSist}/${paDiast}</div>
+                <div><span class="label">FC:</span> ${fc} bpm</div>
+                <div><span class="label">FR:</span> ${fr} irpm</div>
+                <div><span class="label">SatO₂:</span> ${sato2}%</div>
+            </div>
+            <div class="mt-1" style="font-size: 9.5px;"><span class="label">VT ideal:</span> ${vtIdeal}</div>
+        </div>
+
+        <!-- Consciência e Drogas -->
+        <div class="section grid-2">
+            <div>
+                <div class="section-title">NÍVEL DE CONSCIÊNCIA</div>
+                <div style="font-size: 9.5px;">${consc}</div>
+            </div>
+            <div>
+                <div class="section-title">DROGAS EM USO</div>
+                <div style="font-size: 9.5px;">${drogasTexto}</div>
+            </div>
+        </div>
+
+        <!-- Ausculta e Ventilação -->
+        <div class="section bg-soft">
+            <div class="section-title">AUSCULTA E SUPORTE RESPIRATÓRIO</div>
+            <div class="grid-2">
+                <div><span class="label">Ausculta:</span> ${ausculta}</div>
+                <div><span class="label">Suporte:</span> ${suporteResp}</div>
+            </div>
+        </div>
+
+        <!-- Via Aérea Artificial -->
+        <div class="section grid-2">
+            <div>
+                <div class="section-title">VIA AÉREA ARTIFICIAL</div>
+                <div style="font-size: 9.5px;">
+                    <div><span class="label">Tipo:</span> ${viaArtificial}</div>
+                    <div><span class="label">IOT:</span> ${dataIOT}</div>
+                    <div><span class="label">Extubação:</span> ${dataExtubacao}</div>
+                    <div><span class="label">Reintubações:</span> ${reintText}</div>
+                </div>
+            </div>
+            <div>
+                <div class="section-title" style="border-bottom: none;">&nbsp;</div>
+                <div style="font-size: 9.5px;">
+                    <div><span class="label">TQT:</span> ${dataTQT}</div>
+                    <div><span class="label">Desmame TQT:</span> ${dataDesmameTQT}</div>
+                    <div><span class="label">Dias de VM:</span> <strong>${diasVM}</strong> dias</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Avaliação Física -->
+        <div class="section bg-soft">
+            <div class="section-title">AVALIAÇÃO FÍSICA</div>
+            <div class="grid-2">
+                <div><span class="label">Abdômen:</span> ${abdomen}</div>
+                <div><span class="label">Panturrilhas:</span> ${panturrilhas}</div>
+                <div style="grid-column: span 2;"><span class="label">Obs.:</span> ${obsAbdPant}</div>
+            </div>
+            <div class="grid-3 mt-1">
+                <div><span class="label">MRC:</span> ${mrc}</div>
+                <div><span class="label">IMS:</span> ${ims}</div>
+                <div><span class="label">Obs. Motoras:</span> ${obsMotora}</div>
+            </div>
+        </div>
+
+        <!-- Gasometria -->
+        <div class="section">
+            <div class="section-title">GASOMETRIA ARTERIAL</div>
+            <div class="grid-5">
+                <div><span class="label">pH:</span> ${gasoPh}</div>
+                <div><span class="label">PaCO₂:</span> ${gasoPaco2}</div>
+                <div><span class="label">PaO₂:</span> ${gasoPao2}</div>
+                <div><span class="label">HCO₃:</span> ${gasoHco3}</div>
+                <div><span class="label">BE:</span> ${gasoBe}</div>
+            </div>
+        </div>
+
+        ${currentMode === 'avaliacao' ? `
+        <!-- Diagnóstico -->
+        <div class="section bg-blue-soft">
+            <div class="section-title">DIAGNÓSTICO FISIOTERAPÊUTICO (CBDF)</div>
+            <div style="font-size: 9.5px;">${diagnostico}</div>
+        </div>
+
+        <!-- Prognóstico -->
+        <div class="section">
+            <div class="section-title">PROGNÓSTICO</div>
+            <div style="font-size: 9.5px;">${prognostico}</div>
+        </div>
+
+        <!-- Objetivos e Recursos -->
+        <div class="section grid-2">
+            <div>
+                <div class="section-title">OBJETIVOS TERAPÊUTICOS</div>
+                <div style="font-size: 9.5px; white-space: pre-wrap;">${objetivosTexto}</div>
+            </div>
+            <div>
+                <div class="section-title">RECURSOS FISIOTERAPÊUTICOS</div>
+                <div style="font-size: 9.5px; white-space: pre-wrap;">${recursosTexto}</div>
+            </div>
+        </div>
+
+        <!-- Atendimentos -->
+        <div class="section bg-soft">
+            <div class="section-title">QUANTIDADE DE ATENDIMENTOS</div>
+            <div style="font-size: 9.5px;">${qtdAtendimentos}</div>
+        </div>
+        ` : ''}
+
+        <!-- Condutas -->
+        <div class="section bg-soft">
+            <div class="section-title">CONDUTAS FISIOTERAPÊUTICAS</div>
+            <div style="font-size: 9.5px; white-space: pre-wrap;">${condutasTexto}</div>
+        </div>
+
+        <!-- Observações Livres -->
+        <div class="section bg-blue-soft">
+            <div class="section-title">OBSERVAÇÕES LIVRES</div>
+            <div style="font-size: 9.5px; white-space: pre-wrap;">${observacoesLivres}</div>
+        </div>
+
+        <!-- Assinatura -->
+        <div class="border-top" style="display: flex; justify-content: space-between; font-size: 9.5px;">
+            <div><span class="label">Assinatura:</span> ${assinatura}</div>
+            <div><span class="label">Carimbo:</span> ${carimbo}</div>
+        </div>
+
+        <!-- Rodapé -->
+        <div class="footer">
+            Documento gerado eletronicamente — GHC Fisioterapia — Conforme resoluções COFFITO.
+        </div>
+    </div>
+</body>
+</html>
+    `;
+
+    // ========== ABRE UMA NOVA JANELA COM O CONTEÚDO ==========
+    const win = window.open('', '_blank', 'width=900,height=700,scrollbars=yes,resizable=yes');
+    if (!win) {
+        alert('O navegador bloqueou a abertura de uma nova janela. Permita pop-ups para este site.');
+        return;
+    }
+    win.document.write(htmlContent);
+    win.document.close();
+
+    // Aguarda carregamento e chama impressão automaticamente (opcional)
+    // Se preferir, pode deixar o usuário clicar em Ctrl+P manualmente.
+    // Vou adicionar um botão na página para imprimir e também acionar automaticamente após 1 segundo.
+    win.onload = function() {
+        // Adiciona um botão flutuante para imprimir
+        const btn = win.document.createElement('button');
+        btn.innerText = '🖨️ Imprimir / Salvar como PDF';
+        btn.style.cssText = 'position:fixed; bottom:20px; right:20px; padding:12px 24px; background:#2563eb; color:white; border:none; border-radius:30px; font-size:16px; cursor:pointer; z-index:9999; box-shadow:0 4px 12px rgba(0,0,0,0.3);';
+        btn.onclick = function() { win.print(); };
+        win.document.body.appendChild(btn);
+
+        // Opcional: aciona a impressão automaticamente após 1.5s
+        setTimeout(() => {
+            win.print();
+        }, 1500);
+    };
+}
 
         // ========== COPIAR RELATÓRIO (TEXTO PURO) ==========
         function copiarRelatorio() {
