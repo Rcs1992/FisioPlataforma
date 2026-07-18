@@ -1,0 +1,2003 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Prontuário Fisioterapêutico | Avaliação e Evolução</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+    </script>
+    <style>
+        body {
+            background: #f0f4f8;
+        }
+        .card-modern {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: none;
+            border-radius: 1.25rem;
+        }
+        .card-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.1);
+        }
+        .section-title {
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            border-left: 5px solid #2563eb;
+            padding-left: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .dynamic-conduta,
+        .dynamic-comorbidade,
+        .dynamic-reintubacao,
+        .dynamic-droga,
+        .dynamic-objetivo,
+        .dynamic-recurso {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        button.active-mode {
+            background-color: #1e3a8a !important;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .param-card {
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-top: 0.75rem;
+            border: 1px solid #e2e8f0;
+        }
+        .autocomplete-container {
+            position: relative;
+            flex: 1;
+        }
+        .autocomplete-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 0.75rem;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .autocomplete-list.active {
+            display: block;
+        }
+        .autocomplete-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 0.875rem;
+        }
+        .autocomplete-item:hover {
+            background-color: #eff6ff;
+        }
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+        /* Estilos para o PDF */
+        .pdf-content {
+            font-family: 'Helvetica', Arial, sans-serif;
+            max-width: 100%;
+            background: white;
+            padding: 20px 25px;
+            border-radius: 0;
+            font-size: 10.5px;
+            line-height: 1.4;
+            color: #1a1a1a;
+        }
+        .pdf-content h1 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+        .pdf-content h2 {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1e40af;
+            margin: 3px 0;
+        }
+        .pdf-content .header-line {
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .pdf-content .section {
+            margin-bottom: 6px;
+            padding: 5px 8px;
+            border-radius: 4px;
+        }
+        .pdf-content .section-title-pdf {
+            font-weight: 600;
+            color: #0f172a;
+            font-size: 11px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 2px;
+            margin-bottom: 3px;
+        }
+        .pdf-content .label {
+            font-weight: 600;
+            color: #334155;
+        }
+        .pdf-content .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .pdf-content .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+        }
+        .pdf-content .grid-4 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 4px 10px;
+        }
+        .pdf-content .grid-5 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            gap: 4px;
+        }
+        .pdf-content .bg-soft {
+            background: #f8fafc;
+            padding: 6px 10px;
+            border-radius: 4px;
+        }
+        .pdf-content .bg-blue-soft {
+            background: #eef2ff;
+            padding: 6px 10px;
+            border-radius: 4px;
+        }
+        .pdf-content .mt-1 {
+            margin-top: 3px;
+        }
+        .pdf-content .mb-1 {
+            margin-bottom: 3px;
+        }
+        .pdf-content .flex {
+            display: flex;
+        }
+        .pdf-content .flex-between {
+            display: flex;
+            justify-content: space-between;
+        }
+        .pdf-content .gap-2 {
+            gap: 6px;
+        }
+        .pdf-content .border-top {
+            border-top: 1px dashed #cbd5e1;
+            margin-top: 8px;
+            padding-top: 8px;
+        }
+        .pdf-content .text-center {
+            text-align: center;
+        }
+        .pdf-content .text-xs {
+            font-size: 8px;
+            color: #64748b;
+        }
+        .pdf-content ul {
+            margin: 2px 0;
+            padding-left: 16px;
+        }
+        .pdf-content ul li {
+            margin: 1px 0;
+        }
+        .pdf-content .inline-block {
+            display: inline-block;
+        }
+        .pdf-content .w-full {
+            width: 100%;
+        }
+        .pdf-content .page-break {
+            page-break-after: always;
+            border-bottom: 2px dashed #e2e8f0;
+            margin: 10px 0;
+            padding-bottom: 10px;
+        }
+        @media print {
+            .no-print {
+                display: none;
+            }
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body class="font-sans antialiased">
+
+    <div class="max-w-7xl mx-auto px-4 py-6 md:px-6 lg:px-8">
+        <!-- Cabeçalho -->
+        <div class="bg-white rounded-2xl shadow-lg p-4 mb-8 flex flex-col md:flex-row items-center justify-between gap-4 border border-gray-100">
+            <div class="flex items-center gap-4">
+                <img src="https://www.ghc.com.br/files/img.ptg.2.1.01.35392.jpg" alt="Logo GHC" class="h-16 w-auto object-contain drop-shadow-sm">
+                <div>
+                    <h1 class="text-xl md:text-2xl font-extrabold text-gray-800 tracking-tight">GRUPO HOSPITALAR CONCEIÇÃO - SERVIÇO DE FISIOTERAPIA</h1>
+                    <p class="text-gray-600 font-medium">Serviço de Fisioterapia — Sistema de Avaliação e Evolução</p>
+                </div>
+            </div>
+            <div class="bg-blue-50 rounded-full px-4 py-2 text-sm font-semibold text-blue-800 shadow-inner">
+                <i class="fas fa-notes-medical mr-2"></i> Prontuário Eletrônico
+            </div>
+        </div>
+
+        <!-- Botões -->
+        <div class="flex flex-wrap gap-3 mb-8 justify-center no-print">
+            <button id="btnAvaliacao" class="transition-all duration-200 bg-blue-700 hover:bg-blue-800 text-white font-bold py-2.5 px-6 rounded-xl shadow-md flex items-center gap-2"><i class="fas fa-clipboard-list"></i> AVALIAÇÃO</button>
+            <button id="btnEvolucao" class="transition-all duration-200 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2.5 px-6 rounded-xl shadow-md flex items-center gap-2"><i class="fas fa-chart-line"></i> EVOLUÇÃO</button>
+            <button id="btnImportar" class="bg-amber-600 hover:bg-amber-700 text-white py-2.5 px-5 rounded-xl shadow-md flex items-center gap-2"><i class="fas fa-upload"></i> Importar</button>
+            <input type="file" id="importFileInput" accept=".json" style="display:none">
+        </div>
+
+        <form id="mainForm" class="space-y-8">
+            <!-- IDENTIFICAÇÃO -->
+            <div class="bg-white rounded-2xl shadow-md p-6 card-modern">
+                <h2 class="text-xl font-bold text-gray-800 section-title"><i class="fas fa-user-circle mr-2 text-blue-600"></i> Identificação do Paciente</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    <div><label class="block text-sm font-semibold text-gray-700">Nome Completo</label><input type="text" id="nome" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5 focus:ring-2 focus:ring-blue-300"></div>
+                    <div><label class="block text-sm font-semibold text-gray-700">Idade</label><input type="number" id="idade" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5"></div>
+                    <div><label class="block text-sm font-semibold text-gray-700">Sexo</label><select id="sexo" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5 bg-white"><option>Masculino</option><option>Feminino</option><option>Outro</option><option>Não informado</option></select></div>
+                    <div><label class="block text-sm font-semibold text-gray-700">Prontuário</label><input type="text" id="prontuario" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5"></div>
+                    <div><label class="block text-sm font-semibold text-gray-700">Data Internação</label><input type="date" id="dataInternacao" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5"></div>
+                    <div><label class="block text-sm font-semibold text-gray-700">Data Avaliação/Evolução</label><input type="date" id="dataAvaliacao" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5"></div>
+                    <div><label class="block text-sm font-semibold text-gray-700">Unidade</label><select id="unidade" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5"><option>UTI</option><option>Enfermaria</option><option>Emergência</option><option>Centro Cirúrgico</option><option>Semi-Intensiva</option><option>Enfermaria Especial</option></select></div>
+                    <div><label class="block text-sm font-semibold text-gray-700">Leito</label><input type="text" id="leito" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5"></div>
+                </div>
+            </div>
+
+            <!-- História e HPP -->
+            <div class="bg-white rounded-2xl shadow-md p-6 card-modern">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div><label class="block text-sm font-semibold text-gray-700">História Clínica/ HDA (resumo)</label><textarea id="historiaClinica" rows="3" class="mt-1 w-full border rounded-xl p-2.5 focus:ring-2"></textarea></div>
+                    <div><label class="block text-sm font-semibold text-gray-700">HPP (Comorbidades)</label>
+                        <div id="hppContainer" class="space-y-2 mt-1"></div>
+                        <button type="button" id="addComorbidadeBtn" class="mt-2 bg-blue-100 text-blue-700 px-3 py-1.5 rounded-xl text-sm font-medium hover:bg-blue-200"><i class="fas fa-plus mr-1"></i> Comorbidade</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parâmetros Clínicos e VT ideal -->
+            <div class="bg-white rounded-2xl shadow-md p-6 card-modern">
+                <h3 class="font-bold text-gray-800 section-title">Parâmetros Clínicos</h3>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
+                    <div><label>Altura (m)</label><input type="number" step="0.01" id="altura" oninput="calcularVTIdeal()" class="border rounded-xl p-2 w-full"></div>
+                    <div><label>PA (mmHg)</label>
+                        <div class="flex gap-1"><input id="paSist" class="border rounded-xl p-2 w-1/2" placeholder="Sist"><span class="self-center">/</span><input id="paDiast" class="border rounded-xl p-2 w-1/2" placeholder="Diast"></div>
+                    </div>
+                    <div><label>FC (bpm)</label><input id="fc" class="border rounded-xl p-2 w-full"></div>
+                    <div><label>FR (irpm)</label><input id="fr" class="border rounded-xl p-2 w-full"></div>
+                    <div><label>SatO2 (%)</label><input id="sato2" class="border rounded-xl p-2 w-full"></div>
+                </div>
+                <div class="bg-gradient-to-r from-green-50 to-emerald-100 p-3 rounded-xl"><strong>💡 VT ideal (6-8 ml/kg):</strong> <span id="vtIdealDisplay" class="font-mono font-bold">--</span> ml</div>
+            </div>
+
+            <!-- Consciência com drogas dinâmicas -->
+            <div class="bg-white rounded-2xl shadow-md p-6 card-modern">
+                <div class="flex flex-wrap gap-6 items-start">
+                    <div><span class="font-semibold">Nível de Consciência:</span> <select id="tipoConsciencia" class="border rounded-xl p-2"><option>glasgow</option><option>rass</option></select></div>
+                    <div id="glasgowFields" class="flex gap-2 flex-wrap"><select id="glasgowOlhos" class="border rounded-lg p-1"></select> <select id="glasgowVerbal" class="border rounded-lg p-1"></select> <select id="glasgowMotor" class="border rounded-lg p-1"></select> <span id="totalGlasgow" class="font-bold text-blue-800"></span></div>
+                    <div id="rassFields" class="hidden"><select id="rassValor" class="border rounded-lg p-1"><option>-5</option><option>-4</option><option>-3</option><option>-2</option><option>-1</option><option>0</option><option>+1</option><option>+2</option><option>+3</option><option>+4</option></select></div>
+                    <div class="w-full mt-2">
+                        <label class="font-semibold"> Drogas (sedativos, analgésicos, vasoativos, etc.)</label>
+                        <div id="drogasContainer" class="space-y-2 mt-1"></div>
+                        <button type="button" id="addDrogaBtn" class="mt-2 bg-purple-100 text-purple-700 px-3 py-1.5 rounded-xl text-sm font-medium hover:bg-purple-200"><i class="fas fa-plus mr-1"></i> Adicionar droga</button>
+                    </div>
+                </div>
+                <textarea id="obsConsciencia" rows="1" placeholder="Observações (nível de consciência, sedação...)" class="mt-3 w-full border rounded-xl p-2"></textarea>
+            </div>
+
+            <!-- Ausculta e Ventilação -->
+            <div class="bg-white rounded-2xl shadow-md p-6 card-modern">
+                <h3 class="font-bold text-gray-800">🫁 Ausculta Pulmonar e Suporte Respiratório</h3>
+                <div class="grid md:grid-cols-2 gap-5 mt-2">
+                    <select id="ausculta" class="border rounded-xl p-2.5 bg-white">
+                        <option>Murmúrio vesicular presente e simétrico</option>
+                    <option>Murmúrio vesicular presente, porém assimétrico (D > E)</option>
+                <option>Murmúrio vesicular presente, porém assimétrico (E > D)</option>
+                <option>Murmúrio vesicular reduzido em bases bilateralmente</option>
+                <option>Murmúrio vesicular reduzido em base direita</option>
+                <option>Murmúrio vesicular reduzido em base esquerda</option>
+                <option>Murmúrio vesicular reduzido em ápices bilateralmente</option>
+                <option>Murmúrio vesicular reduzido em ápice direito</option>
+                <option>Murmúrio vesicular reduzido em ápice esquerdo</option>
+                <option>Murmúrio vesicular abolido em terço inferior direito</option>
+                <option>Murmúrio vesicular abolido em terço inferior esquerdo</option>
+                <option>Murmúrio vesicular abolido em terço superior direito</option>
+                <option>Murmúrio vesicular abolido em terço superior esquerdo</option>
+                <option>Murmúrio vesicular abolido em hemitórax direito</option>
+                <option>Murmúrio vesicular abolido em hemitórax esquerdo</option>
+<option>Crepitações finas difusas bilateralmente</option>
+                <option>Crepitações finas em bases bilateralmente</option>
+                <option>Crepitações finas em base direita</option>
+                <option>Crepitações finas em base esquerda</option>
+                <option>Crepitações finas em ápices bilateralmente</option>
+                <option>Crepitações grossas em bases bilateralmente</option>
+                <option>Crepitações grossas em base direita</option>
+                <option>Crepitações grossas em base esquerda</option>
+                <option>Crepitações grossas difusas bilateralmente</option>
+                <option>Estertores bolhosos em bases bilateralmente</option>
+ <option>Sibilos expiratórios difusos bilateralmente</option>
+                <option>Sibilos expiratórios em hemitórax direito</option>
+                <option>Sibilos expiratórios em hemitórax esquerdo</option>
+                <option>Sibilos inspiratórios e expiratórios difusos bilateralmente</option>
+                <option>Sibilos inspiratórios e expiratórios em hemitórax direito</option>
+                <option>Sibilos inspiratórios e expiratórios em hemitórax esquerdo</option>
+                <option>Roncos esparsos bilateralmente</option>
+                <option>Roncos esparsos em base direita</option>
+                <option>Roncos esparsos em base esquerda</option>
+                <option>Roncos generalizados bilateralmente</option>
+                <option>Estridor inspiratório</option>
+ <option>Atrito pleural em base direita</option>
+                <option>Atrito pleural em base esquerda</option>
+                <option>Atrito pleural difuso bilateralmente</option>
+                <option>Murmúrio brônquico (sopro tubário) em base direita</option>
+                <option>Murmúrio brônquico (sopro tubário) em base esquerda</option>
+                <option>Murmúrio brônquico (sopro tubário) em ápice direito</option>
+                <option>Murmúrio brônquico (sopro tubário) em ápice esquerdo</option>
+                <option>Pectorilóquia em base direita</option>
+                <option>Pectorilóquia em base esquerda</option>
+                <option>Broncofonia em base direita</option>
+                <option>Broncofonia em base esquerda</option>
+                    </select>
+                    <select id="viaAerea" class="border rounded-xl p-2.5 bg-white">
+                        <option value="arAmbiente">Ar Ambiente</option>
+                        <option value="oxigenoterapia">Oxigenoterapia</option>
+                        <option value="CNAF">CNAF (High Flow)</option>
+                        <option value="VNI">VNI (Ventilação Não Invasiva)</option>
+                        <option value="VMI">VMI (Ventilação Mecânica Invasiva)</option>
+                    </select>
+                </div>
+                <div id="oxigenioDetalhe" class="hidden param-card">
+                    <label>Tipo O2</label><select id="tipoOxigenio"><option>Cateter Nasal</option><option>Máscara Simples</option><option>Máscara com Reservatório</option><option>Venturi</option><option>Óculos Nasal de Alto Fluxo</option></select>
+                    <label class="ml-3">L/min</label><input id="litragemO2" class="w-24 border rounded p-1">
+                </div>
+                <div id="cnafDetalhe" class="hidden param-card"><label>Fluxo (L/min)</label><input id="cnafFluxo" class="w-24 border rounded p-1"> <label>FiO2 (%)</label><input id="cnafFio2" class="w-24 border rounded p-1"></div>
+                <div id="vniDetalhe" class="hidden param-card"><label>IPAP</label><input id="vniIpap" class="w-20 border rounded p-1"> <label>EPAP</label><input id="vniEpap" class="w-20 border rounded p-1"> <label>FiO2</label><input id="vniFio2" class="w-24 border rounded p-1"></div>
+                <div id="vmiDetalhe" class="hidden param-card grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <label>Modo <select id="vmiModo"><option>PCV</option><option>VCV</option><option>PSV</option><option>PRVC</option><option>SIMV-PCV</option><option>SIMV-VCV</option></select></label>
+                    <label>VT (ml) <input id="vmiVt" class="border rounded p-1"></label>
+                    <label>FR (irpm) <input id="vmiFr" class="border rounded p-1"></label>
+                    <label>PEEP (cmH₂O) <input id="vmiPeep" class="border rounded p-1"></label>
+                    <label>FiO2 (%) <input id="vmiFio2" class="border rounded p-1"></label>
+                    <label>PINSP (cmH₂O) <input id="vmiPinsp" placeholder="pico" class="border rounded p-1"></label>
+                    <label>PPICO (cmH₂O) <input id="vmiPpico" placeholder="platô" class="border rounded p-1"></label>
+                </div>
+                <textarea id="obsVentilatoria" rows="2" placeholder="Observações ventilatorias" class="mt-3 w-full border rounded-xl p-2"></textarea>
+            </div>
+
+            <!-- Via Aérea Artificial (TOT/TQT) -->
+            <div class="bg-white rounded-2xl shadow-md p-6 card-modern">
+                <h3 class="font-bold text-gray-800"> Via Aérea Artificial</h3>
+                <div class="flex gap-4 my-3"><label><input type="radio" name="viaArtificial" value="nenhum" checked> Nenhum</label><label><input type="radio" name="viaArtificial" value="TOT"> TOT</label><label><input type="radio" name="viaArtificial" value="TQT"> TQT</label></div>
+                <div id="detalhesTOT" class="hidden space-y-4 bg-gray-50 p-4 rounded-2xl">
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <div><label>Data IOT</label><input type="date" id="dataIOT" class="border rounded-xl p-2 w-full"></div>
+                        <div><label>Data extubação (última)</label><input type="date" id="dataExtubacao" class="border rounded-xl p-2 w-full"></div>
+                    </div>
+                    <div><label class="font-semibold"> Reintubações e respectivas extubações</label>
+                        <div id="reintubacoesContainer" class="space-y-2 mt-1"></div>
+                        <button type="button" id="addReintubacaoBtn" class="mt-2 bg-amber-100 text-amber-800 px-3 py-1.5 rounded-xl text-sm"><i class="fas fa-plus"></i> Adicionar reintubação+extubação</button>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <div><label>Data TQT</label><input type="date" id="dataTQT" class="border rounded-xl p-2"></div>
+                        <div><label>Data desmame TQT (decannulation)</label><input type="date" id="dataDesmameTQT" class="border rounded-xl p-2"></div>
+                    </div>
+                    <div class="bg-blue-100 p-3 rounded-xl"><strong>⏱️ Dias totais de Ventilação Mecânica:</strong> <span id="diasVMAutomatico" class="text-2xl font-black text-blue-800 ml-2">0</span> dias</div>
+                </div>
+            </div>
+
+            <!-- Abdômen, Panturrilhas, Motora, Gasometria -->
+            <div class="bg-white rounded-2xl shadow-md p-6 card-modern">
+                <h3 class="font-bold">Avaliação Física</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div><label>Abdômen</label><select id="abdomen" class="border rounded-xl p-2 w-full">
+                            <option>Normal, indolor</option>
+                            <option>Distendido</option>
+                            <option>Globoso</option>
+                            <option>Timpânico à percussão</option>
+                            <option>Flácido</option>
+                            <option>Rigidez à palpação</option>
+                            <option>Ruídos Hidroaéreos (RHA) presentes e normais</option>
+                            <option>RHA diminuídos</option>
+                            <option>RHA ausentes</option>
+                            <option>Descompressão dolorosa</option>
+                            <option>Dor à palpação superficial</option>
+                            <option>Dor à palpação profunda</option>
+                        </select></div>
+                    <div><label>Panturrilhas</label><select id="panturrilhas" class="border rounded-xl p-2 w-full">
+                            <option>Sem edema, simétricas</option>
+                            <option>Edema grau I (leve)</option>
+                            <option>Edema grau II (moderado)</option>
+                            <option>Edema grau III (intenso)</option>
+                            <option>Sinal de Godet presente</option>
+                            <option>Assimetria de diâmetro</option>
+                            <option>Palpação dolorosa</option>
+                            <option>Empastamento muscular</option>
+                            <option>Rubor local</option>
+                            <option>Hiperemia</option>
+                        </select></div>
+                </div>
+                <textarea id="obsAbdPant" rows="2" class="mt-2 w-full border rounded-xl p-2" placeholder="Observações adicionais (cicatrizes, drenos, lesões...)"></textarea>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6 card-modern">
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div><label>MRC (0-60)</label><input id="mrc" type="number" class="border rounded-xl p-2 w-full"></div>
+                    <div><label>IMS (0-10)</label><input id="ims" type="number" step="1" class="border rounded-xl p-2 w-full"></div>
+                    <div><label>Obs. Motoras</label><input id="obsMotora" class="border rounded-xl p-2 w-full" placeholder="Força/tônus/déficits"></div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6 card-modern">
+                <h3 class="font-bold">Gasometria Arterial</h3>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                    <input placeholder="pH" id="gasoPh" class="border rounded-xl p-2">
+                    <input placeholder="PaCO₂ (mmHg)" id="gasoPaco2" class="border rounded-xl p-2">
+                    <input placeholder="PaO₂ (mmHg)" id="gasoPao2" class="border rounded-xl p-2">
+                    <input placeholder="HCO₃ (mEq/L)" id="gasoHco3" class="border rounded-xl p-2">
+                    <input placeholder="BE" id="gasoBe" class="border rounded-xl p-2">
+                </div>
+            </div>
+
+            <!-- Diagnóstico (somente Avaliação) -->
+            <div id="diagnosticoWrapper" class="bg-white rounded-2xl shadow-md p-6 card-modern">
+                <label class="font-bold text-gray-800"> Diagnóstico Fisioterapêutico (CBDF)</label>
+                <textarea id="diagnosticoFisio" rows="2" class="w-full border rounded-xl p-2 mt-1"></textarea>
+                <div class="mt-1 text-sm"><a href="https://cbdf.coffito.gov.br/cbdf" target="_blank" class="text-blue-600 underline">Acessar CBDF</a></div>
+            </div>
+
+            <!-- Prognóstico, Objetivos, Recursos (Só Avaliação) -->
+            <div id="assessmentOnlySection" class="space-y-5">
+                <div class="bg-white rounded-2xl shadow p-5"><label>Prognóstico</label><textarea id="prognostico" rows="2" class="w-full border rounded-xl p-2"></textarea></div>
+
+                <!-- Objetivos Terapêuticos com Autocomplete -->
+                <div class="bg-white rounded-2xl shadow p-5">
+                    <label class="font-bold text-gray-800"> Objetivos Terapêuticos</label>
+                    <div id="objetivosContainer" class="space-y-2 mt-2"></div>
+                    <button type="button" id="addObjetivoBtn" class="mt-2 bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-xl text-sm font-medium hover:bg-indigo-200"><i class="fas fa-plus mr-1"></i> Adicionar Objetivo</button>
+                </div>
+
+                <!-- Recursos Físicos com Autocomplete -->
+                <div class="bg-white rounded-2xl shadow p-5">
+                    <label class="font-bold text-gray-800"> Recursos Fisioterapêuticos</label>
+                    <div id="recursosContainer" class="space-y-2 mt-2"></div>
+                    <button type="button" id="addRecursoBtn" class="mt-2 bg-teal-100 text-teal-700 px-3 py-1.5 rounded-xl text-sm font-medium hover:bg-teal-200"><i class="fas fa-plus mr-1"></i> Adicionar Recurso</button>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow p-5"><label>Quantidade de Atendimentos</label>
+                    <select id="qtdAtendimentos" class="border rounded-xl p-2 w-58">
+                        <option>1x/dia até a alta do setor</option>
+                        <option>2x/dia até a alta do setor</option>
+                        <option>1x/semana</option>
+                        <option>2x/semana</option>
+                        <option>3x/semana</option>
+                        <option>Diário (incluindo fins de semana)</option>
+                        <option>Conforme demanda</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Condutas Dinâmicas -->
+            <div class="bg-white rounded-2xl shadow-md p-6 card-modern">
+                <div class="flex justify-between items-center"><h3 class="font-bold text-lg">Condutas Fisioterapêuticas</h3><button type="button" id="addCondutaBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-full text-sm"><i class="fas fa-plus"></i> Conduta</button></div>
+                <div id="condutasContainer" class="mt-3 space-y-2"></div>
+                <p class="text-xs text-gray-400 mt-2">Baseadas em diretrizes / referências científicas</p>
+            </div>
+
+            <!-- OBSERVAÇÕES LIVRES -->
+            <div class="bg-white rounded-2xl shadow-md p-6 card-modern">
+                <label class="font-bold text-gray-800"> Observações Livres</label>
+                <textarea id="observacoesLivres" rows="4" class="w-full border rounded-xl p-3 mt-2 focus:ring-2 focus:ring-blue-300" placeholder="Registre aqui quaisquer observações adicionais, intercorrências, evolução clínica, respostas ao tratamento, etc."></textarea>
+            </div>
+
+            <!-- Assinatura e Carimbo -->
+            <div class="bg-white rounded-2xl shadow-md p-6 card-modern">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div><label>Assinatura do Fisioterapeuta</label><input id="assinatura" class="w-full border rounded-xl p-2.5" placeholder="Nome + CREFITO"></div>
+                    <div><label>Carimbo Institucional</label><input id="carimbo" class="w-full border rounded-xl p-2.5" placeholder="Registro / Carimbo"></div>
+                </div>
+            </div>
+
+            <!-- Botões de ação: Exportar JSON, Gerar PDF e Copiar -->
+            <div class="flex flex-wrap justify-center gap-4 no-print">
+                <button type="button" id="btnExportarJson" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xl py-3 px-10 rounded-full shadow-xl transition-all flex items-center gap-3">
+                    <i class="fas fa-file-code fa-lg"></i> Exportar Arquivo
+                </button>
+                <button type="button" id="gerarPdfBtn" class="bg-red-700 hover:bg-red-800 text-white text-xl py-3 px-12 rounded-full shadow-xl transition-all flex items-center gap-3">
+                    <i class="fas fa-file-pdf fa-lg"></i> Gerar PDF
+                </button>
+                <button type="button" id="copiarBtn" class="bg-blue-600 hover:bg-blue-700 text-white text-xl py-3 px-12 rounded-full shadow-xl transition-all flex items-center gap-3">
+                    <i class="fas fa-copy fa-lg"></i> Copiar Relatório
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // ========== LISTAS DE OBJETIVOS E RECURSOS ==========
+              const listaObjetivos = [
+            // OBJETIVOS - DOR, EDEMA E SINTOMAS
+"Aliviar a dor aguda (EVA < 3)",
+"Reduzir a dor crônica (melhora da sensibilidade à pressão)",
+"Diminuir a sensação de queimação ou formigamento (parestesia)",
+"Reduzir o edema e o processo inflamatório local",
+"Controlar espasmos musculares e contratura reflexa",
+"Melhorar a tolerância à posição ortostática (diminuir tontura)",
+
+// OBJETIVOS - AMPLITUDE DE MOVIMENTO (ADM)
+"Aumentar a ADM ativa global",
+"Aumentar a ADM passiva global",
+"Aumentar a ADM ativa-assistida",
+"Melhorar a extensibilidade de tecidos moles (músculos e fáscia)",
+"Melhorar a mobilidade capsular (graus I a IV de Maitland)",
+"Restaurar a ADM funcional para alcance de objetos",
+"Prevenir encurtamentos musculares e contraturas fixas",
+
+// OBJETIVOS - FORÇA E RESISTÊNCIA MUSCULAR
+"Ganhar força muscular concêntrica (grau 3 para 4 na escala de Oxford)",
+"Ganhar força muscular excêntrica (controle de descida)",
+"Aumentar a resistência muscular localizada (RML) para atividades repetitivas",
+"Melhorar a potência muscular (explosividade)",
+"Reequilibrar a relação agonista/antagonista",
+"Recrutamento neuromuscular eficiente (ativação sinérgica)",
+
+// OBJETIVOS - CONTROLE MOTOR E PROPRIOCEPÇÃO
+"Melhorar o controle postural estático (em pé)",
+"Melhorar o controle postural dinâmico (durante a marcha)",
+"Reeducar o padrão de ativação muscular (sequência correta)",
+"Aumentar a estabilidade articular (feedback proprioceptivo)",
+"Melhorar o tempo de reação a estímulos externos",
+"Restaurar a consciência corporal do segmento afetado",
+"Prevenir quedas por instabilidade",
+
+// OBJETIVOS - FUNCIONALIDADE E AVDs
+"Restaurar o padrão de marcha (simetria e comprimento de passada)",
+"Restaurar a capacidade de subir e descer escadas com segurança",
+"Restaurar a capacidade de levantar-se da cadeira ou do solo",
+"Melhorar a mobilidade no leito (rolamento e sedestação)",
+"Restaurar a capacidade de dirigir ou manusear objetos pesados",
+"Promover independência para higiene pessoal e vestimenta",
+"Retornar ao esporte ou trabalho em nível pré-lesão",
+
+// OBJETIVOS - QUALIDADE DE VIDA E PREVENÇÃO
+"Reduzir a fadiga nas AVDs",
+"Melhorar a qualidade do sono (diminuir despertares por dor)",
+"Aliviar o estresse biomecânico em articulações adjacentes",
+"Promover a autogestão da dor (técnicas de relaxamento)",
+"Prevenir novas lesões por overuse ou compensações",
+"Educar o paciente sobre ergonomia e postura no trabalho",
+
+// =============================================
+// OBJETIVOS - FISIOTERAPIA RESPIRATÓRIA E UTI
+// =============================================
+
+// DESMAME DA VENTILAÇÃO MECÂNICA (VM)
+"Promover o desmame da ventilação mecânica invasiva (TOT ou Traqueostomia)",
+"Aumentar o tempo de ventilação espontânea em T-tube ou CPAP",
+"Aumentar o índice de respiração rápida e superficial (IRRS) para níveis seguros (< 80)",
+"Melhorar a força muscular inspiratória (MIP/PImáx > -30 cmH2O)",
+"Melhorar a força muscular expiratória (MEP/PEmáx > +40 cmH2O)",
+"Aumentar o pico de fluxo expiratório (PFE) durante a tosse",
+"Reduzir o esforço respiratório (uso de musculatura acessória)",
+"Sincronizar o paciente com o ventilador (modo A/C, PSV ou PRVC)",
+"Reduzir o tempo de prótese ventilatória (prevenção de VAP - Pneumonia Associada à Ventilação)",
+"Realizar o teste de respiração espontânea (TRE) com sucesso",
+"Preparar o paciente para traqueostomia (se desmame prolongado)",
+"Treinar o paciente para uso de válvula de fala (traqueostomia)",
+
+// VENTILAÇÃO NÃO INVASIVA (VNI) E CNAF
+"Instituir VNI (BIPAP / CPAP) para evitar a intubação orotraqueal",
+"Melhorar a troca gasosa (aumento da PaO2 e redução da PaCO2)",
+"Reduzir o trabalho respiratório e a dispneia (escala de Borg)",
+"Reverter a fadiga muscular respiratória (EMG de intercostais)",
+"Promover o recrutamento alveolar (evitar atelectasias)",
+"Reduzir a hiperinsuflação dinâmica (pneumopatas crônicos)",
+"Adaptar o paciente aos diferentes modos de CNAF (High Flow Nasal Cannula)",
+"Ajustar o fluxo de O₂ na CNAF para manter SpO₂ > 92%",
+"Promover o conforto e a adesão à interface (máscara facial, total ou nasal)",
+"Prevenir a reintubação não planejada (falha de extubação)",
+
+// HIGIENE BRÔNQUICA E DESOBSTRUÇÃO DAS VIAS AÉREAS
+"Mobilizar e eliminar secreções traqueobrônquicas (hipersecreção)",
+"Melhorar a ventilação de regiões com atelectasia (reexpansão pulmonar)",
+"Reduzir a resistência das vias aéreas (RAW) e a hiperinsuflação",
+"Otimizar a relação ventilação/perfusão (V/Q)",
+"Reduzir o risco de pneumonias aspirativas ou bacterianas",
+"Manter a perviedade das vias aéreas superiores e inferiores",
+"Reduzir a colonização bacteriana por meio da clearance mucociliar",
+
+// ALONGAMENTO E CONDICIONAMENTO MUSCULAR RESPIRATÓRIO
+"Alongar a musculatura acessória da respiração (esternocleidomastóideo, escalenos, trapézio)",
+"Fortalecer a musculatura expiratória (reto abdominal, oblíquos e transverso)",
+"Fortalecer o diafragma e os intercostais internos e externos",
+"Melhorar a mecânica da caixa torácica (mobilidade costovertebral)",
+"Aumentar a complacência pulmonar e da parede torácica",
+"Reeducar o padrão ventilatório (diminuir FR e aumentar VC)",
+"Treino de musculatura inspiratória com carga linear ou limiar (Threshold IMT)",
+
+// TOSSE E PROTEÇÃO DE VIAS AÉREAS
+"Restaurar a tosse efetiva e a perfusão da via aérea",
+"Treinar a tosse assistida (compressão toracoabdominal)",
+"Treinar a manobra de Huff (tosse huff) para limpeza de vias aéreas distais",
+"Reabilitar a deglutição e proteção de vias aéreas (pacientes neurológicos/disfágicos)",
+"Promover a glottis closure (fechamento glótico) durante a tosse",
+"Reduzir broncoaspiração silenciosa (com dieta e medicação)",
+
+// CONDICIONAMENTO FÍSICO E FUNCIONAL (PÓS-UTI)
+"Melhorar a tolerância ao esforço físico e capacidade de exercício (TC6 – Teste de Caminhada de 6 Minutos)",
+"Reduzir a fadiga muscular periférica e respiratória",
+"Recondicionar a força dos membros inferiores e superiores (paciente pós-UTI)",
+"Aumentar a distância percorrida no TC6 em pós-COVID ou DPOC grave",
+"Melhorar a saturação periférica de oxigênio (SpO₂) durante o esforço",
+"Reduzir a sensação de falta de ar (dispneia) ao falar, comer e andar",
+"Promover a mobilização precoce no leito (sedestação, ortostase e marcha) com suporte ventilatório",
+
+// EDUCAÇÃO E PREVENÇÃO
+"Ensinar técnicas de respiração diafragmática e com lábios semicerrados (para DPOC)",
+"Orientar sobre higiene broncopulmonar domiciliar (posicionamento, umidificação)",
+"Ensinar a manutenção de VNI e CNAF (higienização de circuitos e interfaces) para uso domiciliar",
+"Reduzir reinternações por exacerbação respiratória",
+"Conscientizar sobre abandono do tabagismo e controle de fatores de risco"
+];
+
+        const listaRecursos = [
+            // Eletrotermofototerapia
+            "TENS (Estimulação Elétrica Nervosa Transcutânea) - modo agudo",
+            "TENS - modo crônico (baixa frequência e alta intensidade)",
+            "Corrente Russa (estimulação de média frequência para fortalecimento)",
+            "Corrente Interferencial (IF) - para alívio da dor profunda",
+            "Microcorrente (Microcurrent) - para reparo tecidual",
+            "Ondas Curtas (Diatermia) - para aquecimento profundo de tecidos",
+            "Ultrassom Terapêutico (1 MHz para profundo / 3 MHz para superficial) - modo contínuo/pulsado",
+            "Laser de Baixa Potência (HeNe ou Diodo) - para efeito anti-inflamatório e cicatricial",
+            "LED Terapêutico (painel de fotobiomodulação)",
+            "Magnetoterapia (campo magnético pulsado para consolidação óssea)",
+            // Crioterapia e Termoterapia
+            "Crioterapia com bolsa de gelo triturado (20 min)",
+            "Crioterapia com crio bolsa reutilizável (gel químico)",
+            "Criocoletes ou faixas compressivas com gel",
+            "Imersão em água gelada (banheira de contraste)",
+            "Compressa quente úmida (hidrocolater)",
+            "Bolsa de água quente / Argila térmica",
+            "Parafina (termoterapia superficial para mãos e pés)",
+            "Banho de contraste (alternando água quente e fria)",
+            "Sauna infravermelha local ou global",
+            // Equipamentos de Suporte e Mecanoterapia
+            "Barras paralelas (para reeducação de marcha e equilíbrio)",
+            "Escada de marcha (degraus reguláveis)",
+            "Bicicleta ergométrica (horizontal ou vertical)",
+            "Esteira elétrica (com suporte de peso corporal - Body Weight Support)",
+            "Prancha de Freeman (para propriocepção de tornozelo)",
+            "Disco de equilíbrio (air cushion)",
+            "BOSU (Both Sides Up) - para treino funcional",
+            "Cama elástica (mini-trampolim) - para saltos com baixo impacto)",
+            "Rolos de espuma (Foam Roller) para auto liberação miofascial",
+            "TheraBand / Elásticos (diferentes cargas: amarelo, vermelho, preto, prata)",
+            "Caneleiras e halteres ajustáveis (0,5Kg a 10Kg)",
+            "Bolas suíças (estabilidade e fortalecimento de core)",
+            "Aparelho de suspensão (TRX) - para treino em cadeia cinética fechada",
+            "Plataforma de força (estabilometria) - para avaliação e treino",
+     // RECURSOS GERAIS E AVALIATIVOS
+"Goniômetro (avaliação de ADM)",
+"Dinamômetro (força de preensão palmar)",
+"Perímetro / Fita métrica (controle de edema)",
+"Escala de Borg (controle de fadiga e esforço)",
+"Eletrodo de superfície para Biofeedback",
+"Bandagens funcionais (Kinesio Taping / McConnell)",
+"Bandagem compressiva (elástica ou crepe) para contenção",
+"Órteses articuladas (joelheira, tornozeleira, órtese dinâmica)",
+"Talas estáticas (para imobilização noturna / prevenção de deformidades)",
+"Espelho de parede (feedback visual durante os exercícios)",
+// CINESIOTERAPIA E TERAPIA MANUAL
+"Cinesioterapia ativa livre (sem resistência)",
+"Cinesioterapia ativa-resistida (com elásticos, caneleiras ou halteres)",
+"Cinesioterapia passiva (realizada pelo terapeuta)",
+"Cinesioterapia ativa-assistida (paciente com ajuda do terapeuta)",
+"Treino excêntrico puro (ênfase na fase de alongamento sob tensão)",
+"Treino isométrico (contração sem movimento articular)",
+"Treino de força em cadeia cinética aberta (CCA)",
+"Treino de força em cadeia cinética fechada (CCF)",
+"Pilates Solo (aparelho solo) e Pilates Aparelho (Reformer/Cadillac)",
+"RPG (Reeducação Postural Global) - com posturas estáticas alongadoras)",
+"GPR (Ginástica Postural Respiratória)",
+"Treino Intervalado de Alta Intensidade (HIIT) adaptado)",
+"Mobilização articular (Maitland / Kaltenborn) - Graus I, II, III, IV)",
+"Manipulação articular de baixa amplitude e alta velocidade (thrust)",
+"Liberação Miofascial (massagem transversa profunda)",
+"Massagem terapêutica (descongestiva, relaxante ou desportiva)",
+"Drenagem Linfática Manual (DLM) - facial, membros ou tronco)",
+"Terapia Trigger Point (pressão isquêmica ou agulhamento seco - se habilitado)",
+"Alongamento estático passivo (mantido por 30 segundos)",
+"Alongamento dinâmico (com movimento controlado)",
+"Facilitação Neuromuscular Proprioceptiva (FNP) - padrões em diagonais",
+"Tração articular (coluna ou membros) para alívio de compressão",
+// ELETROTERMOFOTOTERAPIA
+"TENS (Estimulação Elétrica Nervosa Transcutânea) - modo agudo",
+"TENS - modo crônico (baixa frequência e alta intensidade)",
+"Corrente Russa (estimulação de média frequência para fortalecimento)",
+"Corrente Interferencial (IF) - para alívio da dor profunda",
+"Microcorrente (Microcurrent) - para reparo tecidual",
+"Ondas Curtas (Diatermia) - para aquecimento profundo de tecidos",
+"Ultrassom Terapêutico (1 MHz para profundo / 3 MHz para superficial) - modo contínuo/pulsado",
+"Laser de Baixa Potência (HeNe ou Diodo) - para efeito anti-inflamatório e cicatricial",
+"LED Terapêutico (painel de fotobiomodulação)",
+"Magnetoterapia (campo magnético pulsado para consolidação óssea)",
+// CRIOTERAPIA E TERMOTERAPIA
+"Crioterapia com bolsa de gelo triturado (20 min)",
+"Crioterapia com crio bolsa reutilizável (gel químico)",
+"Criocoletes ou faixas compressivas com gel",
+"Imersão em água gelada (banheira de contraste)",
+"Compressa quente úmida (hidrocolater)",
+"Bolsa de água quente / Argila térmica",
+"Parafina (termoterapia superficial para mãos e pés)",
+"Banho de contraste (alternando água quente e fria)",
+"Sauna infravermelha local ou global",
+// EQUIPAMENTOS DE MECANOTERAPIA E SUPORTE
+"Barras paralelas (para reeducação de marcha e equilíbrio)",
+"Escada de marcha (degraus reguláveis)",
+"Bicicleta ergométrica (horizontal ou vertical)",
+"Esteira elétrica (com suporte de peso corporal - Body Weight Support)",
+"Prancha de Freeman (para propriocepção de tornozelo)",
+"Disco de equilíbrio (air cushion)",
+"BOSU (Both Sides Up) - para treino funcional)",
+"Cama elástica (mini-trampolim) - para saltos com baixo impacto)",
+"Rolos de espuma (Foam Roller) para auto liberação miofascial",
+"TheraBand / Elásticos (diferentes cargas: amarelo, vermelho, preto, prata)",
+"Caneleiras e halteres ajustáveis (0,5Kg a 10Kg)",
+"Bolas suíças (estabilidade e fortalecimento de core)",
+"Aparelho de suspensão (TRX) - para treino em cadeia cinética fechada",
+"Plataforma de força (estabilometria) - para avaliação e treino",
+// RECURSOS RESPIRATÓRIOS - EQUIPAMENTOS E DISPOSITIVOS
+"Flutter VRP1 (dispositivo oscilante manual para clearance brônquico)",
+"Shaker® (dispositivo de oscilação acústica para vias aéreas)",
+"Threshold PEP (dispositivo de pressão expiratória positiva)",
+"Threshold IMT (dispositivo de carga inspiratória para fortalecimento diafragmático)",
+"PowerBreathe (treinador inspiratório com carga resistiva)",
+"Cough Assist (Insufflator-Exsufflator) - tosse mecânica assistida)",
+"EPAP (Pressão Expiratória Positiva) com máscara facial ou bocal)",
+"IPV (Intrapulmonary Percussive Ventilator) - ventilação percussiva intrapulmonar",
+"Balão de anestesia (AMBU) com reservatório de O2 para manobras manuais",
+"Espirômetro incentivado (Voldyne / Respiron) - para exercício de inspiração sustentada",
+"Peak Flow Meter (medidor de pico de fluxo expiratório - para asma/DPOC)",
+// RECURSOS RESPIRATÓRIOS - VNI, CNAF E VENTILADORES
+"Ventilador Mecânico Invasivo (UTI) - modos A/C, SIMV, PSV, PRVC",
+"Ventilador Não Invasivo (BIPAP / CPAP) - hospitalar ou portátil (Ex: Philips Trilogy, Resmed)",
+"Gerador de Fluxo para CNAF (High Flow) - Ex: Airvo 2, OPTIFLOW",
+"Capacete CPAP (Helmet) para pacientes com COVID / SDRA",
+"Máscara facial total para VNI (interface oronasal)",
+"Máscara nasal para VNI (interface nasal)",
+"Traqueostomia (cânula fenestrada ou não) e acessórios (balão, adaptador)",
+// RECURSOS RESPIRATÓRIOS - MONITORIZAÇÃO
+"Oxímetro de pulso (SpO2) - dedo, orelha ou transcutâneo",
+"Capnógrafo (EtCO2) - monitorização de CO2 expirado",
+"Manômetro de Pressão (para medir PImáx e PEmáx)",
+"Gasometria Arterial (coleta para PaO2, PaCO2, pH)",
+"Ventilômetro / Espirômetro (medida de volumes correntes e capacidade vital)",
+"Eletromiografia de Superfície (EMG) para diafragma e intercostais",
+// RECURSOS RESPIRATÓRIOS - POSICIONAMENTO E SUPORTE
+"Cama hospitalar com regulação de Trendelenburg e Anti-Trendelenburg",
+"Colchão de ar / colchão piramidal (prevenção de lesão por pressão)",
+"Cadeira de rodas adaptada com suporte ventilatório (para transporte de UTI)",
+"Rotina de decúbitos (Dorsal, Lateral, Prona) com rolos e almofadas",
+"Cilindro de Oxigênio (mochila de O2 para ambulatório) e fluxômetro",
+"Umidificador e aquecedor de circuito respiratório (para CNAF e VNI domiciliar)",
+// RECURSOS PARA REABILITAÇÃO PULMONAR AMBULATORIAL
+"Esteira Ergométrica (com suporte de O2 e monitor de SpO2)",
+"Bicicleta Ergométrica (para membros inferiores e/ou superiores - Upper body)",
+"Step / Banco de Schilder (para subir e descer degraus)",
+"Bola Suíça (para exercícios de respiração segmentar e estabilização de tronco)"
+];
+
+        // ========== FUNÇÃO DE AUTOCOMPLETE ==========
+        function criarAutocomplete(input, lista, container) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'autocomplete-container';
+
+            const newInput = input.cloneNode(true);
+            newInput.className = 'border rounded-xl p-2 w-full';
+            newInput.placeholder = 'Digite para buscar...';
+            newInput.setAttribute('autocomplete', 'off');
+
+            const listDiv = document.createElement('div');
+            listDiv.className = 'autocomplete-list';
+
+            wrapper.appendChild(newInput);
+            wrapper.appendChild(listDiv);
+            input.parentNode.replaceChild(wrapper, input);
+
+            let currentFocus = -1;
+
+            function filterList(val) {
+                const search = val.toLowerCase().trim();
+                listDiv.innerHTML = '';
+                listDiv.classList.remove('active');
+
+                if (!search) return;
+
+                const matches = lista.filter(item =>
+                    item.toLowerCase().includes(search)
+                );
+
+                if (matches.length === 0) {
+                    const div = document.createElement('div');
+                    div.className = 'autocomplete-item text-gray-500 italic';
+                    div.textContent = `Nenhum resultado. Digite para adicionar "${val}"`;
+                    div.onclick = () => {
+                        newInput.value = val;
+                        listDiv.classList.remove('active');
+                        const item = val.trim();
+                        if (item) {
+                            const existingItems = container.querySelectorAll('.dynamic-objetivo input, .dynamic-recurso input');
+                            let exists = false;
+                            existingItems.forEach(el => {
+                                if (el.value === item) exists = true;
+                            });
+                            if (!exists) {
+                                adicionarItem(item);
+                            }
+                        }
+                    };
+                    listDiv.appendChild(div);
+                    listDiv.classList.add('active');
+                    return;
+                }
+
+                matches.slice(0, 10).forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'autocomplete-item';
+                    div.textContent = item;
+                    div.onclick = () => {
+                        newInput.value = item;
+                        listDiv.classList.remove('active');
+                        const existingItems = container.querySelectorAll('.dynamic-objetivo input, .dynamic-recurso input');
+                        let exists = false;
+                        existingItems.forEach(el => {
+                            if (el.value === item) exists = true;
+                        });
+                        if (!exists) {
+                            adicionarItem(item);
+                        }
+                    };
+                    div.onmouseenter = () => {
+                        currentFocus = index;
+                        listDiv.querySelectorAll('.autocomplete-item').forEach((el, i) => {
+                            el.style.backgroundColor = i === currentFocus ? '#eff6ff' : '';
+                        });
+                    };
+                    listDiv.appendChild(div);
+                });
+                listDiv.classList.add('active');
+            }
+
+            newInput.addEventListener('input', function(e) {
+                filterList(this.value);
+                currentFocus = -1;
+            });
+
+            newInput.addEventListener('keydown', function(e) {
+                const items = listDiv.querySelectorAll('.autocomplete-item');
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    currentFocus = Math.min(currentFocus + 1, items.length - 1);
+                    highlightItem(items);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    currentFocus = Math.max(currentFocus - 1, -1);
+                    highlightItem(items);
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (currentFocus >= 0 && items[currentFocus]) {
+                        items[currentFocus].click();
+                    } else if (this.value.trim()) {
+                        const item = this.value.trim();
+                        const existingItems = container.querySelectorAll('.dynamic-objetivo input, .dynamic-recurso input');
+                        let exists = false;
+                        existingItems.forEach(el => {
+                            if (el.value === item) exists = true;
+                        });
+                        if (!exists) {
+                            adicionarItem(item);
+                        }
+                        this.value = '';
+                        listDiv.classList.remove('active');
+                    }
+                } else if (e.key === 'Escape') {
+                    listDiv.classList.remove('active');
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!wrapper.contains(e.target)) {
+                    listDiv.classList.remove('active');
+                }
+            });
+
+            function highlightItem(items) {
+                items.forEach((el, i) => {
+                    el.style.backgroundColor = i === currentFocus ? '#eff6ff' : '';
+                });
+                if (currentFocus >= 0 && items[currentFocus]) {
+                    items[currentFocus].scrollIntoView({ block: 'nearest' });
+                }
+            }
+
+            return { input: newInput, list: listDiv };
+        }
+
+        // ========== OBJETIVOS TERAPÊUTICOS ==========
+        const objetivosContainer = document.getElementById('objetivosContainer');
+
+        function adicionarItem(valor, tipo) {
+            const container = tipo === 'objetivo' ? objetivosContainer : recursosContainer;
+            const div = document.createElement('div');
+            div.className = tipo === 'objetivo' ? 'dynamic-objetivo flex gap-2 items-center' :
+                'dynamic-recurso flex gap-2 items-center';
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'border rounded-xl p-2 flex-1';
+            input.value = valor;
+            input.readOnly = true;
+
+            const rm = document.createElement('button');
+            rm.innerHTML = '<i class="fas fa-trash-alt text-red-500"></i>';
+            rm.className = 'bg-gray-100 p-2 rounded-full hover:bg-gray-200';
+            rm.onclick = () => div.remove();
+
+            div.appendChild(input);
+            div.appendChild(rm);
+            container.appendChild(div);
+        }
+
+        function adicionarObjetivo() {
+            const container = objetivosContainer;
+            const div = document.createElement('div');
+            div.className = 'dynamic-objetivo flex gap-2 items-center';
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'border rounded-xl p-2 flex-1';
+            input.placeholder = 'Digite o objetivo...';
+            input.setAttribute('autocomplete', 'off');
+
+            const rm = document.createElement('button');
+            rm.innerHTML = '<i class="fas fa-trash-alt text-red-500"></i>';
+            rm.className = 'bg-gray-100 p-2 rounded-full hover:bg-gray-200';
+            rm.onclick = () => div.remove();
+
+            div.appendChild(input);
+            div.appendChild(rm);
+            container.appendChild(div);
+
+            criarAutocomplete(input, listaObjetivos, container);
+            setTimeout(() => input.focus(), 50);
+        }
+
+        // ========== RECURSOS FÍSICOS ==========
+        const recursosContainer = document.getElementById('recursosContainer');
+
+        function adicionarRecurso() {
+            const container = recursosContainer;
+            const div = document.createElement('div');
+            div.className = 'dynamic-recurso flex gap-2 items-center';
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'border rounded-xl p-2 flex-1';
+            input.placeholder = 'Digite o recurso...';
+            input.setAttribute('autocomplete', 'off');
+
+            const rm = document.createElement('button');
+            rm.innerHTML = '<i class="fas fa-trash-alt text-red-500"></i>';
+            rm.className = 'bg-gray-100 p-2 rounded-full hover:bg-gray-200';
+            rm.onclick = () => div.remove();
+
+            div.appendChild(input);
+            div.appendChild(rm);
+            container.appendChild(div);
+
+            criarAutocomplete(input, listaRecursos, container);
+            setTimeout(() => input.focus(), 50);
+        }
+
+        document.getElementById('addObjetivoBtn').addEventListener('click', adicionarObjetivo);
+        document.getElementById('addRecursoBtn').addEventListener('click', adicionarRecurso);
+
+        // ========== CONFIGURAÇÃO DE DROGAS DINÂMICAS ==========
+        const drogasPredef = [
+            "Midazolam", "Fentanil", "Propofol", "Dexmedetomidina", "Cetamina",
+            "Morfina", "Metadona", "Haloperidol", "Quetiapina", "Clonidina",
+            "Noradrenalina", "Dobutamina", "Nitroprussiato de sódio (Nipride)", "Nitroglicerina (Tridil)",
+            "Hidralazina", "Efedrina", "Atropina", "Escopolamina",
+            "Pancurônio", "Rocurônio", "Cisatracúrio", "Suxametônio", "Outra"
+        ];
+        const drogasContainer = document.getElementById('drogasContainer');
+
+        function addDroga(drogaSelecionada = null, dose = '') {
+            const div = document.createElement('div');
+            div.className = 'dynamic-droga flex flex-wrap items-center gap-2';
+
+            const sel = document.createElement('select');
+            sel.className = 'border rounded-xl p-1.5 flex-1 min-w-[140px]';
+            const emptyOpt = document.createElement('option');
+            emptyOpt.value = '';
+            emptyOpt.innerText = '-- Selecione --';
+            sel.appendChild(emptyOpt);
+            drogasPredef.forEach(d => {
+                const opt = document.createElement('option');
+                opt.value = d;
+                opt.innerText = d;
+                sel.appendChild(opt);
+            });
+            if (drogaSelecionada) sel.value = drogaSelecionada;
+
+            const inputDose = document.createElement('input');
+            inputDose.type = 'text';
+            inputDose.placeholder = 'dose (mL/h)';
+            inputDose.className = 'border rounded-xl p-1.5 w-28';
+            if (dose) inputDose.value = dose;
+
+            const rm = document.createElement('button');
+            rm.innerHTML = '<i class="fas fa-trash-alt text-red-500"></i>';
+            rm.className = 'bg-gray-100 p-2 rounded-full';
+            rm.onclick = () => div.remove();
+
+            div.appendChild(sel);
+            div.appendChild(inputDose);
+            div.appendChild(rm);
+            drogasContainer.appendChild(div);
+        }
+
+        document.getElementById('addDrogaBtn').addEventListener('click', () => addDroga(null, ''));
+
+        // ========== HPP DINÂMICO ==========
+        const comorbPredef = ["Hipertensão Arterial", "Diabetes Mellitus", "DPOC", "Insuficiência Cardíaca", "Doença Renal Crônica", "Obesidade", "Tabagismo", "Etilismo", "AVC prévio", "Demência", "Doença Hepática", "Neoplasia", "HIV", "Outra"];
+        const hppContainer = document.getElementById('hppContainer');
+
+        function addComorb(val = null) {
+            const div = document.createElement('div');
+            div.className = 'dynamic-comorbidade flex gap-2';
+            const sel = document.createElement('select');
+            sel.className = 'border rounded-xl p-1.5 flex-1';
+            const emptyOpt = document.createElement('option');
+            emptyOpt.value = '';
+            emptyOpt.innerText = '-- Selecione --';
+            sel.appendChild(emptyOpt);
+            comorbPredef.forEach(c => {
+                let opt = document.createElement('option');
+                opt.value = c;
+                opt.innerText = c;
+                sel.appendChild(opt);
+            });
+            const inp = document.createElement('input');
+            inp.type = 'text';
+            inp.placeholder = 'outra';
+            inp.className = 'border rounded-xl p-1.5 flex-1';
+            inp.style.display = 'none';
+            const rm = document.createElement('button');
+            rm.innerHTML = '<i class="fas fa-trash-alt text-red-500"></i>';
+            rm.className = 'bg-gray-100 p-2 rounded-full';
+            rm.onclick = () => div.remove();
+            sel.onchange = () => {
+                if (sel.value === 'Outra') {
+                    inp.style.display = 'block';
+                    inp.value = '';
+                } else {
+                    inp.style.display = 'none';
+                    inp.value = sel.value;
+                }
+            };
+            if (val) {
+                inp.value = val;
+                if (!comorbPredef.includes(val)) sel.value = 'Outra';
+                else sel.value = val;
+                inp.style.display = sel.value === 'Outra' ? 'block' : 'none';
+            }
+            div.append(sel, inp, rm);
+            hppContainer.appendChild(div);
+        }
+        document.getElementById('addComorbidadeBtn').onclick = () => addComorb(null);
+
+        // ========== REINTUBAÇÕES ==========
+        const reintContainer = document.getElementById('reintubacoesContainer');
+
+        function addReintubacaoPar(dataReint = null, dataExt = null) {
+            const div = document.createElement('div');
+            div.className = 'dynamic-reintubacao grid grid-cols-2 gap-2 items-center';
+            const inpReint = document.createElement('input');
+            inpReint.type = 'date';
+            inpReint.className = 'border rounded-xl p-1.5';
+            if (dataReint) inpReint.value = dataReint;
+            const inpExt = document.createElement('input');
+            inpExt.type = 'date';
+            inpExt.className = 'border rounded-xl p-1.5';
+            if (dataExt) inpExt.value = dataExt;
+            const rm = document.createElement('button');
+            rm.innerHTML = '<i class="fas fa-trash-alt text-red-500"></i>';
+            rm.className = 'bg-gray-100 p-1.5 rounded-full';
+            rm.onclick = () => {
+                div.remove();
+                calcularDiasVM();
+            };
+            inpReint.onchange = calcularDiasVM;
+            inpExt.onchange = calcularDiasVM;
+            div.append(inpReint, inpExt, rm);
+            reintContainer.appendChild(div);
+            calcularDiasVM();
+        }
+        document.getElementById('addReintubacaoBtn').onclick = () => addReintubacaoPar(null, null);
+
+        // ========== CÁLCULO DIAS VM ==========
+        function diffDias(inicio, fim) {
+            return Math.ceil((new Date(fim) - new Date(inicio)) / (1000 * 60 * 60 * 24));
+        }
+
+        function calcularDiasVM() {
+            let total = 0,
+                hoje = new Date().toISOString().slice(0, 10);
+            let iot = document.getElementById('dataIOT').value;
+            if (!iot) {
+                document.getElementById('diasVMAutomatico').innerText = '0';
+                return;
+            }
+            let extIni = document.getElementById('dataExtubacao').value;
+            total += diffDias(iot, extIni || hoje);
+            document.querySelectorAll('#reintubacoesContainer .dynamic-reintubacao').forEach(par => {
+                let reint = par.querySelector('input[type="date"]:first-child').value;
+                let ext = par.querySelector('input[type="date"]:last-child').value;
+                if (reint) total += diffDias(reint, ext || hoje);
+            });
+            let tqt = document.getElementById('dataTQT').value,
+                desmame = document.getElementById('dataDesmameTQT').value;
+            if (tqt) {
+                let ultExt = document.getElementById('dataExtubacao').value;
+                document.querySelectorAll('#reintubacoesContainer .dynamic-reintubacao input[type="date"]:last-child').forEach(inp => {
+                    if (inp.value > ultExt) ultExt = inp.value;
+                });
+                let inicio = (ultExt && tqt > ultExt) ? tqt : (tqt > iot ? tqt : iot);
+                let fim = desmame || hoje;
+                if (fim > inicio) total += diffDias(inicio, fim);
+            }
+            total = Math.max(0, total);
+            document.getElementById('diasVMAutomatico').innerText = total;
+            document.getElementById('diasVM').value = total;
+        }
+        document.getElementById('dataIOT').addEventListener('change', calcularDiasVM);
+        document.getElementById('dataExtubacao').addEventListener('change', calcularDiasVM);
+        document.getElementById('dataTQT').addEventListener('change', calcularDiasVM);
+        document.getElementById('dataDesmameTQT').addEventListener('change', calcularDiasVM);
+
+        // ========== VIA AÉREA ==========
+        const radiosVia = document.querySelectorAll('input[name="viaArtificial"]');
+        const detalhesTOT = document.getElementById('detalhesTOT');
+
+        function toggleVia() {
+            if (document.querySelector('input[name="viaArtificial"]:checked').value !== 'nenhum') detalhesTOT.classList.remove('hidden');
+            else detalhesTOT.classList.add('hidden');
+        }
+        radiosVia.forEach(r => r.addEventListener('change', toggleVia));
+        toggleVia();
+
+        // ========== VT IDEAL ==========
+        function calcularVTIdeal() {
+            let alt = parseFloat(document.getElementById('altura').value) * 100;
+            let sexo = document.getElementById('sexo').value;
+            if (!alt) {
+                document.getElementById('vtIdealDisplay').innerText = '--';
+                return;
+            }
+            let pesoPred = (sexo === 'Masculino') ? 50 + 0.91 * (alt - 152.4) : 45.5 + 0.91 * (alt - 152.4);
+            if (pesoPred < 30) pesoPred = 30;
+            document.getElementById('vtIdealDisplay').innerHTML =
+                `${Math.round(pesoPred*6)} - ${Math.round(pesoPred*8)} ml (peso predito ${pesoPred.toFixed(1)}kg)`;
+        }
+        document.getElementById('altura').addEventListener('input', calcularVTIdeal);
+        document.getElementById('sexo').addEventListener('change', calcularVTIdeal);
+
+        // ========== GLASGOW/RASS ==========
+        const tipoConsc = document.getElementById('tipoConsciencia');
+        const glasgowDiv = document.getElementById('glasgowFields');
+        const rassDiv = document.getElementById('rassFields');
+
+        function toggleConsc() {
+            if (tipoConsc.value === 'glasgow') {
+                glasgowDiv.classList.remove('hidden');
+                rassDiv.classList.add('hidden');
+                atualizarGlasgow();
+            } else {
+                glasgowDiv.classList.add('hidden');
+                rassDiv.classList.remove('hidden');
+            }
+        }
+
+        function atualizarGlasgow() {
+            let s = parseInt(document.getElementById('glasgowOlhos').value) + parseInt(document.getElementById('glasgowVerbal')
+                .value) + parseInt(document.getElementById('glasgowMotor').value);
+            document.getElementById('totalGlasgow').innerText = `Total: ${s}`;
+        }
+        tipoConsc.addEventListener('change', toggleConsc);
+        document.getElementById('glasgowOlhos').addEventListener('change', atualizarGlasgow);
+        document.getElementById('glasgowVerbal').addEventListener('change', atualizarGlasgow);
+        document.getElementById('glasgowMotor').addEventListener('change', atualizarGlasgow);
+        toggleConsc();
+        atualizarGlasgow();
+
+        // ========== VENTILAÇÃO ==========
+        const viaAerea = document.getElementById('viaAerea');
+        const oxi = document.getElementById('oxigenioDetalhe'),
+            cnaf = document.getElementById('cnafDetalhe'),
+            vni = document.getElementById('vniDetalhe'),
+            vmi = document.getElementById('vmiDetalhe');
+
+        function toggleVent() {
+            [oxi, cnaf, vni, vmi].forEach(el => el.classList.add('hidden'));
+            if (viaAerea.value === 'oxigenoterapia') oxi.classList.remove('hidden');
+            else if (viaAerea.value === 'CNAF') cnaf.classList.remove('hidden');
+            else if (viaAerea.value === 'VNI') vni.classList.remove('hidden');
+            else if (viaAerea.value === 'VMI') vmi.classList.remove('hidden');
+        }
+        viaAerea.addEventListener('change', toggleVent);
+        toggleVent();
+
+        // ========== CONDUTAS ==========
+        const condutasContainer = document.getElementById('condutasContainer');
+        const listaCond = [
+            "Monitorização de sinais vitais", "Monitorização ventilatória", "Aspiração de vias aéreas superiores",
+            "Aspiração traqueal",
+            "Cinesioterapia ativa", "Cinesioterapia passiva", "Mobilização precoce",
+            "Exercícios respiratórios", "Manobras de desobstrução", "Ajustes de parâmetros ventilatórios",
+            "Monitorização da pressão de cuff",
+            "Espirometria de incentivo", "Ventilação não invasiva (VNI)", "CNAF (High Flow)",
+            "Fortalecimento muscular global",
+            "Treino de ortostatismo", "Treino de marcha assistida", "Eletroestimulação neuromuscular",
+            "Fisioterapia motora em leito", "Reexpansão pulmonar", "Posicionamento no leito",
+            "Drenagem postural", "Vibração torácica", "Compressão torácica",
+            "Exercícios de membros superiores", "Exercícios de membros inferiores",
+            "Treino de equilíbrio", "Treino de transferências", "Uso de espelho para biofeedback",
+            "Sedestação à beira do leito",
+            "Outra"
+        ];
+
+        function addConduta(val = null) {
+            const div = document.createElement('div');
+            div.className = 'dynamic-conduta flex gap-2';
+            const sel = document.createElement('select');
+            sel.className = 'border rounded-xl p-1.5 flex-1';
+            listaCond.forEach(c => {
+                let opt = document.createElement('option');
+                opt.value = c;
+                opt.innerText = c;
+                sel.appendChild(opt);
+            });
+            const inp = document.createElement('input');
+            inp.type = 'text';
+            inp.placeholder = 'descreva';
+            inp.className = 'border rounded-xl p-1.5 flex-1';
+            inp.style.display = 'none';
+            const rm = document.createElement('button');
+            rm.innerHTML = '<i class="fas fa-trash-alt text-red-500"></i>';
+            rm.className = 'bg-gray-100 p-1.5 rounded-full';
+            rm.onclick = () => div.remove();
+            sel.onchange = () => {
+                if (sel.value === 'Outra') {
+                    inp.style.display = 'block';
+                    inp.value = '';
+                } else {
+                    inp.style.display = 'none';
+                    inp.value = sel.value;
+                }
+            };
+            if (val) {
+                inp.value = val;
+                if (!listaCond.includes(val)) sel.value = 'Outra';
+                else sel.value = val;
+                inp.style.display = sel.value === 'Outra' ? 'block' : 'none';
+            }
+            div.append(sel, inp, rm);
+            condutasContainer.appendChild(div);
+        }
+        document.getElementById('addCondutaBtn').onclick = () => addConduta(null);
+
+        // ========== MODO AVALIAÇÃO/EVOLUÇÃO ==========
+        let currentMode = 'avaliacao';
+        const assessmentSec = document.getElementById('assessmentOnlySection'),
+            diagWrap = document.getElementById('diagnosticoWrapper');
+        const btnAval = document.getElementById('btnAvaliacao'),
+            btnEvo = document.getElementById('btnEvolucao');
+
+        function setMode(mode) {
+            currentMode = mode;
+            if (mode === 'avaliacao') {
+                assessmentSec.classList.remove('hidden');
+                diagWrap.classList.remove('hidden');
+                btnAval.classList.add('active-mode', 'bg-blue-700');
+                btnEvo.classList.remove('active-mode', 'bg-blue-700');
+                btnEvo.classList.add('bg-gray-500');
+            } else {
+                assessmentSec.classList.add('hidden');
+                diagWrap.classList.add('hidden');
+                btnEvo.classList.add('active-mode', 'bg-blue-700');
+                btnAval.classList.remove('active-mode', 'bg-blue-700');
+                btnAval.classList.add('bg-gray-500');
+            }
+        }
+        btnAval.onclick = () => setMode('avaliacao');
+        btnEvo.onclick = () => setMode('evolucao');
+        setMode('avaliacao');
+
+        // ========== EXPORTAR/IMPORTAR JSON ==========
+        function coletarEstadoCompleto() {
+            let estado = { mode: currentMode, campos: {}, hpp: [], reintPares: [], condutas: [], drogas: [], objetivos: [],
+                recursos: [] };
+            document.querySelectorAll('#mainForm input, #mainForm select, #mainForm textarea').forEach(el => {
+                if (el.id) estado.campos[el.id] = el.value;
+            });
+            document.querySelectorAll('#hppContainer .dynamic-comorbidade').forEach(div => {
+                let sel = div.querySelector('select'),
+                    inp = div.querySelector('input');
+                estado.hpp.push(sel.value === 'Outra' ? inp.value : sel.value);
+            });
+            document.querySelectorAll('#reintubacoesContainer .dynamic-reintubacao').forEach(div => {
+                let dates = div.querySelectorAll('input[type="date"]');
+                estado.reintPares.push({ reint: dates[0].value, ext: dates[1].value });
+            });
+            document.querySelectorAll('#condutasContainer .dynamic-conduta').forEach(div => {
+                let sel = div.querySelector('select'),
+                    inp = div.querySelector('input');
+                estado.condutas.push(sel.value === 'Outra' ? inp.value : sel.value);
+            });
+            document.querySelectorAll('#drogasContainer .dynamic-droga').forEach(div => {
+                let sel = div.querySelector('select');
+                let inp = div.querySelector('input[type="text"]');
+                estado.drogas.push({ droga: sel.value, dose: inp.value });
+            });
+            document.querySelectorAll('#objetivosContainer .dynamic-objetivo input').forEach(inp => {
+                if (inp.value.trim()) estado.objetivos.push(inp.value.trim());
+            });
+            document.querySelectorAll('#recursosContainer .dynamic-recurso input').forEach(inp => {
+                if (inp.value.trim()) estado.recursos.push(inp.value.trim());
+            });
+            return estado;
+        }
+
+        function restaurarEstadoCompleto(estado) {
+            setMode(estado.mode);
+            const camposPermitidos = ['nome', 'idade', 'sexo', 'prontuario', 'dataInternacao', 'dataAvaliacao', 'unidade',
+                'leito', 'historiaClinica'
+            ];
+            for (let [id, val] of Object.entries(estado.campos)) {
+                if (camposPermitidos.includes(id)) {
+                    let el = document.getElementById(id);
+                    if (el) el.value = val;
+                }
+            }
+            hppContainer.innerHTML = '';
+            if (estado.hpp && estado.hpp.length) {
+                estado.hpp.forEach(c => addComorb(c));
+            }
+        }
+
+        document.getElementById('btnExportarJson').addEventListener('click', () => {
+            let estado = coletarEstadoCompleto();
+            let blob = new Blob([JSON.stringify(estado, null, 2)], { type: 'application/json' });
+            let url = URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = `fisioterapia_${document.getElementById('prontuario').value || 'paciente'}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        document.getElementById('btnImportar').addEventListener('click', () => document.getElementById('importFileInput')
+            .click());
+        document.getElementById('importFileInput').addEventListener('change', (e) => {
+            let file = e.target.files[0];
+            if (!file) return;
+            let reader = new FileReader();
+            reader.onload = function(ev) {
+                try {
+                    restaurarEstadoCompleto(JSON.parse(ev.target.result));
+                    alert("Importado com sucesso!");
+                } catch (err) { alert("Erro: " + err); }
+            };
+            reader.readAsText(file);
+        });
+
+        // ========== GERAR PDF ==========
+        function gerarPDF() {
+            // ========== COLETA DE DADOS ==========
+            let estado = coletarEstadoCompleto();
+
+            const nome = document.getElementById('nome').value || '---';
+            const idade = document.getElementById('idade').value || '---';
+            const sexo = document.getElementById('sexo').value || '---';
+            const prontuario = document.getElementById('prontuario').value || '---';
+            const dataInternacao = document.getElementById('dataInternacao').value || '---';
+            const dataAvaliacao = document.getElementById('dataAvaliacao').value || new Date().toLocaleDateString();
+            const unidade = document.getElementById('unidade').value || '---';
+            const leito = document.getElementById('leito').value || '---';
+            const historiaClinica = document.getElementById('historiaClinica').value || '---';
+            const hpp = estado.hpp.length ? estado.hpp.join(', ') : 'Nenhuma';
+            const altura = document.getElementById('altura').value || '---';
+            const paSist = document.getElementById('paSist').value || '---';
+            const paDiast = document.getElementById('paDiast').value || '---';
+            const fc = document.getElementById('fc').value || '---';
+            const fr = document.getElementById('fr').value || '---';
+            const sato2 = document.getElementById('sato2').value || '---';
+            const vtIdeal = document.getElementById('vtIdealDisplay').innerHTML || '---';
+            const consc = tipoConsc.value === 'glasgow' ? document.getElementById('totalGlasgow').innerText : `RASS ${document.getElementById('rassValor').value}`;
+            const drogasTexto = estado.drogas.map(d => `${d.droga} ${d.dose} mL/h`).join('; ') || 'Nenhuma';
+            const ausculta = document.getElementById('ausculta').value || '---';
+            const viaAereaVal = viaAerea.value || '---';
+            let suporteResp = viaAereaVal;
+            if (viaAereaVal === 'VMI') {
+                const modo = document.getElementById('vmiModo').value || '---';
+                const vt = document.getElementById('vmiVt').value || '---';
+                const frVmi = document.getElementById('vmiFr').value || '---';
+                const peep = document.getElementById('vmiPeep').value || '---';
+                const fio2 = document.getElementById('vmiFio2').value || '---';
+                const pinsp = document.getElementById('vmiPinsp').value || '---';
+                const ppico = document.getElementById('vmiPpico').value || '---';
+                suporteResp = `${viaAereaVal} | Modo: ${modo} | VT: ${vt}ml | FR: ${frVmi} | PEEP: ${peep} | FiO2: ${fio2}% | PINSP: ${pinsp} | PPICO: ${ppico}`;
+            }
+            const viaArtificial = document.querySelector('input[name="viaArtificial"]:checked').value || 'nenhum';
+            const dataIOT = document.getElementById('dataIOT').value || '---';
+            const dataExtubacao = document.getElementById('dataExtubacao').value || '---';
+            let reintList = [];
+            document.querySelectorAll('#reintubacoesContainer .dynamic-reintubacao').forEach(div => {
+                let d = div.querySelectorAll('input[type="date"]');
+                reintList.push(`${d[0].value} → ${d[1].value||'?'}`);
+            });
+            const reintText = reintList.length ? reintList.join('; ') : 'nenhuma';
+            const diasVM = document.getElementById('diasVMAutomatico').innerText || '0';
+            const dataTQT = document.getElementById('dataTQT').value || '---';
+            const dataDesmameTQT = document.getElementById('dataDesmameTQT').value || '---';
+            const abdomen = document.getElementById('abdomen').value || '---';
+            const panturrilhas = document.getElementById('panturrilhas').value || '---';
+            const obsAbdPant = document.getElementById('obsAbdPant').value || '---';
+            const mrc = document.getElementById('mrc').value || '---';
+            const ims = document.getElementById('ims').value || '---';
+            const obsMotora = document.getElementById('obsMotora').value || '---';
+            const gasoPh = document.getElementById('gasoPh').value || '---';
+            const gasoPaco2 = document.getElementById('gasoPaco2').value || '---';
+            const gasoPao2 = document.getElementById('gasoPao2').value || '---';
+            const gasoHco3 = document.getElementById('gasoHco3').value || '---';
+            const gasoBe = document.getElementById('gasoBe').value || '---';
+            const diagnostico = document.getElementById('diagnosticoFisio').value || '---';
+            const prognostico = document.getElementById('prognostico').value || '---';
+            const objetivosTexto = estado.objetivos.length ? estado.objetivos.map(o => `• ${o}`).join('\n') : 'Nenhum objetivo registrado.';
+            const recursosTexto = estado.recursos.length ? estado.recursos.map(r => `• ${r}`).join('\n') : 'Nenhum recurso registrado.';
+            const qtdAtendimentos = document.getElementById('qtdAtendimentos').value || '---';
+            const condutasTexto = estado.condutas.length ? estado.condutas.map(c => `• ${c}`).join('\n') : 'Nenhuma conduta registrada.';
+            const observacoesLivres = document.getElementById('observacoesLivres').value || '---';
+            const assinatura = document.getElementById('assinatura').value || '---';
+            const carimbo = document.getElementById('carimbo').value || '---';
+
+            // ========== URL DA IMAGEM ==========
+            // TROQUE ESTA URL PELA SUA IMAGEM
+            const LOGO_URL = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTX1H4aZIvufnmA3gQh7mAgGBmAXVB1Prwsdav56AJeMMWAjf3F-Fn_Ghk&s=10';
+
+            const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório Fisioterapêutico</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: white;
+            padding: 20px 25px;
+            color: #1a1a1a;
+            font-size: 10.5px;
+            line-height: 1.4;
+        }
+        .page {
+            max-width: 210mm;
+            margin: 0 auto;
+            background: white;
+            padding: 10px 0;
+        }
+        .header-line {
+            text-align: center;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+        }
+        .header-line img {
+            height: 55px;
+            display: block;
+            margin: 0 auto 5px;
+        }
+        h1 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+        h2 {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1e40af;
+            margin: 3px 0;
+        }
+        .section {
+            margin-bottom: 8px;
+            padding: 5px 8px;
+            border-radius: 4px;
+        }
+        .section-title {
+            font-weight: 600;
+            color: #0f172a;
+            font-size: 11px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 2px;
+            margin-bottom: 4px;
+        }
+        .label { font-weight: 600; color: #334155; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px 10px; }
+        .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 4px 10px; }
+        .grid-5 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 4px; }
+        .bg-soft { background: #f8fafc; }
+        .bg-blue-soft { background: #eef2ff; }
+        .border-top { border-top: 1px dashed #cbd5e1; margin-top: 8px; padding-top: 8px; }
+        .text-center { text-align: center; }
+        .mt-1 { margin-top: 4px; }
+        .mb-1 { margin-bottom: 4px; }
+        .footer { text-align: center; font-size: 7.5px; color: #64748b; margin-top: 10px; border-top: 1px solid #e2e8f0; padding-top: 5px; }
+        .page-break { page-break-after: always; border-bottom: 2px dashed #e2e8f0; margin: 10px 0; padding-bottom: 10px; }
+        @media print {
+            body { padding: 0; }
+            .no-print { display: none; }
+            .page { max-width: 100%; }
+            .page-break { border-bottom: none; margin: 0; padding: 0; }
+        }
+        ul { margin: 2px 0; padding-left: 16px; }
+        ul li { margin: 1px 0; }
+        .print-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 9999;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .print-btn:hover { background: #1d4ed8; }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- Cabeçalho -->
+        <div class="header-line">
+             <img src="${LOGO_URL}" alt="Logo GHC" style="height: 50px; width: auto; object-fit: contain;" 
+                     onerror="this.style.display='none'; this.parentNode.innerHTML += '<span style=\\'font-size:28px;font-weight:bold;color:#0f172a;\\'>🏥 GHC</span>';" />
+                <div style="display: inline-block;">
+            <h1>GRUPO HOSPITALAR CONCEIÇÃO - HOSPITAL GERAL DE BONSUCESSO</h1>
+            <h2>SERVIÇO DE FISIOTERAPIA — ${currentMode === 'avaliacao' ? 'AVALIAÇÃO' : 'EVOLUÇÃO'} FISIOTERAPÊUTICA</h2>
+            <div style="font-size: 10px; color: #475569;">Data do registro: ${dataAvaliacao}</div>
+        </div>
+
+        <!-- Identificação -->
+        <div class="section bg-soft">
+            <div class="section-title">IDENTIFICAÇÃO DO PACIENTE</div>
+            <div class="grid-4">
+                <div><span class="label">Nome:</span> ${nome}</div>
+                <div><span class="label">Idade:</span> ${idade}</div>
+                <div><span class="label">Sexo:</span> ${sexo}</div>
+                <div><span class="label">Prontuário:</span> ${prontuario}</div>
+                <div><span class="label">Internação:</span> ${dataInternacao}</div>
+                <div><span class="label">Unidade:</span> ${unidade}</div>
+                <div><span class="label">Leito:</span> ${leito}</div>
+            </div>
+        </div>
+
+        <!-- História e HPP -->
+        <div class="section grid-2">
+            <div>
+                <div class="section-title">HISTÓRIA CLÍNICA</div>
+                <div style="font-size: 9.5px;">${historiaClinica}</div>
+            </div>
+            <div>
+                <div class="section-title">HPP (Comorbidades)</div>
+                <div style="font-size: 9.5px;">${hpp}</div>
+            </div>
+        </div>
+
+        <!-- Parâmetros Clínicos -->
+        <div class="section bg-soft">
+            <div class="section-title">PARÂMETROS CLÍNICOS</div>
+            <div class="grid-5">
+                <div><span class="label">Altura:</span> ${altura}m</div>
+                <div><span class="label">PA:</span> ${paSist}/${paDiast}</div>
+                <div><span class="label">FC:</span> ${fc} bpm</div>
+                <div><span class="label">FR:</span> ${fr} irpm</div>
+                <div><span class="label">SatO₂:</span> ${sato2}%</div>
+            </div>
+            <div class="mt-1" style="font-size: 9.5px;"><span class="label">VT ideal:</span> ${vtIdeal}</div>
+        </div>
+
+        <!-- Consciência e Drogas -->
+        <div class="section grid-2">
+            <div>
+                <div class="section-title">NÍVEL DE CONSCIÊNCIA</div>
+                <div style="font-size: 9.5px;">${consc}</div>
+            </div>
+            <div>
+                <div class="section-title">DROGAS EM USO</div>
+                <div style="font-size: 9.5px;">${drogasTexto}</div>
+            </div>
+        </div>
+
+        <!-- Ausculta e Ventilação -->
+        <div class="section bg-soft">
+            <div class="section-title">AUSCULTA E SUPORTE RESPIRATÓRIO</div>
+            <div class="grid-2">
+                <div><span class="label">Ausculta:</span> ${ausculta}</div>
+                <div><span class="label">Suporte:</span> ${suporteResp}</div>
+            </div>
+        </div>
+
+        <!-- Via Aérea Artificial -->
+        <div class="section grid-2">
+            <div>
+                <div class="section-title">VIA AÉREA ARTIFICIAL</div>
+                <div style="font-size: 9.5px;">
+                    <div><span class="label">Tipo:</span> ${viaArtificial}</div>
+                    <div><span class="label">IOT:</span> ${dataIOT}</div>
+                    <div><span class="label">Extubação:</span> ${dataExtubacao}</div>
+                    <div><span class="label">Reintubações:</span> ${reintText}</div>
+                </div>
+            </div>
+            <div>
+                <div class="section-title" style="border-bottom: none;">&nbsp;</div>
+                <div style="font-size: 9.5px;">
+                    <div><span class="label">TQT:</span> ${dataTQT}</div>
+                    <div><span class="label">Desmame TQT:</span> ${dataDesmameTQT}</div>
+                    <div><span class="label">Dias de VM:</span> <strong>${diasVM}</strong> dias</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Avaliação Física -->
+        <div class="section bg-soft">
+            <div class="section-title">AVALIAÇÃO FÍSICA</div>
+            <div class="grid-2">
+                <div><span class="label">Abdômen:</span> ${abdomen}</div>
+                <div><span class="label">Panturrilhas:</span> ${panturrilhas}</div>
+                <div style="grid-column: span 2;"><span class="label">Obs.:</span> ${obsAbdPant}</div>
+            </div>
+            <div class="grid-3 mt-1">
+                <div><span class="label">MRC:</span> ${mrc}</div>
+                <div><span class="label">IMS:</span> ${ims}</div>
+                <div><span class="label">Obs. Motoras:</span> ${obsMotora}</div>
+            </div>
+        </div>
+
+        <!-- Gasometria -->
+        <div class="section">
+            <div class="section-title">GASOMETRIA ARTERIAL</div>
+            <div class="grid-5">
+                <div><span class="label">pH:</span> ${gasoPh}</div>
+                <div><span class="label">PaCO₂:</span> ${gasoPaco2}</div>
+                <div><span class="label">PaO₂:</span> ${gasoPao2}</div>
+                <div><span class="label">HCO₃:</span> ${gasoHco3}</div>
+                <div><span class="label">BE:</span> ${gasoBe}</div>
+            </div>
+        </div>
+
+        ${currentMode === 'avaliacao' ? `
+        <!-- Diagnóstico -->
+        <div class="section bg-blue-soft">
+            <div class="section-title">DIAGNÓSTICO FISIOTERAPÊUTICO (CBDF)</div>
+            <div style="font-size: 9.5px;">${diagnostico}</div>
+        </div>
+
+        <!-- Prognóstico -->
+        <div class="section">
+            <div class="section-title">PROGNÓSTICO</div>
+            <div style="font-size: 9.5px;">${prognostico}</div>
+        </div>
+
+        <!-- Objetivos e Recursos -->
+        <div class="section grid-2">
+            <div>
+                <div class="section-title">OBJETIVOS TERAPÊUTICOS</div>
+                <div style="font-size: 9.5px; white-space: pre-wrap;">${objetivosTexto}</div>
+            </div>
+            <div>
+                <div class="section-title">RECURSOS FISIOTERAPÊUTICOS</div>
+                <div style="font-size: 9.5px; white-space: pre-wrap;">${recursosTexto}</div>
+            </div>
+        </div>
+
+        <!-- Atendimentos -->
+        <div class="section bg-soft">
+            <div class="section-title">QUANTIDADE DE ATENDIMENTOS</div>
+            <div style="font-size: 9.5px;">${qtdAtendimentos}</div>
+        </div>
+        ` : ''}
+
+        <!-- Condutas -->
+        <div class="section bg-soft">
+            <div class="section-title">CONDUTAS FISIOTERAPÊUTICAS</div>
+            <div style="font-size: 9.5px; white-space: pre-wrap;">${condutasTexto}</div>
+        </div>
+
+        <!-- Observações Livres -->
+        <div class="section bg-blue-soft">
+            <div class="section-title">OBSERVAÇÕES LIVRES</div>
+            <div style="font-size: 9.5px; white-space: pre-wrap;">${observacoesLivres}</div>
+        </div>
+
+        <!-- Assinatura -->
+        <div class="border-top" style="display: flex; justify-content: space-between; font-size: 9.5px;">
+            <div><span class="label">Assinatura:</span> ${assinatura}</div>
+            <div><span class="label">Carimbo:</span> ${carimbo}</div>
+        </div>
+
+        <!-- Rodapé -->
+        <div class="footer">
+            Documento gerado eletronicamente — GHC Fisioterapia — Conforme resoluções COFFITO.
+        </div>
+    </div>
+
+    <!-- Botão de impressão -->
+    <button class="print-btn" onclick="window.print()">🖨️ Imprimir / Salvar como PDF</button>
+
+    <script>
+        // Impressão automática após 1.5 segundos
+        setTimeout(function() {
+            window.print();
+        }, 1500);
+
+            `;
+
+            // ========== ABRE UMA NOVA JANELA ==========
+            const win = window.open('', '_blank', 'width=900,height=700,scrollbars=yes,resizable=yes');
+            if (!win) {
+                alert('O navegador bloqueou a abertura de uma nova janela. Permita pop-ups para este site.');
+                return;
+            }
+            win.document.write(htmlContent);
+            win.document.close();
+        }
+
+        // ========== CONECTA O BOTÃO GERAR PDF ==========
+        document.getElementById('gerarPdfBtn').addEventListener('click', gerarPDF);
+
+        // ========== COPIAR RELATÓRIO (TEXTO PURO) ==========
+        function copiarRelatorio() {
+            let estado = coletarEstadoCompleto();
+            let reintList = [];
+            document.querySelectorAll('#reintubacoesContainer .dynamic-reintubacao').forEach(div => {
+                let d = div.querySelectorAll('input[type="date"]');
+                reintList.push(`${d[0].value} → ${d[1].value||'?'}`);
+            });
+            let vmiText = (viaAerea.value === 'VMI') ?
+                ` | PINSP: ${document.getElementById('vmiPinsp').value} | PPICO: ${document.getElementById('vmiPpico').value}` :
+                '';
+            let drogasTexto = estado.drogas.map(d => `${d.droga} ${d.dose} mL/h`).join('; ') || 'Nenhuma';
+            let objetivosTexto = estado.objetivos.length ? estado.objetivos.map(o => `• ${o}`).join('\n') :
+                'Nenhum objetivo registrado.';
+            let recursosTexto = estado.recursos.length ? estado.recursos.map(r => `• ${r}`).join('\n') :
+                'Nenhum recurso registrado.';
+
+            let lines = [];
+            let sep = "=".repeat(60);
+            let subSep = "-".repeat(40);
+
+            lines.push("GRUPO HOSPITALAR CONCEIÇÃO - SERVIÇO DE FISIOTERAPIA");
+            lines.push(sep);
+            lines.push(`${currentMode.toUpperCase()} FISIOTERAPÊUTICA`);
+            lines.push(`Data do registro: ${document.getElementById('dataAvaliacao').value || new Date().toLocaleDateString()}`);
+            lines.push(sep);
+
+            // Identificação
+            lines.push("IDENTIFICAÇÃO DO PACIENTE");
+            lines.push(subSep);
+            lines.push(`Nome: ${document.getElementById('nome').value}`);
+            lines.push(`Idade: ${document.getElementById('idade').value}`);
+            lines.push(`Sexo: ${document.getElementById('sexo').value}`);
+            lines.push(`Prontuário: ${document.getElementById('prontuario').value}`);
+            lines.push(`Data Internação: ${document.getElementById('dataInternacao').value}`);
+            lines.push(`Unidade: ${document.getElementById('unidade').value} | Leito: ${document.getElementById('leito').value}`);
+            lines.push(sep);
+
+            // HPP e História
+            lines.push("HISTÓRIA CLÍNICA / HPP");
+            lines.push(subSep);
+            lines.push(`HPP: ${estado.hpp.join(', ') || 'Nenhuma'}`);
+            lines.push(`História Clínica: ${document.getElementById('historiaClinica').value || '---'}`);
+            lines.push(sep);
+
+            // Sinais e VT
+            lines.push("PARÂMETROS CLÍNICOS");
+            lines.push(subSep);
+            lines.push(`Altura: ${document.getElementById('altura').value}m`);
+            lines.push(`PA: ${document.getElementById('paSist').value}/${document.getElementById('paDiast').value} mmHg`);
+            lines.push(`FC: ${document.getElementById('fc').value} bpm`);
+            lines.push(`FR: ${document.getElementById('fr').value} irpm`);
+            lines.push(`SatO2: ${document.getElementById('sato2').value}%`);
+            lines.push(`VT ideal: ${document.getElementById('vtIdealDisplay').innerText}`);
+            lines.push(sep);
+
+            // Consciência e Drogas
+            lines.push("NÍVEL DE CONSCIÊNCIA E DROGAS");
+            lines.push(subSep);
+            let consc = (tipoConsc.value === 'glasgow') ? document.getElementById('totalGlasgow').innerText :
+                `RASS ${document.getElementById('rassValor').value}`;
+            lines.push(`Consciência: ${consc}`);
+            lines.push(`Drogas em uso: ${drogasTexto}`);
+            lines.push(`Obs. Consciência: ${document.getElementById('obsConsciencia').value || '---'}`);
+            lines.push(sep);
+
+            // Ausculta e Ventilação
+            lines.push("AUSCULTA E SUPORTE RESPIRATÓRIO");
+            lines.push(subSep);
+            lines.push(`Ausculta: ${document.getElementById('ausculta').value}`);
+            let suporte = viaAerea.value;
+            if (viaAerea.value === 'VMI') {
+                suporte +=
+                    ` | Modo: ${document.getElementById('vmiModo').value} | VT: ${document.getElementById('vmiVt').value}ml | FR: ${document.getElementById('vmiFr').value} | PEEP: ${document.getElementById('vmiPeep').value} | FiO2: ${document.getElementById('vmiFio2').value}%${vmiText}`;
+            }
+            lines.push(`Suporte respiratório: ${suporte}`);
+            lines.push(`Obs. Ventilação: ${document.getElementById('obsVentilatoria').value || '---'}`);
+            lines.push(sep);
+
+            // Via artificial
+            lines.push("VIA AÉREA ARTIFICIAL (TOT/TQT)");
+            lines.push(subSep);
+            let via = document.querySelector('input[name="viaArtificial"]:checked').value;
+            lines.push(`Via: ${via}`);
+            lines.push(`IOT: ${document.getElementById('dataIOT').value}`);
+            lines.push(`Extubação: ${document.getElementById('dataExtubacao').value}`);
+            lines.push(`Reintubações: ${reintList.join('; ') || 'nenhuma'}`);
+            lines.push(`TQT: ${document.getElementById('dataTQT').value}`);
+            lines.push(`Desmame TQT: ${document.getElementById('dataDesmameTQT').value}`);
+            lines.push(`Dias de VM: ${document.getElementById('diasVMAutomatico').innerText}`);
+            lines.push(sep);
+
+            // Abdômen, Panturrilhas, Motora
+            lines.push("AVALIAÇÃO FÍSICA");
+            lines.push(subSep);
+            lines.push(`Abdômen: ${document.getElementById('abdomen').value}`);
+            lines.push(`Panturrilhas: ${document.getElementById('panturrilhas').value}`);
+            lines.push(`Obs. Abd/Pant: ${document.getElementById('obsAbdPant').value || '---'}`);
+            lines.push(`MRC: ${document.getElementById('mrc').value}`);
+            lines.push(`IMS: ${document.getElementById('ims').value}`);
+            lines.push(`Obs. Motoras: ${document.getElementById('obsMotora').value || '---'}`);
+            lines.push(sep);
+
+            // Gasometria
+            lines.push("GASOMETRIA ARTERIAL");
+            lines.push(subSep);
+            lines.push(`pH: ${document.getElementById('gasoPh').value}`);
+            lines.push(`PaCO₂: ${document.getElementById('gasoPaco2').value} mmHg`);
+            lines.push(`PaO₂: ${document.getElementById('gasoPao2').value} mmHg`);
+            lines.push(`HCO₃: ${document.getElementById('gasoHco3').value} mEq/L`);
+            lines.push(`BE: ${document.getElementById('gasoBe').value}`);
+            lines.push(sep);
+
+            // Diagnóstico (apenas na Avaliação)
+            if (currentMode === 'avaliacao') {
+                lines.push("DIAGNÓSTICO FISIOTERAPÊUTICO (CBDF)");
+                lines.push(subSep);
+                lines.push(`${document.getElementById('diagnosticoFisio').value || '---'}`);
+                lines.push(sep);
+            }
+
+            // Prognóstico, Objetivos, Recursos (apenas Avaliação)
+            if (currentMode === 'avaliacao') {
+                lines.push("PROGNÓSTICO, OBJETIVOS E RECURSOS");
+                lines.push(subSep);
+                lines.push(`Prognóstico: ${document.getElementById('prognostico').value || '---'}`);
+                lines.push(`\n OBJETIVOS TERAPÊUTICOS:\n${objetivosTexto}`);
+                lines.push(`\n RECURSOS FISIOTERAPÊUTICOS:\n${recursosTexto}`);
+                lines.push(`\nAtendimentos: ${document.getElementById('qtdAtendimentos').value}`);
+                lines.push(sep);
+            }
+
+            // Condutas
+            lines.push("CONDUTAS FISIOTERAPÊUTICAS");
+            lines.push(subSep);
+            estado.condutas.forEach((c, i) => lines.push(`${i+1}. ${c}`));
+            if (estado.condutas.length === 0) lines.push("Nenhuma conduta registrada.");
+            lines.push(sep);
+
+            // Observações Livres
+            lines.push("OBSERVAÇÕES LIVRES");
+            lines.push(subSep);
+            lines.push(document.getElementById('observacoesLivres').value || '---');
+            lines.push(sep);
+
+            // Assinatura e Carimbo
+            lines.push("ASSINATURA E CARIMBO");
+            lines.push(subSep);
+            lines.push(`Assinatura: ${document.getElementById('assinatura').value || '---'}`);
+            lines.push(`Carimbo: ${document.getElementById('carimbo').value || '---'}`);
+            lines.push(sep);
+            lines.push("Documento gerado eletronicamente — GHC Fisioterapia — Conforme resoluções COFFITO.");
+
+            // Copiar para a área de transferência
+            const texto = lines.join('\n');
+            navigator.clipboard.writeText(texto).then(() => {
+                alert("Relatório copiado para a área de transferência!");
+            }).catch(err => {
+                const textarea = document.createElement('textarea');
+                textarea.value = texto;
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    alert("Relatório copiado para a área de transferência!");
+                } catch (e2) {
+                    alert("Não foi possível copiar automaticamente. Selecione o texto e pressione Ctrl+C.");
+                }
+                document.body.removeChild(textarea);
+            });
+        }
+
+        document.getElementById('copiarBtn').addEventListener('click', copiarRelatorio);
+
+        // ========== INICIALIZAÇÃO DOS SELECTS GLASGOW ==========
+        for (let i = 1; i <= 4; i++) {
+            let opt = document.createElement('option');
+            opt.value = i;
+            opt.innerText = i;
+            document.getElementById('glasgowOlhos').appendChild(opt);
+        }
+        for (let i = 1; i <= 5; i++) {
+            let opt = document.createElement('option');
+            opt.value = i;
+            opt.innerText = i;
+            document.getElementById('glasgowVerbal').appendChild(opt);
+        }
+        for (let i = 1; i <= 6; i++) {
+            let opt = document.createElement('option');
+            opt.value = i;
+            opt.innerText = i;
+            document.getElementById('glasgowMotor').appendChild(opt);
+        }
+        atualizarGlasgow();
+        calcularDiasVM();
+
+        // Adiciona exemplos iniciais
+        setTimeout(() => {
+            adicionarObjetivo();
+            const objetivoInput = document.querySelector('#objetivosContainer .dynamic-objetivo input');
+            if (objetivoInput) objetivoInput.value = 'Aumentar a ADM ativa global';
+
+            adicionarRecurso();
+            const recursoInput = document.querySelector('#recursosContainer .dynamic-recurso input');
+            if (recursoInput) recursoInput.value = 'TENS (Estimulação Elétrica Nervosa Transcutânea) - modo agudo';
+        }, 100);
+    </script>
+</body>
+</html>
