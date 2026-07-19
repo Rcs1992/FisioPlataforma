@@ -1505,10 +1505,10 @@ function gerarPDF() {
     const assinatura = document.getElementById('assinatura').value || '---';
     const carimbo = document.getElementById('carimbo').value || '---';
 
-    // ========== URL DA IMAGEM ==========
+     // ========== URL DA IMAGEM ==========
     const LOGO_URL = 'https://i.8upload.com/image/43d92fad0c426fa9/logonovafisio2.png';
 
-const htmlContent = `
+    const htmlContent = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -1536,10 +1536,25 @@ const htmlContent = `
             padding-bottom: 10px;
             margin-bottom: 12px;
         }
-        .header-line img {
-            height: 55px;
-            display: block;
+        /* IMAGEM OCUPANDO TODA A LARGURA DO HEADER */
+        .header-logo {
+            width: 100%;
+            max-width: 210mm;
             margin: 0 auto 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 5px 0;
+        }
+        .header-logo img {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            max-height: 100px;
+            object-fit: contain;
+            display: block;
         }
         h1 {
             font-size: 16px;
@@ -1616,43 +1631,28 @@ const htmlContent = `
             .section {
                 page-break-inside: avoid;
             }
+            .header-logo img {
+                max-width: 180mm;
+                max-height: 80px;
+            }
         }
         
         ul { margin: 2px 0; padding-left: 16px; }
         ul li { margin: 1px 0; }
-        
-        /* Classe para centralizar o cabeçalho em coluna */
-        .header-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            margin-bottom: 5px;
-        }
-        .header-container img {
-            height: 55px;
-            width: auto;
-            object-fit: contain;
-        }
-        .header-text {
-            text-align: center;
-        }
     </style>
 </head>
 <body>
     <div class="page">
-        <!-- Cabeçalho com LOGO EM CIMA -->
+        <!-- Cabeçalho com LOGO OCUPANDO A LARGURA -->
         <div class="header-line">
-            <div class="header-container">
-                <img src="${LOGO_URL}" alt="Logo GHC" 
-                     onerror="this.style.display='none'; this.parentNode.innerHTML += '<span style=\\'font-size:32px;font-weight:bold;color:#00817F;\\'>🏥 GHC</span>';" />
-                <div class="header-text">
-                    <h1>GRUPO HOSPITALAR CONCEIÇÃO - HOSPITAL GERAL DE BONSUCESSO</h1>
-                    <h2>SERVIÇO DE FISIOTERAPIA — ${currentMode === 'avaliacao' ? 'AVALIAÇÃO' : 'EVOLUÇÃO'} FISIOTERAPÊUTICA</h2>
-                </div>
+            <div class="header-logo">
+                <img src="${LOGO_URL}" 
+                     alt="Logo GHC" 
+                     onerror="this.style.display='none'; this.parentNode.innerHTML += '<span style=\\'font-size:48px;font-weight:bold;color:#00817F;\\'>🏥 GHC</span>';" />
             </div>
-            <div style="font-size: 10px; color: #00817F;">Data do registro: ${dataAvaliacao}</div>
+            <h1>GRUPO HOSPITALAR CONCEIÇÃO - HOSPITAL GERAL DE BONSUCESSO</h1>
+            <h2>SERVIÇO DE FISIOTERAPIA — ${currentMode === 'avaliacao' ? 'AVALIAÇÃO' : 'EVOLUÇÃO'} FISIOTERAPÊUTICA</h2>
+            <div style="font-size: 10px; color: #00817F; margin-top: 2px;">Data do registro: ${dataAvaliacao}</div>
         </div>
 
         <!-- Identificação -->
@@ -1826,7 +1826,7 @@ const htmlContent = `
 </html>`;
 
     // ========== ABRE UMA NOVA JANELA ==========
-    const win = window.open('', '_blank', 'width=900,height=700,scrollbars=yes,resizable=yes');
+   const win = window.open('', '_blank', 'width=900,height=700,scrollbars=yes,resizable=yes');
     if (!win) {
         alert('O navegador bloqueou a abertura de uma nova janela. Permita pop-ups para este site.');
         return;
