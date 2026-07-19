@@ -27,7 +27,7 @@
         .section-title {
             font-weight: 600;
             letter-spacing: -0.01em;
-            border-left: 5px solid #2563eb;
+            border-left: 5px solid #00817F;
             padding-left: 0.75rem;
             margin-bottom: 1rem;
         }
@@ -102,17 +102,17 @@
         .pdf-content h1 {
             font-size: 16px;
             font-weight: 700;
-            color: #0f172a;
+            color: #00817F;
             margin: 0;
         }
         .pdf-content h2 {
             font-size: 13px;
             font-weight: 600;
-            color: #1e40af;
+            color: #00817F;
             margin: 3px 0;
         }
         .pdf-content .header-line {
-            border-bottom: 2px solid #2563eb;
+            border-bottom: 2px solid #00817F;
             padding-bottom: 8px;
             margin-bottom: 10px;
             text-align: center;
@@ -259,7 +259,7 @@
                     <div><label class="block text-sm font-semibold text-gray-700">Prontuário</label><input type="text" id="prontuario" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5"></div>
                     <div><label class="block text-sm font-semibold text-gray-700">Data Internação</label><input type="date" id="dataInternacao" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5"></div>
                     <div><label class="block text-sm font-semibold text-gray-700">Data Avaliação/Evolução</label><input type="date" id="dataAvaliacao" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5"></div>
-                    <div><label class="block text-sm font-semibold text-gray-700">Unidade</label><select id="unidade" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5"><option>UTI</option><option>Enfermaria</option><option>Emergência</option><option>Centro Cirúrgico</option><option>Semi-Intensiva</option><option>Enfermaria Especial</option></select></div>
+                    <div><label class="block text-sm font-semibold text-gray-700">Unidade</label><select id="unidade" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5"><option>CTI 1</option><option>CTI 2</option><option>Sala Vermelha</option><option>Sala Amarela</option><option>UCO</option><option>CETIP</option></select></div>
                     <div><label class="block text-sm font-semibold text-gray-700">Leito</label><input type="text" id="leito" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5"></div>
                 </div>
             </div>
@@ -353,11 +353,7 @@
                 <option>Murmúrio brônquico (sopro tubário) em base esquerda</option>
                 <option>Murmúrio brônquico (sopro tubário) em ápice direito</option>
                 <option>Murmúrio brônquico (sopro tubário) em ápice esquerdo</option>
-                <option>Pectorilóquia em base direita</option>
-                <option>Pectorilóquia em base esquerda</option>
-                <option>Broncofonia em base direita</option>
-                <option>Broncofonia em base esquerda</option>
-                    </select>
+                </select>
                     <select id="viaAerea" class="border rounded-xl p-2.5 bg-white">
                         <option value="arAmbiente">Ar Ambiente</option>
                         <option value="oxigenoterapia">Oxigenoterapia</option>
@@ -367,7 +363,7 @@
                     </select>
                 </div>
                 <div id="oxigenioDetalhe" class="hidden param-card">
-                    <label>Tipo O2</label><select id="tipoOxigenio"><option>Cateter Nasal</option><option>Máscara Simples</option><option>Máscara com Reservatório</option><option>Venturi</option><option>Óculos Nasal de Alto Fluxo</option></select>
+                    <label>Tipo O2</label><select id="tipoOxigenio"><option>Cateter Nasal</option><option>Máscara Simples</option><option>Máscara com Reservatório</option><option>Venturi</option></select>
                     <label class="ml-3">L/min</label><input id="litragemO2" class="w-24 border rounded p-1">
                 </div>
                 <div id="cnafDetalhe" class="hidden param-card"><label>Fluxo (L/min)</label><input id="cnafFluxo" class="w-24 border rounded p-1"> <label>FiO2 (%)</label><input id="cnafFio2" class="w-24 border rounded p-1"></div>
@@ -467,7 +463,7 @@
 
             <!-- Prognóstico, Objetivos, Recursos (Só Avaliação) -->
             <div id="assessmentOnlySection" class="space-y-5">
-                <div class="bg-white rounded-2xl shadow p-5"><label>Prognóstico</label><textarea id="prognostico" rows="2" class="w-full border rounded-xl p-2"></textarea></div>
+                <div class="bg-white rounded-2xl shadow p-5"><label class="font-bold text-gray-800">Prognóstico</label><textarea id="prognostico" rows="2" class="w-full border rounded-xl p-2"></textarea></div>
 
                 <!-- Objetivos Terapêuticos com Autocomplete -->
                 <div class="bg-white rounded-2xl shadow p-5">
@@ -512,7 +508,7 @@
             <!-- Assinatura e Carimbo -->
             <div class="bg-white rounded-2xl shadow-md p-6 card-modern">
                 <div class="grid md:grid-cols-2 gap-6">
-                    <div><label>Assinatura do Fisioterapeuta</label><input id="assinatura" class="w-full border rounded-xl p-2.5" placeholder="Nome + CREFITO"></div>
+                    <div><label>Assinatura do Fisioterapeuta</label><input id="assinatura" class="w-full border rounded-xl p-2.5" placeholder="Nome"></div>
                     <div><label>Carimbo Institucional</label><input id="carimbo" class="w-full border rounded-xl p-2.5" placeholder="Registro / Carimbo"></div>
                 </div>
             </div>
@@ -1422,9 +1418,9 @@
             reader.readAsText(file);
         });
 
-        // ========== GERAR PDF COM MÚLTIPLAS PÁGINAS ==========
-       async function gerarPDF() {
-    // ========== COLETA DE DADOS (igual ao seu código original) ==========
+// ========== GERAR PDF ==========
+function gerarPDF() {
+    // ========== COLETA DE DADOS ==========
     let estado = coletarEstadoCompleto();
 
     const nome = document.getElementById('nome').value || '---';
@@ -1448,8 +1444,24 @@
     const drogasTexto = estado.drogas.map(d => `${d.droga} ${d.dose} mL/h`).join('; ') || 'Nenhuma';
     const ausculta = document.getElementById('ausculta').value || '---';
     const viaAereaVal = viaAerea.value || '---';
+    
+    // ========== CORREÇÃO: TRATAR TODOS OS SUPORTES RESPIRATÓRIOS ==========
     let suporteResp = viaAereaVal;
-    if (viaAereaVal === 'VMI') {
+    
+    if (viaAereaVal === 'oxigenoterapia') {
+        const tipo = document.getElementById('tipoOxigenio').value || '---';
+        const litragem = document.getElementById('litragemO2').value || '---';
+        suporteResp = `Oxigenoterapia | Tipo: ${tipo} | Litragem: ${litragem} L/min`;
+    } else if (viaAereaVal === 'CNAF') {
+        const fluxo = document.getElementById('cnafFluxo').value || '---';
+        const fio2 = document.getElementById('cnafFio2').value || '---';
+        suporteResp = `CNAF (High Flow) | Fluxo: ${fluxo} L/min | FiO₂: ${fio2}%`;
+    } else if (viaAereaVal === 'VNI') {
+        const ipap = document.getElementById('vniIpap').value || '---';
+        const epap = document.getElementById('vniEpap').value || '---';
+        const fio2 = document.getElementById('vniFio2').value || '---';
+        suporteResp = `VNI | IPAP: ${ipap} cmH₂O | EPAP: ${epap} cmH₂O | FiO₂: ${fio2}%`;
+    } else if (viaAereaVal === 'VMI') {
         const modo = document.getElementById('vmiModo').value || '---';
         const vt = document.getElementById('vmiVt').value || '---';
         const frVmi = document.getElementById('vmiFr').value || '---';
@@ -1457,8 +1469,9 @@
         const fio2 = document.getElementById('vmiFio2').value || '---';
         const pinsp = document.getElementById('vmiPinsp').value || '---';
         const ppico = document.getElementById('vmiPpico').value || '---';
-        suporteResp = `${viaAereaVal} | Modo: ${modo} | VT: ${vt}ml | FR: ${frVmi} | PEEP: ${peep} | FiO2: ${fio2}% | PINSP: ${pinsp} | PPICO: ${ppico}`;
+        suporteResp = `VMI | Modo: ${modo} | VT: ${vt}ml | FR: ${frVmi} | PEEP: ${peep} | FiO₂: ${fio2}% | PINSP: ${pinsp} | PPICO: ${ppico}`;
     }
+    
     const viaArtificial = document.querySelector('input[name="viaArtificial"]:checked').value || 'nenhum';
     const dataIOT = document.getElementById('dataIOT').value || '---';
     const dataExtubacao = document.getElementById('dataExtubacao').value || '---';
@@ -1492,13 +1505,10 @@
     const assinatura = document.getElementById('assinatura').value || '---';
     const carimbo = document.getElementById('carimbo').value || '---';
 
-    // ========== CONTEÚDO HTML PARA IMPRESSÃO ==========
-    // Use a URL da sua imagem (coloque a que funcionar)
-    const LOGO_URL = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTX1H4aZIvufnmA3gQh7mAgGBmAXVB1Prwsdav56AJeMMWAjf3F-Fn_Ghk&s=10'; // Substitua pelo link da sua imagem
-    // Ou use o Base64 se preferir:
-    // const LOGO_URL = 'data:image/png;base64,iVBORw0...';
+    // ========== URL DA IMAGEM ==========
+    const LOGO_URL = 'https://i.8upload.com/image/b0839695af8a5e56/novalogo.png';
 
-    const htmlContent = `
+const htmlContent = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -1522,7 +1532,7 @@
         }
         .header-line {
             text-align: center;
-            border-bottom: 2px solid #2563eb;
+            border-bottom: 2px solid #00817F;
             padding-bottom: 10px;
             margin-bottom: 12px;
         }
@@ -1534,13 +1544,13 @@
         h1 {
             font-size: 16px;
             font-weight: 700;
-            color: #0f172a;
+            color: #00817F;
             margin: 0;
         }
         h2 {
             font-size: 13px;
             font-weight: 600;
-            color: #1e40af;
+            color: #00817F;
             margin: 3px 0;
         }
         .section {
@@ -1569,26 +1579,80 @@
         .mb-1 { margin-bottom: 4px; }
         .footer { text-align: center; font-size: 7.5px; color: #64748b; margin-top: 10px; border-top: 1px solid #e2e8f0; padding-top: 5px; }
         .page-break { page-break-after: always; border-bottom: 2px dashed #e2e8f0; margin: 10px 0; padding-bottom: 10px; }
-        /* Ajustes para impressão */
-        @media print {
-            body { padding: 0; }
-            .no-print { display: none; }
-            .page { max-width: 100%; }
-            .page-break { border-bottom: none; margin: 0; padding: 0; }
+        
+        .print-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: #00817F;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 9999;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
-        /* Estilo para listas */
+        .print-btn:hover { background: #1d4ed8; }
+
+        @media print {
+            .no-print, .print-btn {
+                display: none !important;
+            }
+            body { 
+                padding: 0; 
+                margin: 0;
+            }
+            .page { 
+                max-width: 100%; 
+                padding: 15px 20px;
+            }
+            .page-break { 
+                border-bottom: none; 
+                margin: 0; 
+                padding: 0; 
+            }
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+        
         ul { margin: 2px 0; padding-left: 16px; }
         ul li { margin: 1px 0; }
+        
+        /* Classe para centralizar o cabeçalho em coluna */
+        .header-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+        .header-container img {
+            height: 55px;
+            width: auto;
+            object-fit: contain;
+        }
+        .header-text {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <div class="page">
-        <!-- Cabeçalho -->
+        <!-- Cabeçalho com LOGO EM CIMA -->
         <div class="header-line">
-            <img src="${LOGO_URL}" alt="Logo GHC" onerror="this.style.display='none'; this.parentNode.innerHTML += '<span style=\"font-size:20px;font-weight:bold;\">GHC</span>';" />
-            <h1>GRUPO HOSPITALAR CONCEIÇÃO - HOSPITAL GERAL DE BONSUCESSO</h1>
-            <h2>SERVIÇO DE FISIOTERAPIA — ${currentMode === 'avaliacao' ? 'AVALIAÇÃO' : 'EVOLUÇÃO'} FISIOTERAPÊUTICA</h2>
-            <div style="font-size: 10px; color: #475569;">Data do registro: ${dataAvaliacao}</div>
+            <div class="header-container">
+                <img src="${LOGO_URL}" alt="Logo GHC" 
+                     onerror="this.style.display='none'; this.parentNode.innerHTML += '<span style=\\'font-size:32px;font-weight:bold;color:#00817F;\\'>🏥 GHC</span>';" />
+                <div class="header-text">
+                    <h1>GRUPO HOSPITALAR CONCEIÇÃO - HOSPITAL GERAL DE BONSUCESSO</h1>
+                    <h2>SERVIÇO DE FISIOTERAPIA — ${currentMode === 'avaliacao' ? 'AVALIAÇÃO' : 'EVOLUÇÃO'} FISIOTERAPÊUTICA</h2>
+                </div>
+            </div>
+            <div style="font-size: 10px; color: #00817F;">Data do registro: ${dataAvaliacao}</div>
         </div>
 
         <!-- Identificação -->
@@ -1754,11 +1818,14 @@
             Documento gerado eletronicamente — GHC Fisioterapia — Conforme resoluções COFFITO.
         </div>
     </div>
-</body>
-</html>
-    `;
 
-    // ========== ABRE UMA NOVA JANELA COM O CONTEÚDO ==========
+    <!-- Botão de impressão - SERÁ OCULTADO NA IMPRESSÃO -->
+    <button class="print-btn" onclick="window.print()">🖨️ Imprimir / Salvar como PDF</button>
+
+</body>
+</html>`;
+
+    // ========== ABRE UMA NOVA JANELA ==========
     const win = window.open('', '_blank', 'width=900,height=700,scrollbars=yes,resizable=yes');
     if (!win) {
         alert('O navegador bloqueou a abertura de uma nova janela. Permita pop-ups para este site.');
@@ -1766,24 +1833,10 @@
     }
     win.document.write(htmlContent);
     win.document.close();
-
-    // Aguarda carregamento e chama impressão automaticamente (opcional)
-    // Se preferir, pode deixar o usuário clicar em Ctrl+P manualmente.
-    // Vou adicionar um botão na página para imprimir e também acionar automaticamente após 1 segundo.
-    win.onload = function() {
-        // Adiciona um botão flutuante para imprimir
-        const btn = win.document.createElement('button');
-        btn.innerText = '🖨️ Imprimir / Salvar como PDF';
-        btn.style.cssText = 'position:fixed; bottom:20px; right:20px; padding:12px 24px; background:#2563eb; color:white; border:none; border-radius:30px; font-size:16px; cursor:pointer; z-index:9999; box-shadow:0 4px 12px rgba(0,0,0,0.3);';
-        btn.onclick = function() { win.print(); };
-        win.document.body.appendChild(btn);
-
-        // Opcional: aciona a impressão automaticamente após 1.5s
-        setTimeout(() => {
-            win.print();
-        }, 1500);
-    };
 }
+
+// ========== CONECTA O BOTÃO GERAR PDF ==========
+document.getElementById('gerarPdfBtn').addEventListener('click', gerarPDF);
 
         // ========== COPIAR RELATÓRIO (TEXTO PURO) ==========
         function copiarRelatorio() {
