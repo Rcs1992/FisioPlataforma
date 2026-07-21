@@ -355,7 +355,7 @@
                 <option>Murmúrio brônquico (sopro tubário) em ápice esquerdo</option>
                 </select>
                     <select id="viaAerea" class="border rounded-xl p-2.5 bg-white">
-                        <option value="arAmbiente">Ar Ambiente</option>
+                        <option value="Ar Ambiente">Ar Ambiente</option>
                         <option value="oxigenoterapia">Oxigenoterapia</option>
                         <option value="CNAF">CNAF (High Flow)</option>
                         <option value="VNI">VNI (Ventilação Não Invasiva)</option>
@@ -443,16 +443,30 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-md p-6 card-modern">
-                <h3 class="font-bold">Gasometria Arterial</h3>
-                <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-                    <input placeholder="pH" id="gasoPh" class="border rounded-xl p-2">
-                    <input placeholder="PaCO₂ (mmHg)" id="gasoPaco2" class="border rounded-xl p-2">
-                    <input placeholder="PaO₂ (mmHg)" id="gasoPao2" class="border rounded-xl p-2">
-                    <input placeholder="HCO₃ (mEq/L)" id="gasoHco3" class="border rounded-xl p-2">
-                    <input placeholder="BE" id="gasoBe" class="border rounded-xl p-2">
-                </div>
-            </div>
+            <!-- Gasometria Arterial -->
+<div class="bg-white rounded-2xl shadow-md p-6 card-modern">
+    <h3 class="font-bold text-gray-800">Gasometria Arterial</h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <input placeholder="pH" id="gasoPh" class="border rounded-xl p-2">
+        <input placeholder="PaCO₂ (mmHg)" id="gasoPaco2" class="border rounded-xl p-2">
+        <input placeholder="PaO₂ (mmHg)" id="gasoPao2" class="border rounded-xl p-2">
+        <input placeholder="HCO₃ (mEq/L)" id="gasoHco3" class="border rounded-xl p-2">
+        <input placeholder="BE" id="gasoBe" class="border rounded-xl p-2">
+        <input placeholder="SO₂ (%)" id="gasoSo2" class="border rounded-xl p-2">
+        <input placeholder="Lactato (mmol/L)" id="gasoLactato" class="border rounded-xl p-2">
+        <input placeholder="FiO₂ (%)" id="gasoFio2" class="border rounded-xl p-2" oninput="calcularPF()">
+    </div>
+    <div class="mt-3 bg-gradient-to-r from-blue-50 to-cyan-100 p-3 rounded-xl flex flex-wrap items-center gap-4">
+        <div>
+            <strong>📊 Relação P/F:</strong> 
+            <span id="pfDisplay" class="font-mono font-bold text-blue-800 text-lg">--</span>
+        </div>
+        <div class="text-sm text-gray-600">
+            <span class="font-semibold">Classificação:</span>
+            <span id="pfClassificacao" class="text-gray-700">Aguardando dados</span>
+        </div>
+    </div>
+</div>
 
             <!-- Diagnóstico (somente Avaliação) -->
             <div id="diagnosticoWrapper" class="bg-white rounded-2xl shadow-md p-6 card-modern">
@@ -513,18 +527,21 @@
                 </div>
             </div>
 
-            <!-- Botões de ação: Exportar JSON, Gerar PDF e Copiar -->
-            <div class="flex flex-wrap justify-center gap-4 no-print">
-                <button type="button" id="btnExportarJson" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xl py-3 px-10 rounded-full shadow-xl transition-all flex items-center gap-3">
-                    <i class="fas fa-file-code fa-lg"></i> Exportar Arquivo
-                </button>
-                <button type="button" id="gerarPdfBtn" class="bg-red-700 hover:bg-red-800 text-white text-xl py-3 px-12 rounded-full shadow-xl transition-all flex items-center gap-3">
-                    <i class="fas fa-file-pdf fa-lg"></i> Gerar PDF
-                </button>
-                <button type="button" id="copiarBtn" class="bg-blue-600 hover:bg-blue-700 text-white text-xl py-3 px-12 rounded-full shadow-xl transition-all flex items-center gap-3">
-                    <i class="fas fa-copy fa-lg"></i> Copiar Relatório
-                </button>
-            </div>
+<!-- Botões de ação: Exportar JSON, Gerar PDF, Copiar e Nova Evolução -->
+<div class="flex flex-wrap justify-center gap-4 no-print">
+    <button type="button" id="btnExportarJson" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xl py-3 px-10 rounded-full shadow-xl transition-all flex items-center gap-3">
+        <i class="fas fa-file-code fa-lg"></i> Exportar Arquivo
+    </button>
+    <button type="button" id="gerarPdfBtn" class="bg-red-700 hover:bg-red-800 text-white text-xl py-3 px-12 rounded-full shadow-xl transition-all flex items-center gap-3">
+        <i class="fas fa-file-pdf fa-lg"></i> Gerar PDF
+    </button>
+    <button type="button" id="copiarBtn" class="bg-blue-600 hover:bg-blue-700 text-white text-xl py-3 px-12 rounded-full shadow-xl transition-all flex items-center gap-3">
+        <i class="fas fa-copy fa-lg"></i> Copiar Relatório
+    </button>
+    <button type="button" id="novaEvolucaoBtn" class="bg-rose-600 hover:bg-rose-700 text-white text-xl py-3 px-10 rounded-full shadow-xl transition-all flex items-center gap-3">
+        <i class="fas fa-plus-circle fa-lg"></i> Nova Evolução
+    </button>
+</div>
         </form>
     </div>
 
@@ -939,6 +956,7 @@
             return { input: newInput, list: listDiv };
         }
 
+        
         // ========== OBJETIVOS TERAPÊUTICOS ==========
         const objetivosContainer = document.getElementById('objetivosContainer');
 
@@ -1143,6 +1161,47 @@
         document.getElementById('addReintubacaoBtn').onclick = () => addReintubacaoPar(null, null);
 
         // ========== CÁLCULO DIAS VM ==========
+      
+        // ========== CÁLCULO P/F (PaO2/FiO2) ==========
+function calcularPF() {
+    const pao2 = parseFloat(document.getElementById('gasoPao2').value);
+    const fio2 = parseFloat(document.getElementById('gasoFio2').value);
+    const display = document.getElementById('pfDisplay');
+    const classificacao = document.getElementById('pfClassificacao');
+    
+    if (!pao2 || !fio2 || fio2 === 0) {
+        display.textContent = '--';
+        classificacao.textContent = 'Aguardando dados (PaO₂ e FiO₂ necessários)';
+        return;
+    }
+    
+    const pf = (pao2 / fio2) * 100;
+    display.textContent = pf.toFixed(1);
+    
+    // Classificação da gravidade da SDRA (Berlin Criteria)
+    let classe = '';
+    let cor = '';
+    if (pf >= 300) {
+        classe = 'Normal (≥ 300)';
+        cor = 'text-green-700';
+    } else if (pf >= 200) {
+        classe = 'SDRA leve (200-299)';
+        cor = 'text-yellow-700';
+    } else if (pf >= 100) {
+        classe = 'SDRA moderada (100-199)';
+        cor = 'text-orange-700';
+    } else {
+        classe = 'SDRA grave (< 100)';
+        cor = 'text-red-700';
+    }
+    classificacao.innerHTML = `<span class="${cor} font-semibold">${classe}</span>`;
+}
+
+// Adicionar listeners para atualizar P/F automaticamente
+document.getElementById('gasoPao2').addEventListener('input', calcularPF);
+document.getElementById('gasoFio2').addEventListener('input', calcularPF);
+        
+        
         function diffDias(inicio, fim) {
             return Math.ceil((new Date(fim) - new Date(inicio)) / (1000 * 60 * 60 * 24));
         }
@@ -1471,6 +1530,9 @@ function gerarPDF() {
         const ppico = document.getElementById('vmiPpico').value || '---';
         suporteResp = `VMI | Modo: ${modo} | VT: ${vt}ml | FR: ${frVmi} | PEEP: ${peep} | FiO₂: ${fio2}% | PINSP: ${pinsp} | PPICO: ${ppico}`;
     }
+
+    const obsVentilatoria = document.getElementById('obsVentilatoria').value || '---';
+    const obsConsciencia = document.getElementById('obsConsciencia').value || '---';
     
     const viaArtificial = document.querySelector('input[name="viaArtificial"]:checked').value || 'nenhum';
     const dataIOT = document.getElementById('dataIOT').value || '---';
@@ -1490,11 +1552,28 @@ function gerarPDF() {
     const mrc = document.getElementById('mrc').value || '---';
     const ims = document.getElementById('ims').value || '---';
     const obsMotora = document.getElementById('obsMotora').value || '---';
-    const gasoPh = document.getElementById('gasoPh').value || '---';
-    const gasoPaco2 = document.getElementById('gasoPaco2').value || '---';
-    const gasoPao2 = document.getElementById('gasoPao2').value || '---';
-    const gasoHco3 = document.getElementById('gasoHco3').value || '---';
-    const gasoBe = document.getElementById('gasoBe').value || '---';
+   // Gasometria
+const gasoPh = document.getElementById('gasoPh').value || '---';
+const gasoPaco2 = document.getElementById('gasoPaco2').value || '---';
+const gasoPao2 = document.getElementById('gasoPao2').value || '---';
+const gasoHco3 = document.getElementById('gasoHco3').value || '---';
+const gasoBe = document.getElementById('gasoBe').value || '---';
+const gasoSo2 = document.getElementById('gasoSo2').value || '---';
+const gasoLactato = document.getElementById('gasoLactato').value || '---';
+const gasoFio2 = document.getElementById('gasoFio2').value || '---';
+
+// Calcular P/F para exibição no PDF
+let pfValue = '---';
+let pfClasse = '---';
+const pao2Num = parseFloat(gasoPao2);
+const fio2Num = parseFloat(gasoFio2);
+if (pao2Num && fio2Num && fio2Num > 0) {
+    pfValue = ((pao2Num / fio2Num) * 100).toFixed(1);
+    if (pfValue >= 300) pfClasse = 'Normal ou SDRA leve (≥ 300)';
+    else if (pfValue >= 200) pfClasse = 'SDRA leve (200-299)';
+    else if (pfValue >= 100) pfClasse = 'SDRA moderada (100-199)';
+    else pfClasse = 'SDRA grave (< 100)';
+}
     const diagnostico = document.getElementById('diagnosticoFisio').value || '---';
     const prognostico = document.getElementById('prognostico').value || '---';
     const objetivosTexto = estado.objetivos.length ? estado.objetivos.map(o => `• ${o}`).join('\n') : 'Nenhum objetivo registrado.';
@@ -1695,25 +1774,31 @@ function gerarPDF() {
         </div>
 
         <!-- Consciência e Drogas -->
-        <div class="section grid-2">
-            <div>
-                <div class="section-title">NÍVEL DE CONSCIÊNCIA</div>
-                <div style="font-size: 9.5px;">${consc}</div>
-            </div>
-            <div>
-                <div class="section-title">DROGAS EM USO</div>
-                <div style="font-size: 9.5px;">${drogasTexto}</div>
-            </div>
+<div class="section grid-2">
+    <div>
+        <div class="section-title">NÍVEL DE CONSCIÊNCIA</div>
+        <div style="font-size: 9.5px;">${consc}</div>
+        <div style="font-size: 9.5px; margin-top: 2px;">
+            <span class="label">Obs.:</span> ${obsConsciencia}
         </div>
+    </div>
+    <div>
+        <div class="section-title">DROGAS EM USO</div>
+        <div style="font-size: 9.5px;">${drogasTexto}</div>
+    </div>
+</div>
 
-        <!-- Ausculta e Ventilação -->
-        <div class="section bg-soft">
-            <div class="section-title">AUSCULTA E SUPORTE RESPIRATÓRIO</div>
-            <div class="grid-2">
-                <div><span class="label">Ausculta:</span> ${ausculta}</div>
-                <div><span class="label">Suporte:</span> ${suporteResp}</div>
-            </div>
-        </div>
+       <!-- Ausculta e Ventilação -->
+<div class="section bg-soft">
+    <div class="section-title">AUSCULTA E SUPORTE RESPIRATÓRIO</div>
+    <div class="grid-2">
+        <div><span class="label">Ausculta:</span> ${ausculta}</div>
+        <div><span class="label">Suporte:</span> ${suporteResp}</div>
+    </div>
+    <div class="mt-1" style="font-size: 9.5px;">
+        <span class="label">Observações ventilatórias:</span> ${obsVentilatoria}
+    </div>
+</div>
 
         <!-- Via Aérea Artificial -->
         <div class="section grid-2">
@@ -1752,16 +1837,22 @@ function gerarPDF() {
         </div>
 
         <!-- Gasometria -->
-        <div class="section">
-            <div class="section-title">GASOMETRIA ARTERIAL</div>
-            <div class="grid-5">
-                <div><span class="label">pH:</span> ${gasoPh}</div>
-                <div><span class="label">PaCO₂:</span> ${gasoPaco2}</div>
-                <div><span class="label">PaO₂:</span> ${gasoPao2}</div>
-                <div><span class="label">HCO₃:</span> ${gasoHco3}</div>
-                <div><span class="label">BE:</span> ${gasoBe}</div>
-            </div>
-        </div>
+<div class="section">
+    <div class="section-title">GASOMETRIA ARTERIAL</div>
+    <div class="grid-4">
+        <div><span class="label">pH:</span> ${gasoPh}</div>
+        <div><span class="label">PaCO₂:</span> ${gasoPaco2}</div>
+        <div><span class="label">PaO₂:</span> ${gasoPao2}</div>
+        <div><span class="label">HCO₃:</span> ${gasoHco3}</div>
+        <div><span class="label">BE:</span> ${gasoBe}</div>
+        <div><span class="label">SO₂:</span> ${gasoSo2}%</div>
+        <div><span class="label">Lactato:</span> ${gasoLactato}</div>
+        <div><span class="label">FiO₂:</span> ${gasoFio2}%</div>
+    </div>
+    <div class="mt-1 bg-blue-soft" style="padding: 4px 8px; border-radius: 4px; font-weight: 600;">
+        <span class="label">Relação P/F:</span> ${pfValue} — ${pfClasse}
+    </div>
+</div>
 
         ${currentMode === 'avaliacao' ? `
         <!-- Diagnóstico -->
@@ -1895,27 +1986,27 @@ document.getElementById('gerarPdfBtn').addEventListener('click', gerarPDF);
             lines.push(sep);
 
             // Consciência e Drogas
-            lines.push("NÍVEL DE CONSCIÊNCIA E DROGAS");
-            lines.push(subSep);
-            let consc = (tipoConsc.value === 'glasgow') ? document.getElementById('totalGlasgow').innerText :
-                `RASS ${document.getElementById('rassValor').value}`;
-            lines.push(`Consciência: ${consc}`);
-            lines.push(`Drogas em uso: ${drogasTexto}`);
-            lines.push(`Obs. Consciência: ${document.getElementById('obsConsciencia').value || '---'}`);
-            lines.push(sep);
-
-            // Ausculta e Ventilação
-            lines.push("AUSCULTA E SUPORTE RESPIRATÓRIO");
-            lines.push(subSep);
-            lines.push(`Ausculta: ${document.getElementById('ausculta').value}`);
-            let suporte = viaAerea.value;
+lines.push("NÍVEL DE CONSCIÊNCIA E DROGAS");
+lines.push(subSep);
+let consc = (tipoConsc.value === 'glasgow') ? document.getElementById('totalGlasgow').innerText :
+    `RASS ${document.getElementById('rassValor').value}`;
+lines.push(`Consciência: ${consc}`);
+lines.push(`Obs. Consciência: ${document.getElementById('obsConsciencia').value || '---'}`);
+lines.push(`Drogas em uso: ${drogasTexto}`);
+lines.push(sep);
+            
+           // Ausculta e Ventilação
+lines.push("AUSCULTA E SUPORTE RESPIRATÓRIO");
+lines.push(subSep);
+lines.push(`Ausculta: ${document.getElementById('ausculta').value}`);
+let suporte = viaAerea.value;
             if (viaAerea.value === 'VMI') {
                 suporte +=
                     ` | Modo: ${document.getElementById('vmiModo').value} | VT: ${document.getElementById('vmiVt').value}ml | FR: ${document.getElementById('vmiFr').value} | PEEP: ${document.getElementById('vmiPeep').value} | FiO2: ${document.getElementById('vmiFio2').value}%${vmiText}`;
             }
             lines.push(`Suporte respiratório: ${suporte}`);
-            lines.push(`Obs. Ventilação: ${document.getElementById('obsVentilatoria').value || '---'}`);
-            lines.push(sep);
+lines.push(`Obs. Ventilação: ${document.getElementById('obsVentilatoria').value || '---'}`);
+lines.push(sep);
 
             // Via artificial
             lines.push("VIA AÉREA ARTIFICIAL (TOT/TQT)");
@@ -1942,15 +2033,27 @@ document.getElementById('gerarPdfBtn').addEventListener('click', gerarPDF);
             lines.push(sep);
 
             // Gasometria
-            lines.push("GASOMETRIA ARTERIAL");
-            lines.push(subSep);
-            lines.push(`pH: ${document.getElementById('gasoPh').value}`);
-            lines.push(`PaCO₂: ${document.getElementById('gasoPaco2').value} mmHg`);
-            lines.push(`PaO₂: ${document.getElementById('gasoPao2').value} mmHg`);
-            lines.push(`HCO₃: ${document.getElementById('gasoHco3').value} mEq/L`);
-            lines.push(`BE: ${document.getElementById('gasoBe').value}`);
-            lines.push(sep);
+lines.push("GASOMETRIA ARTERIAL");
+lines.push(subSep);
+lines.push(`pH: ${document.getElementById('gasoPh').value || '---'}`);
+lines.push(`PaCO₂: ${document.getElementById('gasoPaco2').value || '---'} mmHg`);
+lines.push(`PaO₂: ${document.getElementById('gasoPao2').value || '---'} mmHg`);
+lines.push(`HCO₃: ${document.getElementById('gasoHco3').value || '---'} mEq/L`);
+lines.push(`BE: ${document.getElementById('gasoBe').value || '---'}`);
+lines.push(`SO₂: ${document.getElementById('gasoSo2').value || '---'}%`);
+lines.push(`Lactato: ${document.getElementById('gasoLactato').value || '---'} mmol/L`);
+lines.push(`FiO₂: ${document.getElementById('gasoFio2').value || '---'}%`);
 
+// Calcular P/F para o texto
+const pao2Val = parseFloat(document.getElementById('gasoPao2').value);
+const fio2Val = parseFloat(document.getElementById('gasoFio2').value);
+let pfTexto = '---';
+if (pao2Val && fio2Val && fio2Val > 0) {
+    pfTexto = ((pao2Val / fio2Val) * 100).toFixed(1);
+}
+lines.push(`Relação P/F: ${pfTexto}`);
+lines.push(sep);
+            
             // Diagnóstico (apenas na Avaliação)
             if (currentMode === 'avaliacao') {
                 lines.push("DIAGNÓSTICO FISIOTERAPÊUTICO (CBDF)");
@@ -2044,6 +2147,109 @@ document.getElementById('gerarPdfBtn').addEventListener('click', gerarPDF);
             const recursoInput = document.querySelector('#recursosContainer .dynamic-recurso input');
             if (recursoInput) recursoInput.value = 'TENS (Estimulação Elétrica Nervosa Transcutânea) - modo agudo';
         }, 100);
+
+        // ========== NOVA EVOLUÇÃO - LIMPAR FORMULÁRIO ==========
+function limparFormulario() {
+    // 1. Limpar todos os campos de entrada (input, select, textarea)
+    const elementos = document.querySelectorAll('#mainForm input, #mainForm select, #mainForm textarea');
+    elementos.forEach(el => {
+        if (el.type === 'radio' || el.type === 'checkbox') {
+            // Para radio/checkbox, desmarcar (exceto o primeiro radio de viaArtificial)
+            if (el.type === 'radio') {
+                // Se for o grupo viaArtificial, marcar 'nenhum' como padrão
+                if (el.name === 'viaArtificial' && el.value === 'nenhum') {
+                    el.checked = true;
+                } else {
+                    el.checked = false;
+                }
+            } else {
+                el.checked = false;
+            }
+        } else if (el.tagName === 'SELECT') {
+            // Selecionar a primeira opção (ou opção vazia)
+            el.selectedIndex = 0;
+        } else if (el.tagName === 'TEXTAREA' || el.type === 'text' || el.type === 'number' || el.type === 'date') {
+            el.value = '';
+        }
+    });
+
+    // 2. Limpar campos dinâmicos (HPP, drogas, reintubações, condutas, objetivos, recursos)
+    document.getElementById('hppContainer').innerHTML = '';
+    document.getElementById('drogasContainer').innerHTML = '';
+    document.getElementById('reintubacoesContainer').innerHTML = '';
+    document.getElementById('condutasContainer').innerHTML = '';
+    document.getElementById('objetivosContainer').innerHTML = '';
+    document.getElementById('recursosContainer').innerHTML = '';
+
+    // 3. Resetar o VT ideal
+    document.getElementById('vtIdealDisplay').innerHTML = '--';
+
+    // 4. Resetar o total de Glasgow
+    document.getElementById('totalGlasgow').innerText = '';
+
+    // 5. Resetar o cálculo de dias de VM
+    document.getElementById('diasVMAutomatico').innerText = '0';
+
+    // 6. Resetar o P/F
+    document.getElementById('pfDisplay').textContent = '--';
+    document.getElementById('pfClassificacao').textContent = 'Aguardando dados (PaO₂ e FiO₂ necessários)';
+
+    // 7. Ocultar detalhes de ventilação (voltar ao estado inicial)
+    document.querySelectorAll('#oxigenioDetalhe, #cnafDetalhe, #vniDetalhe, #vmiDetalhe').forEach(el => {
+        el.classList.add('hidden');
+    });
+    document.getElementById('viaAerea').value = 'arAmbiente';
+
+    // 8. Ocultar detalhes de via aérea artificial (voltar para 'nenhum')
+    document.querySelectorAll('input[name="viaArtificial"]').forEach(r => r.checked = false);
+    document.querySelector('input[name="viaArtificial"][value="nenhum"]').checked = true;
+    document.getElementById('detalhesTOT').classList.add('hidden');
+
+    // 9. Resetar modo para Avaliação (padrão)
+    setMode('avaliacao');
+
+    // 10. Resetar a data de avaliação para hoje
+    const hoje = new Date().toISOString().split('T')[0];
+    document.getElementById('dataAvaliacao').value = hoje;
+
+    // 11. Adicionar itens iniciais padrão (como no carregamento)
+    setTimeout(() => {
+        // Adicionar objetivo padrão
+        adicionarObjetivo();
+        const objetivoInput = document.querySelector('#objetivosContainer .dynamic-objetivo input');
+        if (objetivoInput) objetivoInput.value = 'Aumentar a ADM ativa global';
+
+        // Adicionar recurso padrão
+        adicionarRecurso();
+        const recursoInput = document.querySelector('#recursosContainer .dynamic-recurso input');
+        if (recursoInput) recursoInput.value = 'TENS (Estimulação Elétrica Nervosa Transcutânea) - modo agudo';
+    }, 100);
+
+    // 12. Scroll para o topo da página
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ========== EVENTO DO BOTÃO NOVA EVOLUÇÃO ==========
+document.getElementById('novaEvolucaoBtn').addEventListener('click', function() {
+    // Exibir caixa de confirmação com opções Sim/Não
+    if (confirm('⚠️ Você tem certeza que quer iniciar uma nova evolução?\n\nOs dados atuais serão apagados permanentemente.')) {
+        // Usuário confirmou → limpar formulário
+        limparFormulario();
+        // Opcional: feedback visual
+        const btn = this;
+        btn.innerHTML = '<i class="fas fa-check-circle fa-lg"></i> Limpo!';
+        btn.classList.remove('bg-rose-600', 'hover:bg-rose-700');
+        btn.classList.add('bg-green-600', 'hover:bg-green-700');
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fas fa-plus-circle fa-lg"></i> Nova Evolução';
+            btn.classList.remove('bg-green-600', 'hover:bg-green-700');
+            btn.classList.add('bg-rose-600', 'hover:bg-rose-700');
+        }, 1500);
+    } else {
+        // Usuário cancelou → não faz nada
+        console.log('Nova evolução cancelada pelo usuário.');
+    }
+});
     </script>
 </body>
 </html>
