@@ -1202,6 +1202,7 @@ document.getElementById('gasoFio2').addEventListener('input', calcularPF);
         
         
 // ========== CÁLCULO DIAS VM (VERSÃO SIMPLIFICADA E CORRIGIDA) ==========
+// ========== CÁLCULO DIAS VM (VERSÃO COMPLETA E CORRIGIDA) ==========
 function diffDias(inicio, fim) {
     if (!inicio) return 0;
     const fimDate = fim ? new Date(fim) : new Date();
@@ -1225,15 +1226,46 @@ function calcularDiasVM() {
     const dataTQT = document.getElementById('dataTQT').value;
     const dataDesmameTQT = document.getElementById('dataDesmameTQT').value;
 
-    // 3. Se houver TQT → CONTAGEM CONTÍNUA da IOT até o desmame (ou hoje)
-    //    NÃO importa se houve extubação antes, a TQT é continuação da VM
+    // 3. Se houver TQT → Conta TODOS os períodos de VM até a TQT + TQT até hoje
     if (dataTQT) {
-        // Período contínuo: da IOT até o desmame da TQT (ou hoje)
-        const fim = dataDesmameTQT || hoje;
-        total = diffDias(dataIOT, fim);
-    } 
-    // 4. Se NÃO houver TQT → SOMAR PERÍODOS com IOT/reintubações
-    else {
+        // 3a. Períodos ANTES da TQT: somar IOT/extubações/reintubações
+        //     Mas apenas os períodos que ocorreram ANTES da TQT
+        
+        // Período inicial: IOT até primeira extubação (se houver e se for antes da TQT)
+        const dataExtubacao = document.getElementById('dataExtubacao').value;
+        if (dataExtubacao && dataExtubacao <= dataTQT) {
+            // Se a extubação ocorreu antes ou na data da TQT
+            total += diffDias(dataIOT, dataExtubacao);
+        } else if (!dataExtubacao) {
+            // Se não houve extubação, o paciente ficou intubado até a TQT
+            total += diffDias(dataIOT, dataTQT);
+        }
+        
+        // Períodos de reintubação que ocorreram ANTES da TQT
+        document.querySelectorAll('#reintubacoesContainer .dynamic-reintubacao').forEach(par => {
+            const inputs = par.querySelectorAll('input[type="date"]');
+            const reint = inputs[0].value;
+            const ext = inputs[1].value;
+            
+            // Só considerar se a reintubação ocorreu antes da TQT
+            if (reint && reint <= dataTQT) {
+                // Se o paciente foi extubado após essa reintubação e antes da TQT
+                if (ext && ext <= dataTQT) {
+                    total += diffDias(reint, ext);
+                } else {
+                    // Se não houve extubação após essa reintubação,
+                    // o paciente estava intubado até a TQT
+                    total += diffDias(reint, dataTQT);
+                }
+            }
+        });
+        
+        // 3b. Período APÓS a TQT: da TQT até o desmame (ou hoje)
+        const fimTQT = dataDesmameTQT || hoje;
+        total += diffDias(dataTQT, fimTQT);
+        
+    } else {
+        // 4. Se NÃO houver TQT → SOMAR PERÍODOS com IOT/reintubações
         // Período inicial: IOT até primeira extubação (ou hoje)
         const dataExtubacao = document.getElementById('dataExtubacao').value;
         total += diffDias(dataIOT, dataExtubacao || hoje);
