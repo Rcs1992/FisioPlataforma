@@ -1201,12 +1201,13 @@ document.getElementById('gasoPao2').addEventListener('input', calcularPF);
 document.getElementById('gasoFio2').addEventListener('input', calcularPF);
         
         
-// ========== CÁLCULO DIAS VM (CORRIGIDO E COM EVENTOS) ==========
+// ========== CÁLCULO DIAS VM (VERSÃO COMPLETA E CORRIGIDA) ==========
 function diffDias(inicio, fim) {
     if (!inicio) return 0;
     const fimDate = fim ? new Date(fim) : new Date();
     const inicioDate = new Date(inicio);
-    return Math.ceil((fimDate - inicioDate) / (1000 * 60 * 60 * 24));
+    const diff = Math.ceil((fimDate - inicioDate) / (1000 * 60 * 60 * 24));
+    return Math.max(0, diff);
 }
 
 function calcularDiasVM() {
@@ -1224,14 +1225,46 @@ function calcularDiasVM() {
     const dataTQT = document.getElementById('dataTQT').value;
     const dataDesmameTQT = document.getElementById('dataDesmameTQT').value;
 
-    // 3. Se houver TQT, o período é contínuo da IOT até o desmame da TQT (ou hoje)
+    // 3. Se houver TQT → Conta TODOS os períodos de VM até a TQT + TQT até hoje
     if (dataTQT) {
-        // O período de VM é da IOT até o desmame da TQT (ou hoje)
-        const fim = dataDesmameTQT || hoje;
-        total = diffDias(dataIOT, fim);
-    } 
-    // 4. Se NÃO houver TQT, considera os períodos com IOT/extubações/reintubações
-    else {
+        // 3a. Períodos ANTES da TQT: somar IOT/extubações/reintubações
+        //     Mas apenas os períodos que ocorreram ANTES da TQT
+        
+        // Período inicial: IOT até primeira extubação (se houver e se for antes da TQT)
+        const dataExtubacao = document.getElementById('dataExtubacao').value;
+        if (dataExtubacao && dataExtubacao <= dataTQT) {
+            // Se a extubação ocorreu antes ou na data da TQT
+            total += diffDias(dataIOT, dataExtubacao);
+        } else if (!dataExtubacao) {
+            // Se não houve extubação, o paciente ficou intubado até a TQT
+            total += diffDias(dataIOT, dataTQT);
+        }
+        
+        // Períodos de reintubação que ocorreram ANTES da TQT
+        document.querySelectorAll('#reintubacoesContainer .dynamic-reintubacao').forEach(par => {
+            const inputs = par.querySelectorAll('input[type="date"]');
+            const reint = inputs[0].value;
+            const ext = inputs[1].value;
+            
+            // Só considerar se a reintubação ocorreu antes da TQT
+            if (reint && reint <= dataTQT) {
+                // Se o paciente foi extubado após essa reintubação e antes da TQT
+                if (ext && ext <= dataTQT) {
+                    total += diffDias(reint, ext);
+                } else {
+                    // Se não houve extubação após essa reintubação,
+                    // o paciente estava intubado até a TQT
+                    total += diffDias(reint, dataTQT);
+                }
+            }
+        });
+        
+        // 3b. Período APÓS a TQT: da TQT até o desmame (ou hoje)
+        const fimTQT = dataDesmameTQT || hoje;
+        total += diffDias(dataTQT, fimTQT);
+        
+    } else {
+        // 4. Se NÃO houver TQT → SOMAR PERÍODOS com IOT/reintubações
         // Período inicial: IOT até primeira extubação (ou hoje)
         const dataExtubacao = document.getElementById('dataExtubacao').value;
         total += diffDias(dataIOT, dataExtubacao || hoje);
@@ -1260,14 +1293,14 @@ camposData.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
         el.addEventListener('change', calcularDiasVM);
-        el.addEventListener('input', calcularDiasVM); // também em tempo real
+        el.addEventListener('input', calcularDiasVM);
     }
 });
 
-// Também monitorar mudanças nas reintubações (já existe no addReintubacaoPar)
-// Reforçar para os existentes
+// Monitorar mudanças nas reintubações
 document.querySelectorAll('#reintubacoesContainer .dynamic-reintubacao input').forEach(inp => {
     inp.addEventListener('change', calcularDiasVM);
+    inp.addEventListener('input', calcularDiasVM);
 });
 
 // Chamar cálculo inicial
@@ -2180,15 +2213,13 @@ lines.push(sep);
             if (recursoInput) recursoInput.value = 'TENS (Estimulação Elétrica Nervosa Transcutânea) - modo agudo';
         }, 100);
 
-        // ========== NOVA EVOLUÇÃO - LIMPAR FORMULÁRIO ==========
+// ========== NOVA EVOLUÇÃO - LIMPAR FORMULÁRIO ==========
 function limparFormulario() {
     // 1. Limpar todos os campos de entrada (input, select, textarea)
     const elementos = document.querySelectorAll('#mainForm input, #mainForm select, #mainForm textarea');
     elementos.forEach(el => {
         if (el.type === 'radio' || el.type === 'checkbox') {
-            // Para radio/checkbox, desmarcar (exceto o primeiro radio de viaArtificial)
             if (el.type === 'radio') {
-                // Se for o grupo viaArtificial, marcar 'nenhum' como padrão
                 if (el.name === 'viaArtificial' && el.value === 'nenhum') {
                     el.checked = true;
                 } else {
@@ -2198,14 +2229,60 @@ function limparFormulario() {
                 el.checked = false;
             }
         } else if (el.tagName === 'SELECT') {
-            // Selecionar a primeira opção (ou opção vazia)
-            el.selectedIndex = 0;
+            // Para selects específicos, definir valores padrão
+            if (el.id === 'viaAerea') {
+                el.value = 'Ar Ambiente';
+            } else if (el.id === 'tipoConsciencia') {
+                el.value = 'glasgow';
+            } else if (el.id === 'sexo') {
+                el.value = 'Masculino';
+            } else if (el.id === 'unidade') {
+                el.selectedIndex = 0;
+            } else if (el.id === 'ausculta') {
+                el.selectedIndex = 0;
+            } else if (el.id === 'abdomen') {
+                el.selectedIndex = 0;
+            } else if (el.id === 'panturrilhas') {
+                el.selectedIndex = 0;
+            } else if (el.id === 'qtdAtendimentos') {
+                el.selectedIndex = 0;
+            } else if (el.id === 'glasgowOlhos') {
+                el.value = '4';
+            } else if (el.id === 'glasgowVerbal') {
+                el.value = '5';
+            } else if (el.id === 'glasgowMotor') {
+                el.value = '6';
+            } else if (el.id === 'rassValor') {
+                el.value = '0';
+            } else if (el.id === 'tipoOxigenio') {
+                el.selectedIndex = 0;
+            } else if (el.id === 'vmiModo') {
+                el.selectedIndex = 0;
+            } else {
+                el.selectedIndex = 0;
+            }
         } else if (el.tagName === 'TEXTAREA' || el.type === 'text' || el.type === 'number' || el.type === 'date') {
             el.value = '';
         }
     });
 
-    // 2. Limpar campos dinâmicos (HPP, drogas, reintubações, condutas, objetivos, recursos)
+    // 2. FORÇAR A VISIBILIDADE CORRETA DOS CAMPOS DE CONSCIÊNCIA
+    // Isso é crucial para garantir que o Glasgow apareça e o RASS fique oculto
+    const tipoConsc = document.getElementById('tipoConsciencia');
+    const glasgowDiv = document.getElementById('glasgowFields');
+    const rassDiv = document.getElementById('rassFields');
+    
+    // Garantir que o tipo seja 'glasgow'
+    tipoConsc.value = 'glasgow';
+    
+    // Mostrar Glasgow, ocultar RASS
+    glasgowDiv.classList.remove('hidden');
+    rassDiv.classList.add('hidden');
+    
+    // Atualizar o total do Glasgow
+    atualizarGlasgow();
+
+    // 3. Limpar campos dinâmicos (HPP, drogas, reintubações, condutas, objetivos, recursos)
     document.getElementById('hppContainer').innerHTML = '';
     document.getElementById('drogasContainer').innerHTML = '';
     document.getElementById('reintubacoesContainer').innerHTML = '';
@@ -2213,11 +2290,8 @@ function limparFormulario() {
     document.getElementById('objetivosContainer').innerHTML = '';
     document.getElementById('recursosContainer').innerHTML = '';
 
-    // 3. Resetar o VT ideal
+    // 4. Resetar o VT ideal
     document.getElementById('vtIdealDisplay').innerHTML = '--';
-
-    // 4. Resetar o total de Glasgow
-    document.getElementById('totalGlasgow').innerText = '';
 
     // 5. Resetar o cálculo de dias de VM
     document.getElementById('diasVMAutomatico').innerText = '0';
@@ -2230,7 +2304,7 @@ function limparFormulario() {
     document.querySelectorAll('#oxigenioDetalhe, #cnafDetalhe, #vniDetalhe, #vmiDetalhe').forEach(el => {
         el.classList.add('hidden');
     });
-    document.getElementById('viaAerea').value = 'arAmbiente';
+    document.getElementById('viaAerea').value = 'Ar Ambiente';
 
     // 8. Ocultar detalhes de via aérea artificial (voltar para 'nenhum')
     document.querySelectorAll('input[name="viaArtificial"]').forEach(r => r.checked = false);
