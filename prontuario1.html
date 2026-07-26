@@ -259,7 +259,7 @@
                     <div><label class="block text-sm font-semibold text-gray-700">Prontuário</label><input type="text" id="prontuario" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5"></div>
                     <div><label class="block text-sm font-semibold text-gray-700">Data Internação</label><input type="date" id="dataInternacao" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5"></div>
                     <div><label class="block text-sm font-semibold text-gray-700">Data Avaliação/Evolução</label><input type="date" id="dataAvaliacao" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5"></div>
-                    <div><label class="block text-sm font-semibold text-gray-700">Unidade</label><select id="unidade" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5"><option>CTI 1</option><option>CTI 2</option><option>Sala Vermelha</option><option>Sala Amarela</option><option>UCO</option><option>CETIP</option></select></div>
+                    <div><label class="block text-sm font-semibold text-gray-700">Unidade</label><select id="unidade" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5"><option>Sala Verde Adulto</option><option>Sala Amarela Adulto</option><option>Sala Vermelha Adulto</option><option>Sala Amarela Pediátrica</option><option>Sala Vermelha Pediátrica</option></select></div>
                     <div><label class="block text-sm font-semibold text-gray-700">Leito</label><input type="text" id="leito" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5"></div>
                 </div>
             </div>
@@ -374,8 +374,8 @@
                     <label>FR (irpm) <input id="vmiFr" class="border rounded p-1"></label>
                     <label>PEEP (cmH₂O) <input id="vmiPeep" class="border rounded p-1"></label>
                     <label>FiO2 (%) <input id="vmiFio2" class="border rounded p-1"></label>
-                    <label>PINSP (cmH₂O) <input id="vmiPinsp" placeholder="pico" class="border rounded p-1"></label>
-                    <label>PPICO (cmH₂O) <input id="vmiPpico" placeholder="platô" class="border rounded p-1"></label>
+                    <label>PINSP (cmH₂O) <input id="vmiPinsp" placeholder="Pinsp" class="border rounded p-1"></label>
+                    <label>PPICO (cmH₂O) <input id="vmiPpico" placeholder="PPico" class="border rounded p-1"></label>
                 </div>
                 <textarea id="obsVentilatoria" rows="2" placeholder="Observações ventilatorias" class="mt-3 w-full border rounded-xl p-2"></textarea>
             </div>
@@ -527,18 +527,21 @@
                 </div>
             </div>
 
-            <!-- Botões de ação: Exportar JSON, Gerar PDF e Copiar -->
-            <div class="flex flex-wrap justify-center gap-4 no-print">
-                <button type="button" id="btnExportarJson" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xl py-3 px-10 rounded-full shadow-xl transition-all flex items-center gap-3">
-                    <i class="fas fa-file-code fa-lg"></i> Exportar Arquivo
-                </button>
-                <button type="button" id="gerarPdfBtn" class="bg-red-700 hover:bg-red-800 text-white text-xl py-3 px-12 rounded-full shadow-xl transition-all flex items-center gap-3">
-                    <i class="fas fa-file-pdf fa-lg"></i> Gerar PDF
-                </button>
-                <button type="button" id="copiarBtn" class="bg-blue-600 hover:bg-blue-700 text-white text-xl py-3 px-12 rounded-full shadow-xl transition-all flex items-center gap-3">
-                    <i class="fas fa-copy fa-lg"></i> Copiar Relatório
-                </button>
-            </div>
+<!-- Botões de ação: Exportar JSON, Gerar PDF, Copiar e Nova Evolução -->
+<div class="flex flex-wrap justify-center gap-4 no-print">
+    <button type="button" id="btnExportarJson" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xl py-3 px-10 rounded-full shadow-xl transition-all flex items-center gap-3">
+        <i class="fas fa-file-code fa-lg"></i> Exportar Arquivo
+    </button>
+    <button type="button" id="gerarPdfBtn" class="bg-red-700 hover:bg-red-800 text-white text-xl py-3 px-12 rounded-full shadow-xl transition-all flex items-center gap-3">
+        <i class="fas fa-file-pdf fa-lg"></i> Gerar PDF
+    </button>
+    <button type="button" id="copiarBtn" class="bg-blue-600 hover:bg-blue-700 text-white text-xl py-3 px-12 rounded-full shadow-xl transition-all flex items-center gap-3">
+        <i class="fas fa-copy fa-lg"></i> Copiar Relatório
+    </button>
+    <button type="button" id="novaEvolucaoBtn" class="bg-rose-600 hover:bg-rose-700 text-white text-xl py-3 px-10 rounded-full shadow-xl transition-all flex items-center gap-3">
+        <i class="fas fa-plus-circle fa-lg"></i> Nova Evolução
+    </button>
+</div>
         </form>
     </div>
 
@@ -953,6 +956,7 @@
             return { input: newInput, list: listDiv };
         }
 
+        
         // ========== OBJETIVOS TERAPÊUTICOS ==========
         const objetivosContainer = document.getElementById('objetivosContainer');
 
@@ -1156,8 +1160,7 @@
         }
         document.getElementById('addReintubacaoBtn').onclick = () => addReintubacaoPar(null, null);
 
-        // ========== CÁLCULO DIAS VM ==========
-      
+            
         // ========== CÁLCULO P/F (PaO2/FiO2) ==========
 function calcularPF() {
     const pao2 = parseFloat(document.getElementById('gasoPao2').value);
@@ -1198,45 +1201,111 @@ document.getElementById('gasoPao2').addEventListener('input', calcularPF);
 document.getElementById('gasoFio2').addEventListener('input', calcularPF);
         
         
-        function diffDias(inicio, fim) {
-            return Math.ceil((new Date(fim) - new Date(inicio)) / (1000 * 60 * 60 * 24));
-        }
+// ========== CÁLCULO DIAS VM (VERSÃO COMPLETA E CORRIGIDA) ==========
+function diffDias(inicio, fim) {
+    if (!inicio) return 0;
+    const fimDate = fim ? new Date(fim) : new Date();
+    const inicioDate = new Date(inicio);
+    const diff = Math.ceil((fimDate - inicioDate) / (1000 * 60 * 60 * 24));
+    return Math.max(0, diff);
+}
 
-        function calcularDiasVM() {
-            let total = 0,
-                hoje = new Date().toISOString().slice(0, 10);
-            let iot = document.getElementById('dataIOT').value;
-            if (!iot) {
-                document.getElementById('diasVMAutomatico').innerText = '0';
-                return;
-            }
-            let extIni = document.getElementById('dataExtubacao').value;
-            total += diffDias(iot, extIni || hoje);
-            document.querySelectorAll('#reintubacoesContainer .dynamic-reintubacao').forEach(par => {
-                let reint = par.querySelector('input[type="date"]:first-child').value;
-                let ext = par.querySelector('input[type="date"]:last-child').value;
-                if (reint) total += diffDias(reint, ext || hoje);
-            });
-            let tqt = document.getElementById('dataTQT').value,
-                desmame = document.getElementById('dataDesmameTQT').value;
-            if (tqt) {
-                let ultExt = document.getElementById('dataExtubacao').value;
-                document.querySelectorAll('#reintubacoesContainer .dynamic-reintubacao input[type="date"]:last-child').forEach(inp => {
-                    if (inp.value > ultExt) ultExt = inp.value;
-                });
-                let inicio = (ultExt && tqt > ultExt) ? tqt : (tqt > iot ? tqt : iot);
-                let fim = desmame || hoje;
-                if (fim > inicio) total += diffDias(inicio, fim);
-            }
-            total = Math.max(0, total);
-            document.getElementById('diasVMAutomatico').innerText = total;
-            document.getElementById('diasVM').value = total;
-        }
-        document.getElementById('dataIOT').addEventListener('change', calcularDiasVM);
-        document.getElementById('dataExtubacao').addEventListener('change', calcularDiasVM);
-        document.getElementById('dataTQT').addEventListener('change', calcularDiasVM);
-        document.getElementById('dataDesmameTQT').addEventListener('change', calcularDiasVM);
+function calcularDiasVM() {
+    let total = 0;
+    const hoje = new Date().toISOString().slice(0, 10);
+    
+    // 1. Verifica se há IOT
+    const dataIOT = document.getElementById('dataIOT').value;
+    if (!dataIOT) {
+        document.getElementById('diasVMAutomatico').innerText = '0';
+        return;
+    }
 
+    // 2. Verifica se há TQT (traqueostomia)
+    const dataTQT = document.getElementById('dataTQT').value;
+    const dataDesmameTQT = document.getElementById('dataDesmameTQT').value;
+
+    // 3. Se houver TQT → Conta TODOS os períodos de VM até a TQT + TQT até hoje
+    if (dataTQT) {
+        // 3a. Períodos ANTES da TQT: somar IOT/extubações/reintubações
+        //     Mas apenas os períodos que ocorreram ANTES da TQT
+        
+        // Período inicial: IOT até primeira extubação (se houver e se for antes da TQT)
+        const dataExtubacao = document.getElementById('dataExtubacao').value;
+        if (dataExtubacao && dataExtubacao <= dataTQT) {
+            // Se a extubação ocorreu antes ou na data da TQT
+            total += diffDias(dataIOT, dataExtubacao);
+        } else if (!dataExtubacao) {
+            // Se não houve extubação, o paciente ficou intubado até a TQT
+            total += diffDias(dataIOT, dataTQT);
+        }
+        
+        // Períodos de reintubação que ocorreram ANTES da TQT
+        document.querySelectorAll('#reintubacoesContainer .dynamic-reintubacao').forEach(par => {
+            const inputs = par.querySelectorAll('input[type="date"]');
+            const reint = inputs[0].value;
+            const ext = inputs[1].value;
+            
+            // Só considerar se a reintubação ocorreu antes da TQT
+            if (reint && reint <= dataTQT) {
+                // Se o paciente foi extubado após essa reintubação e antes da TQT
+                if (ext && ext <= dataTQT) {
+                    total += diffDias(reint, ext);
+                } else {
+                    // Se não houve extubação após essa reintubação,
+                    // o paciente estava intubado até a TQT
+                    total += diffDias(reint, dataTQT);
+                }
+            }
+        });
+        
+        // 3b. Período APÓS a TQT: da TQT até o desmame (ou hoje)
+        const fimTQT = dataDesmameTQT || hoje;
+        total += diffDias(dataTQT, fimTQT);
+        
+    } else {
+        // 4. Se NÃO houver TQT → SOMAR PERÍODOS com IOT/reintubações
+        // Período inicial: IOT até primeira extubação (ou hoje)
+        const dataExtubacao = document.getElementById('dataExtubacao').value;
+        total += diffDias(dataIOT, dataExtubacao || hoje);
+
+        // Períodos de reintubação (se houver)
+        document.querySelectorAll('#reintubacoesContainer .dynamic-reintubacao').forEach(par => {
+            const inputs = par.querySelectorAll('input[type="date"]');
+            const reint = inputs[0].value;
+            const ext = inputs[1].value;
+            if (reint) {
+                total += diffDias(reint, ext || hoje);
+            }
+        });
+    }
+
+    // Garantir que o total não seja negativo
+    total = Math.max(0, total);
+    document.getElementById('diasVMAutomatico').innerText = total;
+}
+
+// ========== ADICIONAR EVENTOS PARA ATUALIZAR AUTOMATICAMENTE ==========
+// Lista de todos os campos de data que afetam o cálculo
+const camposData = ['dataIOT', 'dataExtubacao', 'dataTQT', 'dataDesmameTQT'];
+
+camposData.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+        el.addEventListener('change', calcularDiasVM);
+        el.addEventListener('input', calcularDiasVM);
+    }
+});
+
+// Monitorar mudanças nas reintubações
+document.querySelectorAll('#reintubacoesContainer .dynamic-reintubacao input').forEach(inp => {
+    inp.addEventListener('change', calcularDiasVM);
+    inp.addEventListener('input', calcularDiasVM);
+});
+
+// Chamar cálculo inicial
+calcularDiasVM();
+        
         // ========== VIA AÉREA ==========
         const radiosVia = document.querySelectorAll('input[name="viaArtificial"]');
         const detalhesTOT = document.getElementById('detalhesTOT');
@@ -2143,6 +2212,109 @@ lines.push(sep);
             const recursoInput = document.querySelector('#recursosContainer .dynamic-recurso input');
             if (recursoInput) recursoInput.value = 'TENS (Estimulação Elétrica Nervosa Transcutânea) - modo agudo';
         }, 100);
+
+        // ========== NOVA EVOLUÇÃO - LIMPAR FORMULÁRIO ==========
+function limparFormulario() {
+    // 1. Limpar todos os campos de entrada (input, select, textarea)
+    const elementos = document.querySelectorAll('#mainForm input, #mainForm select, #mainForm textarea');
+    elementos.forEach(el => {
+        if (el.type === 'radio' || el.type === 'checkbox') {
+            // Para radio/checkbox, desmarcar (exceto o primeiro radio de viaArtificial)
+            if (el.type === 'radio') {
+                // Se for o grupo viaArtificial, marcar 'nenhum' como padrão
+                if (el.name === 'viaArtificial' && el.value === 'nenhum') {
+                    el.checked = true;
+                } else {
+                    el.checked = false;
+                }
+            } else {
+                el.checked = false;
+            }
+        } else if (el.tagName === 'SELECT') {
+            // Selecionar a primeira opção (ou opção vazia)
+            el.selectedIndex = 0;
+        } else if (el.tagName === 'TEXTAREA' || el.type === 'text' || el.type === 'number' || el.type === 'date') {
+            el.value = '';
+        }
+    });
+
+    // 2. Limpar campos dinâmicos (HPP, drogas, reintubações, condutas, objetivos, recursos)
+    document.getElementById('hppContainer').innerHTML = '';
+    document.getElementById('drogasContainer').innerHTML = '';
+    document.getElementById('reintubacoesContainer').innerHTML = '';
+    document.getElementById('condutasContainer').innerHTML = '';
+    document.getElementById('objetivosContainer').innerHTML = '';
+    document.getElementById('recursosContainer').innerHTML = '';
+
+    // 3. Resetar o VT ideal
+    document.getElementById('vtIdealDisplay').innerHTML = '--';
+
+    // 4. Resetar o total de Glasgow
+    document.getElementById('totalGlasgow').innerText = '';
+
+    // 5. Resetar o cálculo de dias de VM
+    document.getElementById('diasVMAutomatico').innerText = '0';
+
+    // 6. Resetar o P/F
+    document.getElementById('pfDisplay').textContent = '--';
+    document.getElementById('pfClassificacao').textContent = 'Aguardando dados (PaO₂ e FiO₂ necessários)';
+
+    // 7. Ocultar detalhes de ventilação (voltar ao estado inicial)
+    document.querySelectorAll('#oxigenioDetalhe, #cnafDetalhe, #vniDetalhe, #vmiDetalhe').forEach(el => {
+        el.classList.add('hidden');
+    });
+    document.getElementById('viaAerea').value = 'arAmbiente';
+
+    // 8. Ocultar detalhes de via aérea artificial (voltar para 'nenhum')
+    document.querySelectorAll('input[name="viaArtificial"]').forEach(r => r.checked = false);
+    document.querySelector('input[name="viaArtificial"][value="nenhum"]').checked = true;
+    document.getElementById('detalhesTOT').classList.add('hidden');
+
+    // 9. Resetar modo para Avaliação (padrão)
+    setMode('avaliacao');
+
+    // 10. Resetar a data de avaliação para hoje
+    const hoje = new Date().toISOString().split('T')[0];
+    document.getElementById('dataAvaliacao').value = hoje;
+
+    // 11. Adicionar itens iniciais padrão (como no carregamento)
+    setTimeout(() => {
+        // Adicionar objetivo padrão
+        adicionarObjetivo();
+        const objetivoInput = document.querySelector('#objetivosContainer .dynamic-objetivo input');
+        if (objetivoInput) objetivoInput.value = 'Aumentar a ADM ativa global';
+
+        // Adicionar recurso padrão
+        adicionarRecurso();
+        const recursoInput = document.querySelector('#recursosContainer .dynamic-recurso input');
+        if (recursoInput) recursoInput.value = 'TENS (Estimulação Elétrica Nervosa Transcutânea) - modo agudo';
+    }, 100);
+
+    // 12. Scroll para o topo da página
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ========== EVENTO DO BOTÃO NOVA EVOLUÇÃO ==========
+document.getElementById('novaEvolucaoBtn').addEventListener('click', function() {
+    // Exibir caixa de confirmação com opções Sim/Não
+    if (confirm('⚠️ Você tem certeza que quer iniciar uma nova evolução?\n\nOs dados atuais serão apagados permanentemente.')) {
+        // Usuário confirmou → limpar formulário
+        limparFormulario();
+        // Opcional: feedback visual
+        const btn = this;
+        btn.innerHTML = '<i class="fas fa-check-circle fa-lg"></i> Limpo!';
+        btn.classList.remove('bg-rose-600', 'hover:bg-rose-700');
+        btn.classList.add('bg-green-600', 'hover:bg-green-700');
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fas fa-plus-circle fa-lg"></i> Nova Evolução';
+            btn.classList.remove('bg-green-600', 'hover:bg-green-700');
+            btn.classList.add('bg-rose-600', 'hover:bg-rose-700');
+        }, 1500);
+    } else {
+        // Usuário cancelou → não faz nada
+        console.log('Nova evolução cancelada pelo usuário.');
+    }
+});
     </script>
 </body>
 </html>
