@@ -1201,7 +1201,7 @@ document.getElementById('gasoPao2').addEventListener('input', calcularPF);
 document.getElementById('gasoFio2').addEventListener('input', calcularPF);
         
         
-        // ========== CÁLCULO DIAS VM (CORRIGIDO) ==========
+// ========== CÁLCULO DIAS VM (CORRIGIDO E COM EVENTOS) ==========
 function diffDias(inicio, fim) {
     if (!inicio) return 0;
     const fimDate = fim ? new Date(fim) : new Date();
@@ -1252,6 +1252,27 @@ function calcularDiasVM() {
     document.getElementById('diasVMAutomatico').innerText = total;
 }
 
+// ========== ADICIONAR EVENTOS PARA ATUALIZAR AUTOMATICAMENTE ==========
+// Lista de todos os campos de data que afetam o cálculo
+const camposData = ['dataIOT', 'dataExtubacao', 'dataTQT', 'dataDesmameTQT'];
+
+camposData.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+        el.addEventListener('change', calcularDiasVM);
+        el.addEventListener('input', calcularDiasVM); // também em tempo real
+    }
+});
+
+// Também monitorar mudanças nas reintubações (já existe no addReintubacaoPar)
+// Reforçar para os existentes
+document.querySelectorAll('#reintubacoesContainer .dynamic-reintubacao input').forEach(inp => {
+    inp.addEventListener('change', calcularDiasVM);
+});
+
+// Chamar cálculo inicial
+calcularDiasVM();
+        
         // ========== VIA AÉREA ==========
         const radiosVia = document.querySelectorAll('input[name="viaArtificial"]');
         const detalhesTOT = document.getElementById('detalhesTOT');
