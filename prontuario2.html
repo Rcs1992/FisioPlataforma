@@ -1160,8 +1160,7 @@
         }
         document.getElementById('addReintubacaoBtn').onclick = () => addReintubacaoPar(null, null);
 
-        // ========== CÁLCULO DIAS VM ==========
-      
+            
         // ========== CÁLCULO P/F (PaO2/FiO2) ==========
 function calcularPF() {
     const pao2 = parseFloat(document.getElementById('gasoPao2').value);
@@ -1202,44 +1201,56 @@ document.getElementById('gasoPao2').addEventListener('input', calcularPF);
 document.getElementById('gasoFio2').addEventListener('input', calcularPF);
         
         
-        function diffDias(inicio, fim) {
-            return Math.ceil((new Date(fim) - new Date(inicio)) / (1000 * 60 * 60 * 24));
-        }
+        // ========== CÁLCULO DIAS VM (CORRIGIDO) ==========
+function diffDias(inicio, fim) {
+    if (!inicio) return 0;
+    const fimDate = fim ? new Date(fim) : new Date();
+    const inicioDate = new Date(inicio);
+    return Math.ceil((fimDate - inicioDate) / (1000 * 60 * 60 * 24));
+}
 
-        function calcularDiasVM() {
-            let total = 0,
-                hoje = new Date().toISOString().slice(0, 10);
-            let iot = document.getElementById('dataIOT').value;
-            if (!iot) {
-                document.getElementById('diasVMAutomatico').innerText = '0';
-                return;
+function calcularDiasVM() {
+    let total = 0;
+    const hoje = new Date().toISOString().slice(0, 10);
+    
+    // 1. Verifica se há IOT
+    const dataIOT = document.getElementById('dataIOT').value;
+    if (!dataIOT) {
+        document.getElementById('diasVMAutomatico').innerText = '0';
+        return;
+    }
+
+    // 2. Verifica se há TQT (traqueostomia)
+    const dataTQT = document.getElementById('dataTQT').value;
+    const dataDesmameTQT = document.getElementById('dataDesmameTQT').value;
+
+    // 3. Se houver TQT, o período é contínuo da IOT até o desmame da TQT (ou hoje)
+    if (dataTQT) {
+        // O período de VM é da IOT até o desmame da TQT (ou hoje)
+        const fim = dataDesmameTQT || hoje;
+        total = diffDias(dataIOT, fim);
+    } 
+    // 4. Se NÃO houver TQT, considera os períodos com IOT/extubações/reintubações
+    else {
+        // Período inicial: IOT até primeira extubação (ou hoje)
+        const dataExtubacao = document.getElementById('dataExtubacao').value;
+        total += diffDias(dataIOT, dataExtubacao || hoje);
+
+        // Períodos de reintubação (se houver)
+        document.querySelectorAll('#reintubacoesContainer .dynamic-reintubacao').forEach(par => {
+            const inputs = par.querySelectorAll('input[type="date"]');
+            const reint = inputs[0].value;
+            const ext = inputs[1].value;
+            if (reint) {
+                total += diffDias(reint, ext || hoje);
             }
-            let extIni = document.getElementById('dataExtubacao').value;
-            total += diffDias(iot, extIni || hoje);
-            document.querySelectorAll('#reintubacoesContainer .dynamic-reintubacao').forEach(par => {
-                let reint = par.querySelector('input[type="date"]:first-child').value;
-                let ext = par.querySelector('input[type="date"]:last-child').value;
-                if (reint) total += diffDias(reint, ext || hoje);
-            });
-            let tqt = document.getElementById('dataTQT').value,
-                desmame = document.getElementById('dataDesmameTQT').value;
-            if (tqt) {
-                let ultExt = document.getElementById('dataExtubacao').value;
-                document.querySelectorAll('#reintubacoesContainer .dynamic-reintubacao input[type="date"]:last-child').forEach(inp => {
-                    if (inp.value > ultExt) ultExt = inp.value;
-                });
-                let inicio = (ultExt && tqt > ultExt) ? tqt : (tqt > iot ? tqt : iot);
-                let fim = desmame || hoje;
-                if (fim > inicio) total += diffDias(inicio, fim);
-            }
-            total = Math.max(0, total);
-            document.getElementById('diasVMAutomatico').innerText = total;
-            document.getElementById('diasVM').value = total;
-        }
-        document.getElementById('dataIOT').addEventListener('change', calcularDiasVM);
-        document.getElementById('dataExtubacao').addEventListener('change', calcularDiasVM);
-        document.getElementById('dataTQT').addEventListener('change', calcularDiasVM);
-        document.getElementById('dataDesmameTQT').addEventListener('change', calcularDiasVM);
+        });
+    }
+
+    // Garantir que o total não seja negativo
+    total = Math.max(0, total);
+    document.getElementById('diasVMAutomatico').innerText = total;
+}
 
         // ========== VIA AÉREA ==========
         const radiosVia = document.querySelectorAll('input[name="viaArtificial"]');
