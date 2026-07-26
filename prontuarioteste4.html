@@ -1513,7 +1513,7 @@ calcularDiasVM();
         document.getElementById('addCondutaBtn').onclick = () => addConduta(null);
 
         // ========== MODO AVALIAÇÃO/EVOLUÇÃO ==========
-        let currentMode = 'evolucao';
+        let currentMode = 'avaliacao';
         const assessmentSec = document.getElementById('assessmentOnlySection'),
             diagWrap = document.getElementById('diagnosticoWrapper');
         const btnAval = document.getElementById('btnAvaliacao'),
@@ -1537,7 +1537,7 @@ calcularDiasVM();
         }
         btnAval.onclick = () => setMode('avaliacao');
         btnEvo.onclick = () => setMode('evolucao');
-        setMode('avaliacao');
+        setMode('evolucao');
 
         // ========== EXPORTAR/IMPORTAR JSON ==========
         function coletarEstadoCompleto() {
