@@ -2213,7 +2213,6 @@ lines.push(sep);
             if (recursoInput) recursoInput.value = 'TENS (Estimulação Elétrica Nervosa Transcutânea) - modo agudo';
         }, 100);
 
-        // ========== NOVA EVOLUÇÃO - LIMPAR FORMULÁRIO ==========
 // ========== NOVA EVOLUÇÃO - LIMPAR FORMULÁRIO ==========
 function limparFormulario() {
     // 1. Limpar todos os campos de entrada (input, select, textarea)
@@ -2247,11 +2246,12 @@ function limparFormulario() {
                 el.selectedIndex = 0;
             } else if (el.id === 'qtdAtendimentos') {
                 el.selectedIndex = 0;
-            } else if (el.id === 'glasgowOlhos' || el.id === 'glasgowVerbal' || el.id === 'glasgowMotor') {
-                // Para Glasgow, definir valores que resultem em um total razoável
-                if (el.id === 'glasgowOlhos') el.value = '4';
-                else if (el.id === 'glasgowVerbal') el.value = '5';
-                else if (el.id === 'glasgowMotor') el.value = '6';
+            } else if (el.id === 'glasgowOlhos') {
+                el.value = '4';
+            } else if (el.id === 'glasgowVerbal') {
+                el.value = '5';
+            } else if (el.id === 'glasgowMotor') {
+                el.value = '6';
             } else if (el.id === 'rassValor') {
                 el.value = '0';
             } else if (el.id === 'tipoOxigenio') {
@@ -2266,7 +2266,23 @@ function limparFormulario() {
         }
     });
 
-    // 2. Limpar campos dinâmicos (HPP, drogas, reintubações, condutas, objetivos, recursos)
+    // 2. FORÇAR A VISIBILIDADE CORRETA DOS CAMPOS DE CONSCIÊNCIA
+    // Isso é crucial para garantir que o Glasgow apareça e o RASS fique oculto
+    const tipoConsc = document.getElementById('tipoConsciencia');
+    const glasgowDiv = document.getElementById('glasgowFields');
+    const rassDiv = document.getElementById('rassFields');
+    
+    // Garantir que o tipo seja 'glasgow'
+    tipoConsc.value = 'glasgow';
+    
+    // Mostrar Glasgow, ocultar RASS
+    glasgowDiv.classList.remove('hidden');
+    rassDiv.classList.add('hidden');
+    
+    // Atualizar o total do Glasgow
+    atualizarGlasgow();
+
+    // 3. Limpar campos dinâmicos (HPP, drogas, reintubações, condutas, objetivos, recursos)
     document.getElementById('hppContainer').innerHTML = '';
     document.getElementById('drogasContainer').innerHTML = '';
     document.getElementById('reintubacoesContainer').innerHTML = '';
@@ -2274,11 +2290,8 @@ function limparFormulario() {
     document.getElementById('objetivosContainer').innerHTML = '';
     document.getElementById('recursosContainer').innerHTML = '';
 
-    // 3. Resetar o VT ideal
+    // 4. Resetar o VT ideal
     document.getElementById('vtIdealDisplay').innerHTML = '--';
-
-    // 4. Resetar o total de Glasgow (atualizar após definir os valores)
-    atualizarGlasgow();
 
     // 5. Resetar o cálculo de dias de VM
     document.getElementById('diasVMAutomatico').innerText = '0';
