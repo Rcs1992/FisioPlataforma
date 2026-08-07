@@ -221,6 +221,48 @@
                 margin: 0;
             }
         }
+        
+        /* Estilo específico para VMI - melhor alinhamento */
+        .vmi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px 15px;
+            align-items: end;
+        }
+        .vmi-grid .vmi-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .vmi-grid .vmi-item label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #475569;
+            letter-spacing: 0.3px;
+        }
+        .vmi-grid .vmi-item input,
+        .vmi-grid .vmi-item select {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            background: white;
+            transition: border-color 0.15s ease;
+        }
+        .vmi-grid .vmi-item input:focus,
+        .vmi-grid .vmi-item select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            ring: 2px solid #93c5fd;
+        }
+        
+        /* Ajuste responsivo para telas menores */
+        @media (max-width: 640px) {
+            .vmi-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
     </style>
 </head>
 <body class="font-sans antialiased">
@@ -368,15 +410,48 @@
                 </div>
                 <div id="cnafDetalhe" class="hidden param-card"><label>Fluxo (L/min)</label><input id="cnafFluxo" class="w-24 border rounded p-1"> <label>FiO2 (%)</label><input id="cnafFio2" class="w-24 border rounded p-1"></div>
                 <div id="vniDetalhe" class="hidden param-card"><label>IPAP</label><input id="vniIpap" class="w-20 border rounded p-1"> <label>EPAP</label><input id="vniEpap" class="w-20 border rounded p-1"> <label>FiO2</label><input id="vniFio2" class="w-24 border rounded p-1"></div>
-                <div id="vmiDetalhe" class="hidden param-card grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <label>Modo <select id="vmiModo"><option>PCV</option><option>VCV</option><option>PSV</option><option>PRVC</option><option>SIMV-PCV</option><option>SIMV-VCV</option></select></label>
-                    <label>VT (ml) <input id="vmiVt" class="border rounded p-1"></label>
-                    <label>FR (irpm) <input id="vmiFr" class="border rounded p-1"></label>
-                    <label>PEEP (cmH₂O) <input id="vmiPeep" class="border rounded p-1"></label>
-                    <label>FiO2 (%) <input id="vmiFio2" class="border rounded p-1"></label>
-                    <label>PINSP (cmH₂O) <input id="vmiPinsp" placeholder="Pinsp" class="border rounded p-1"></label>
-                    <label>PPICO (cmH₂O) <input id="vmiPpico" placeholder="PPico" class="border rounded p-1"></label>
+                
+                <!-- VMI DETALHE - VERSÃO MELHORADA COM GRID ORGANIZADO -->
+                <div id="vmiDetalhe" class="hidden param-card">
+                    <div class="vmi-grid">
+                        <div class="vmi-item">
+                            <label for="vmiModo">Modo Ventilatório</label>
+                            <select id="vmiModo">
+                                <option>PCV</option>
+                                <option>VCV</option>
+                                <option>PSV</option>
+                                <option>PRVC</option>
+                                <option>SIMV-PCV</option>
+                                <option>SIMV-VCV</option>
+                            </select>
+                        </div>
+                        <div class="vmi-item">
+                            <label for="vmiVt">VT (ml)</label>
+                            <input id="vmiVt" type="number" placeholder="Volume Corrente">
+                        </div>
+                        <div class="vmi-item">
+                            <label for="vmiFr">FR (irpm)</label>
+                            <input id="vmiFr" type="number" placeholder="Frequência Respiratória">
+                        </div>
+                        <div class="vmi-item">
+                            <label for="vmiPeep">PEEP (cmH₂O)</label>
+                            <input id="vmiPeep" type="number" step="0.5" placeholder="Pressão Expiratória">
+                        </div>
+                        <div class="vmi-item">
+                            <label for="vmiFio2">FiO₂ (%)</label>
+                            <input id="vmiFio2" type="number" min="21" max="100" placeholder="21-100">
+                        </div>
+                        <div class="vmi-item">
+                            <label for="vmiPinsp">PINSP (cmH₂O)</label>
+                            <input id="vmiPinsp" type="number" step="0.5" placeholder="Pressão Inspiratória">
+                        </div>
+                        <div class="vmi-item">
+                            <label for="vmiPpico">PPICO (cmH₂O)</label>
+                            <input id="vmiPpico" type="number" step="0.5" placeholder="Pressão de Pico">
+                        </div>
+                    </div>
                 </div>
+                
                 <textarea id="obsVentilatoria" rows="2" placeholder="Observações ventilatorias" class="mt-3 w-full border rounded-xl p-2"></textarea>
             </div>
 
@@ -1462,7 +1537,7 @@ calcularDiasVM();
         }
         btnAval.onclick = () => setMode('avaliacao');
         btnEvo.onclick = () => setMode('evolucao');
-        setMode('avaliacao');
+        setMode('evolucao');
 
         // ========== EXPORTAR/IMPORTAR JSON ==========
         function coletarEstadoCompleto() {
