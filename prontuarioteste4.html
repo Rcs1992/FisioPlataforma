@@ -1615,22 +1615,25 @@ calcularDiasVM();
         }
 
         function restaurarEstadoCompleto(estado) {
-            setMode(estado.mode);
-            const camposPermitidos = ['nome', 'idade', 'sexo', 'prontuario', 'dataInternacao', 'dataAvaliacao', 'unidade',
-                'leito', 'historiaClinica'
-            ];
-            for (let [id, val] of Object.entries(estado.campos)) {
-                if (camposPermitidos.includes(id)) {
-                    let el = document.getElementById(id);
-                    if (el) el.value = val;
-                }
-            }
-            hppContainer.innerHTML = '';
-            if (estado.hpp && estado.hpp.length) {
-                estado.hpp.forEach(c => addComorb(c));
-            }
+    setMode(estado.mode);
+    const camposPermitidos = ['nome', 'idade', 'sexo', 'prontuario', 'dataInternacao', 'dataAvaliacao', 'unidade',
+        'leito', 'historiaClinica'
+    ];
+    for (let [id, val] of Object.entries(estado.campos)) {
+        if (camposPermitidos.includes(id)) {
+            let el = document.getElementById(id);
+            if (el) el.value = val;
         }
+    }
+    hppContainer.innerHTML = '';
+    if (estado.hpp && estado.hpp.length) {
+        estado.hpp.forEach(c => addComorb(c));
+    }
 
+    // Sempre atualiza a Data Avaliação/Evolução para o dia atual,
+    // independente do que veio salvo no arquivo importado
+    document.getElementById('dataAvaliacao').value = new Date().toISOString().split('T')[0];
+}
         async function exportarJson() {
     let estado = coletarEstadoCompleto();
     const jsonString = JSON.stringify(estado, null, 2);
