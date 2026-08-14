@@ -1631,17 +1631,53 @@ calcularDiasVM();
             }
         }
 
-        document.getElementById('btnExportarJson').addEventListener('click', () => {
-            let estado = coletarEstadoCompleto();
-            let blob = new Blob([JSON.stringify(estado, null, 2)], { type: 'application/json' });
-            let url = URL.createObjectURL(blob);
-            let a = document.createElement('a');
-            a.href = url;
-            a.download = `fisioterapia_${document.getElementById('prontuario').value || 'paciente'}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-        });
+        async function exportarJson() {
+    let estado = coletarEstadoCompleto();
+    const jsonString = JSON.stringify(estado, null, 2);
 
+    // Monta o nome do arquivo: NomeDoPaciente_Prontuario.json
+    const nomePaciente = (document.getElementById('nome').value || 'paciente')
+        .trim()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // remove acentos
+        .replace(/[^a-zA-Z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '');
+    const prontuarioVal = (document.getElementById('prontuario').value || 'sem_prontuario')
+        .trim()
+        .replace(/[^a-zA-Z0-9]+/g, '_');
+    const nomeArquivo = `${nomePaciente || 'paciente'}_${prontuarioVal}.json`;
+
+    // Navegadores compatíveis (Chrome, Edge): abre o seletor de pasta/local
+    if (window.showSaveFilePicker) {
+        try {
+            const handle = await window.showSaveFilePicker({
+                suggestedName: nomeArquivo,
+                types: [{
+                    description: 'Arquivo JSON',
+                    accept: { 'application/json': ['.json'] }
+                }]
+            });
+            const writable = await handle.createWritable();
+            await writable.write(jsonString);
+            await writable.close();
+            return;
+        } catch (err) {
+            if (err.name === 'AbortError') return; // usuário cancelou
+            console.error('Erro ao salvar com seletor de pasta:', err);
+            // segue para o fallback abaixo
+        }
+    }
+
+    // Fallback (Firefox, Safari, etc.): baixa para a pasta padrão do navegador
+    let blob = new Blob([jsonString], { type: 'application/json' });
+    let url = URL.createObjectURL(blob);
+    let a = document.createElement('a');
+    a.href = url;
+    a.download = nomeArquivo;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+document.getElementById('btnExportarJson').addEventListener('click', exportarJson);
         document.getElementById('btnImportar').addEventListener('click', () => document.getElementById('importFileInput')
             .click());
         document.getElementById('importFileInput').addEventListener('change', (e) => {
