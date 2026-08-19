@@ -2198,11 +2198,13 @@ document.getElementById('gerarPdfBtn').addEventListener('click', gerarPDF);
             lines.push(`Unidade: ${document.getElementById('unidade').value} | Leito: ${document.getElementById('leito').value}`);
             lines.push(sep);
 
-            // HPP e História
-            lines.push("HISTÓRIA CLÍNICA / HPP");
+            // História clínica / HDA em destaque + HPP como informação complementar
+            lines.push("DIAGNÓSTICO / HISTÓRIA DA DOENÇA ATUAL (HDA)");
             lines.push(subSep);
-            lines.push(`HPP: ${estado.hpp.join(', ') || 'Nenhuma'}`);
-            lines.push(`História Clínica: ${document.getElementById('historiaClinica').value || '---'}`);
+            lines.push(document.getElementById('historiaClinica').value || '---');
+            lines.push("");
+            lines.push("HPP / COMORBIDADES");
+            lines.push(`• ${estado.hpp.join(' | ') || 'Nenhuma'}`);
             lines.push(sep);
 
             // Sinais e VT
