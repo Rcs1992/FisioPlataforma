@@ -263,6 +263,15 @@
                 grid-template-columns: 1fr 1fr;
             }
         }
+        .folder-status-dot {
+            width: 0.65rem;
+            height: 0.65rem;
+            border-radius: 9999px;
+            display: inline-block;
+            background: #94a3b8;
+        }
+        .folder-status-dot.connected { background: #16a34a; }
+        .folder-status-dot.error { background: #dc2626; }
     </style>
 </head>
 <body class="font-sans antialiased">
@@ -287,6 +296,7 @@
             <button id="btnAvaliacao" class="transition-all duration-200 bg-blue-700 hover:bg-blue-800 text-white font-bold py-2.5 px-6 rounded-xl shadow-md flex items-center gap-2"><i class="fas fa-clipboard-list"></i> AVALIAÇÃO</button>
             <button id="btnEvolucao" class="transition-all duration-200 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2.5 px-6 rounded-xl shadow-md flex items-center gap-2"><i class="fas fa-chart-line"></i> EVOLUÇÃO</button>
             <button id="btnImportar" class="bg-amber-600 hover:bg-amber-700 text-white py-2.5 px-5 rounded-xl shadow-md flex items-center gap-2"><i class="fas fa-upload"></i> Importar</button>
+            <button id="btnSelecionarPasta" type="button" class="bg-teal-700 hover:bg-teal-800 text-white py-2.5 px-5 rounded-xl shadow-md flex items-center gap-2"><i class="fas fa-folder-open"></i> Pasta de evoluções</button>
             <input type="file" id="importFileInput" accept=".json" style="display:none">
         </div>
 
@@ -303,6 +313,22 @@
                     <div><label class="block text-sm font-semibold text-gray-700">Data Avaliação/Evolução</label><input type="date" id="dataAvaliacao" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5"></div>
                     <div><label class="block text-sm font-semibold text-gray-700">Unidade</label><select id="unidade" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5"><option>Sala Verde Adulto</option><option>Sala Amarela Adulto</option><option>Sala Vermelha Adulto</option><option>Sala Amarela Pediátrica</option><option>Sala Vermelha Pediátrica</option></select></div>
                     <div><label class="block text-sm font-semibold text-gray-700">Leito</label><input type="text" id="leito" class="mt-1 w-full border border-gray-300 rounded-xl p-2.5"></div>
+                </div>
+                <div id="pastaStatus" class="mt-4 text-sm text-slate-600 flex items-center gap-2 no-print">
+                    <span id="pastaStatusDot" class="folder-status-dot"></span>
+                    <span id="pastaStatusTexto">Selecione a pasta de evoluções para ativar a busca automática.</span>
+                </div>
+                <div id="pacienteEncontrado" class="hidden mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-4 no-print">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                        <div>
+                            <p class="font-bold text-emerald-900"><i class="fas fa-user-check mr-2"></i>Paciente encontrado</p>
+                            <p id="pacienteEncontradoTexto" class="text-sm text-emerald-800 mt-1"></p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button id="btnCarregarPaciente" type="button" class="bg-emerald-700 hover:bg-emerald-800 text-white font-semibold px-4 py-2 rounded-lg">Carregar dados anteriores</button>
+                            <button id="btnIgnorarPaciente" type="button" class="bg-white hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-semibold px-4 py-2 rounded-lg">Ignorar</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -654,6 +680,9 @@
     </button>
     <button type="button" id="copiarBtn" class="bg-blue-600 hover:bg-blue-700 text-white text-xl py-3 px-12 rounded-full shadow-xl transition-all flex items-center gap-3">
         <i class="fas fa-copy fa-lg"></i> Copiar Relatório
+    </button>
+    <button type="button" id="copiarPassagemBtn" class="bg-violet-700 hover:bg-violet-800 text-white text-xl py-3 px-10 rounded-full shadow-xl transition-all flex items-center gap-3">
+        <i class="fas fa-table-columns fa-lg"></i> Copiar para Passagem
     </button>
     <button type="button" id="novaEvolucaoBtn" class="bg-rose-600 hover:bg-rose-700 text-white text-xl py-3 px-10 rounded-full shadow-xl transition-all flex items-center gap-3">
         <i class="fas fa-plus-circle fa-lg"></i> Nova Evolução
@@ -1619,11 +1648,8 @@ calcularDiasVM();
 
         function restaurarEstadoCompleto(estado) {
     setMode(estado.mode);
-    // Campos que devem persistir ao importar o JSON.
-    // Além do cabeçalho, preserva todo o histórico de via aérea artificial.
     const camposPermitidos = ['nome', 'idade', 'sexo', 'prontuario', 'dataInternacao', 'dataAvaliacao', 'unidade',
-        'leito', 'historiaClinica',
-        'dataIOT', 'dataExtubacao', 'dataTQT', 'dataDesmameTQT'
+        'leito', 'historiaClinica'
     ];
     for (let [id, val] of Object.entries(estado.campos)) {
         if (camposPermitidos.includes(id)) {
@@ -1635,28 +1661,6 @@ calcularDiasVM();
     if (estado.hpp && estado.hpp.length) {
         estado.hpp.forEach(c => addComorb(c));
     }
-
-    // Restaura todo o histórico de reintubações + respectivas extubações.
-    reintContainer.innerHTML = '';
-    if (estado.reintPares && estado.reintPares.length) {
-        estado.reintPares.forEach(par => addReintubacaoPar(par.reint || null, par.ext || null));
-    }
-
-    // Reexibe a área de TOT quando houver histórico de IOT/extubação/reintubação/TQT/desmame.
-    const possuiHistoricoViaAerea =
-        !!document.getElementById('dataIOT').value ||
-        !!document.getElementById('dataExtubacao').value ||
-        !!document.getElementById('dataTQT').value ||
-        !!document.getElementById('dataDesmameTQT').value ||
-        (estado.reintPares && estado.reintPares.length > 0);
-
-    if (possuiHistoricoViaAerea) {
-        const radioTOT = document.querySelector('input[name="viaArtificial"][value="TOT"]');
-        if (radioTOT) radioTOT.checked = true;
-        document.getElementById('detalhesTOT').classList.remove('hidden');
-    }
-
-    calcularDiasVM();
 
     // Sempre atualiza a Data Avaliação/Evolução para o dia atual,
     // independente do que veio salvo no arquivo importado
@@ -1709,6 +1713,194 @@ calcularDiasVM();
 }
 
 document.getElementById('btnExportarJson').addEventListener('click', exportarJson);
+        // ========== PASTA DE EVOLUÇÕES E BUSCA AUTOMÁTICA POR PRONTUÁRIO ==========
+        const btnSelecionarPasta = document.getElementById('btnSelecionarPasta');
+        const prontuarioInput = document.getElementById('prontuario');
+        const pastaStatusDot = document.getElementById('pastaStatusDot');
+        const pastaStatusTexto = document.getElementById('pastaStatusTexto');
+        const pacienteEncontrado = document.getElementById('pacienteEncontrado');
+        const pacienteEncontradoTexto = document.getElementById('pacienteEncontradoTexto');
+        const btnCarregarPaciente = document.getElementById('btnCarregarPaciente');
+        const btnIgnorarPaciente = document.getElementById('btnIgnorarPaciente');
+
+        let pastaEvolucoesHandle = null;
+        let candidatoEncontrado = null;
+        let buscaProntuarioTimer = null;
+        let numeroDaBuscaAtual = 0;
+
+        function normalizarProntuario(valor) {
+            return String(valor || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+        }
+
+        function atualizarStatusPasta(texto, tipo = 'normal') {
+            pastaStatusTexto.textContent = texto;
+            pastaStatusDot.classList.remove('connected', 'error');
+            if (tipo === 'connected') pastaStatusDot.classList.add('connected');
+            if (tipo === 'error') pastaStatusDot.classList.add('error');
+        }
+
+        function ocultarPacienteEncontrado() {
+            candidatoEncontrado = null;
+            pacienteEncontrado.classList.add('hidden');
+        }
+
+        function abrirBancoPastas() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('prontuario-fisio-pastas', 1);
+                request.onupgradeneeded = () => {
+                    const db = request.result;
+                    if (!db.objectStoreNames.contains('handles')) db.createObjectStore('handles');
+                };
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        async function guardarPasta(handle) {
+            const db = await abrirBancoPastas();
+            await new Promise((resolve, reject) => {
+                const tx = db.transaction('handles', 'readwrite');
+                tx.objectStore('handles').put(handle, 'pasta-evolucoes');
+                tx.oncomplete = resolve;
+                tx.onerror = () => reject(tx.error);
+            });
+            db.close();
+        }
+
+        async function recuperarPasta() {
+            const db = await abrirBancoPastas();
+            const handle = await new Promise((resolve, reject) => {
+                const request = db.transaction('handles', 'readonly').objectStore('handles').get('pasta-evolucoes');
+                request.onsuccess = () => resolve(request.result || null);
+                request.onerror = () => reject(request.error);
+            });
+            db.close();
+            return handle;
+        }
+
+        async function pastaTemPermissao(handle, solicitar = false) {
+            if (!handle) return false;
+            const opcoes = { mode: 'read' };
+            if ((await handle.queryPermission(opcoes)) === 'granted') return true;
+            return solicitar && (await handle.requestPermission(opcoes)) === 'granted';
+        }
+
+        function timestampDoEstado(estado, arquivo) {
+            const valor = estado?.campos?.dataAvaliacao || estado?.dataAvaliacao || '';
+            let timestamp = Date.parse(valor);
+            if (!Number.isFinite(timestamp) && /^\d{2}\/\d{2}\/\d{4}$/.test(valor)) {
+                const [dia, mes, ano] = valor.split('/');
+                timestamp = Date.parse(`${ano}-${mes}-${dia}T00:00:00`);
+            }
+            return Number.isFinite(timestamp) ? timestamp : arquivo.lastModified;
+        }
+
+        function formatarDataEncontrada(timestamp) {
+            if (!Number.isFinite(timestamp)) return 'data não informada';
+            return new Intl.DateTimeFormat('pt-BR', { timeZone: 'UTC' }).format(new Date(timestamp));
+        }
+
+        async function buscarPacientePorProntuario() {
+            const prontuarioBuscado = normalizarProntuario(prontuarioInput.value);
+            const idDestaBusca = ++numeroDaBuscaAtual;
+            ocultarPacienteEncontrado();
+            if (prontuarioBuscado.length < 3 || !pastaEvolucoesHandle) return;
+
+            if (!(await pastaTemPermissao(pastaEvolucoesHandle))) {
+                atualizarStatusPasta('Clique em “Pasta de evoluções” para autorizar novamente o acesso.', 'error');
+                return;
+            }
+
+            atualizarStatusPasta(`Procurando o prontuário ${prontuarioInput.value.trim()}...`, 'connected');
+            const candidatos = [];
+            try {
+                for await (const [nomeArquivo, handle] of pastaEvolucoesHandle.entries()) {
+                    if (idDestaBusca !== numeroDaBuscaAtual) return;
+                    if (handle.kind !== 'file' || !nomeArquivo.toLowerCase().endsWith('.json')) continue;
+                    const baseNormalizada = normalizarProntuario(nomeArquivo.replace(/\.json$/i, ''));
+                    if (!baseNormalizada.endsWith(prontuarioBuscado)) continue;
+
+                    try {
+                        const arquivo = await handle.getFile();
+                        const estado = JSON.parse(await arquivo.text());
+                        const prontuarioInterno = normalizarProntuario(estado?.campos?.prontuario || estado?.prontuario);
+                        if (prontuarioInterno !== prontuarioBuscado) continue;
+                        candidatos.push({ estado, arquivo, timestamp: timestampDoEstado(estado, arquivo) });
+                    } catch (erroArquivo) {
+                        console.warn('JSON ignorado por estar inválido:', nomeArquivo, erroArquivo);
+                    }
+                }
+
+                if (idDestaBusca !== numeroDaBuscaAtual) return;
+                if (!candidatos.length) {
+                    atualizarStatusPasta(`Nenhuma evolução encontrada para o prontuário ${prontuarioInput.value.trim()}.`, 'connected');
+                    return;
+                }
+
+                candidatos.sort((a, b) => (b.timestamp - a.timestamp) || (b.arquivo.lastModified - a.arquivo.lastModified));
+                candidatoEncontrado = candidatos[0];
+                const nome = candidatoEncontrado.estado?.campos?.nome || 'paciente sem nome informado';
+                pacienteEncontradoTexto.textContent = `${nome} — última evolução: ${formatarDataEncontrada(candidatoEncontrado.timestamp)}${candidatos.length > 1 ? ` (${candidatos.length} arquivos encontrados; será usado o mais recente)` : ''}.`;
+                pacienteEncontrado.classList.remove('hidden');
+                atualizarStatusPasta('Pasta conectada. Evolução anterior localizada.', 'connected');
+            } catch (erro) {
+                console.error('Erro ao pesquisar a pasta:', erro);
+                atualizarStatusPasta('Não foi possível pesquisar a pasta. Selecione-a novamente.', 'error');
+            }
+        }
+
+        btnSelecionarPasta.addEventListener('click', async () => {
+            if (!window.showDirectoryPicker) {
+                alert('A busca automática por pasta exige Google Chrome ou Microsoft Edge atualizado. A importação manual continua disponível.');
+                return;
+            }
+            try {
+                // O botão sempre abre o seletor, permitindo trocar de pasta quando necessário.
+                const handle = await window.showDirectoryPicker({ mode: 'read', id: 'pasta-evolucoes-fisioterapia' });
+                pastaEvolucoesHandle = handle;
+                await guardarPasta(handle);
+                atualizarStatusPasta(`Pasta conectada: ${handle.name}`, 'connected');
+                buscarPacientePorProntuario();
+            } catch (erro) {
+                if (erro.name !== 'AbortError') {
+                    console.error('Erro ao selecionar a pasta:', erro);
+                    atualizarStatusPasta('Não foi possível acessar a pasta selecionada.', 'error');
+                }
+            }
+        });
+
+        prontuarioInput.addEventListener('input', () => {
+            clearTimeout(buscaProntuarioTimer);
+            ocultarPacienteEncontrado();
+            buscaProntuarioTimer = setTimeout(buscarPacientePorProntuario, 600);
+        });
+
+        btnCarregarPaciente.addEventListener('click', () => {
+            if (!candidatoEncontrado) return;
+            restaurarEstadoCompleto(candidatoEncontrado.estado);
+            setMode('evolucao');
+            ocultarPacienteEncontrado();
+            atualizarStatusPasta('Dados anteriores carregados. Nova evolução pronta para preenchimento.', 'connected');
+            document.getElementById('dataAvaliacao').value = new Date().toISOString().split('T')[0];
+        });
+
+        btnIgnorarPaciente.addEventListener('click', ocultarPacienteEncontrado);
+
+        (async function iniciarPastaSalva() {
+            if (!window.showDirectoryPicker || !window.indexedDB) return;
+            try {
+                pastaEvolucoesHandle = await recuperarPasta();
+                if (!pastaEvolucoesHandle) return;
+                if (await pastaTemPermissao(pastaEvolucoesHandle)) {
+                    atualizarStatusPasta(`Pasta conectada: ${pastaEvolucoesHandle.name}`, 'connected');
+                } else {
+                    atualizarStatusPasta('Pasta lembrada. Clique em “Pasta de evoluções” para autorizar o acesso.', 'error');
+                }
+            } catch (erro) {
+                console.warn('Não foi possível recuperar a pasta salva:', erro);
+            }
+        })();
+
         document.getElementById('btnImportar').addEventListener('click', () => document.getElementById('importFileInput')
             .click());
         document.getElementById('importFileInput').addEventListener('change', (e) => {
@@ -2223,13 +2415,13 @@ document.getElementById('gerarPdfBtn').addEventListener('click', gerarPDF);
             lines.push(`Unidade: ${document.getElementById('unidade').value} | Leito: ${document.getElementById('leito').value}`);
             lines.push(sep);
 
-            // História clínica / HDA em destaque + HPP como informação complementar
-            lines.push("DIAGNÓSTICO / HISTÓRIA DA DOENÇA ATUAL (HDA)");
+            // Diagnóstico/HDA em destaque, seguido do HPP
+            lines.push("DIAGNÓSTICO / HDA");
             lines.push(subSep);
             lines.push(document.getElementById('historiaClinica').value || '---');
             lines.push("");
-            lines.push("HPP / COMORBIDADES");
-            lines.push(`• ${estado.hpp.join(' | ') || 'Nenhuma'}`);
+            lines.push("HPP (COMORBIDADES)");
+            lines.push(`${estado.hpp.join(', ') || 'Nenhuma'}`);
             lines.push(sep);
 
             // Sinais e VT
@@ -2380,6 +2572,141 @@ lines.push(sep);
         }
 
         document.getElementById('copiarBtn').addEventListener('click', copiarRelatorio);
+
+        // ========== COPIAR PARA PASSAGEM (1 LINHA / 7 COLUNAS NO WORD) ==========
+        function copiarParaPassagem() {
+            const estado = coletarEstadoCompleto();
+
+            const valor = id => (document.getElementById(id)?.value || '').trim();
+            const maiusculas = texto => (texto || '---').toLocaleUpperCase('pt-BR');
+            const escaparHtml = texto => String(texto || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;')
+                .replace(/\n/g, '<br>');
+            const formatarData = data => {
+                if (!data) return '---';
+                const partes = data.split('-');
+                return partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : data;
+            };
+
+            const leito = maiusculas(valor('leito'));
+            const nome = maiusculas(valor('nome'));
+            const prontuario = maiusculas(valor('prontuario'));
+            const idade = valor('idade') ? `${valor('idade')} ANOS` : '---';
+            const internacao = formatarData(valor('dataInternacao'));
+            const hpp = estado.hpp.length ? estado.hpp.join(', ') : 'NENHUMA';
+            const diagnostico = maiusculas(valor('historiaClinica'));
+
+            const consciencia = tipoConsc.value === 'glasgow'
+                ? `GLASGOW ${document.getElementById('totalGlasgow').innerText || '---'}`
+                : `RASS ${valor('rassValor') || '---'}`;
+            const obsConsciencia = valor('obsConsciencia');
+            const neurologico = maiusculas([consciencia, obsConsciencia].filter(Boolean).join('. '));
+
+            let suporteRespiratorio = valor('viaAerea') || '---';
+            if (suporteRespiratorio === 'Ar Ambiente') {
+                suporteRespiratorio = 'EM AR AMBIENTE';
+            } else if (suporteRespiratorio === 'oxigenoterapia') {
+                suporteRespiratorio = `${valor('tipoOxigenio') || 'OXIGENOTERAPIA'} ${valor('litragemO2') ? valor('litragemO2') + ' L/MIN' : ''}`;
+            } else if (suporteRespiratorio === 'CNAF') {
+                suporteRespiratorio = `CNAF: FLUXO ${valor('cnafFluxo') || '---'} L/MIN, FIO2 ${valor('cnafFio2') || '---'}%`;
+            } else if (suporteRespiratorio === 'VNI') {
+                suporteRespiratorio = `VNI: IPAP ${valor('vniIpap') || '---'}, EPAP ${valor('vniEpap') || '---'}, FIO2 ${valor('vniFio2') || '---'}%`;
+            } else if (suporteRespiratorio === 'VMI') {
+                suporteRespiratorio = `VMI ${valor('vmiModo') || '---'}: VT ${valor('vmiVt') || '---'} ML, FR ${valor('vmiFr') || '---'}, PEEP ${valor('vmiPeep') || '---'}, FIO2 ${valor('vmiFio2') || '---'}%`;
+            }
+            const dadosRespiratorios = [
+                suporteRespiratorio,
+                valor('fr') ? `FR ${valor('fr')} IRPM` : '',
+                valor('sato2') ? `SATO2 ${valor('sato2')}%` : '',
+                valor('ausculta'),
+                valor('obsVentilatoria')
+            ].filter(Boolean).join('. ');
+
+            const drogas = estado.drogas
+                .filter(d => d.droga)
+                .map(d => `${d.droga}${d.dose ? ' ' + d.dose + ' ML/H' : ''}`)
+                .join('; ');
+            const dadosCardiovasculares = [
+                (valor('paSist') || valor('paDiast')) ? `PA ${valor('paSist') || '---'}/${valor('paDiast') || '---'} MMHG` : '',
+                valor('fc') ? `FC ${valor('fc')} BPM` : '',
+                drogas ? `DROGAS EM USO: ${drogas}` : 'SEM DROGAS VASOATIVAS REGISTRADAS'
+            ].filter(Boolean).join('. ');
+
+            const gasometria = [
+                valor('gasoPh') ? `PH ${valor('gasoPh')}` : '',
+                valor('gasoPaco2') ? `PACO2 ${valor('gasoPaco2')}` : '',
+                valor('gasoPao2') ? `PAO2 ${valor('gasoPao2')}` : '',
+                valor('gasoHco3') ? `HCO3 ${valor('gasoHco3')}` : '',
+                valor('gasoBe') ? `BE ${valor('gasoBe')}` : '',
+                valor('gasoSo2') ? `SO2 ${valor('gasoSo2')}%` : '',
+                valor('gasoLactato') ? `LAC ${valor('gasoLactato')}` : '',
+                valor('gasoFio2') ? `FIO2 ${valor('gasoFio2')}%` : ''
+            ].filter(Boolean).join(' | ');
+            const evolucao = [
+                `NEUROLÓGICO: ${neurologico}`,
+                `RESPIRATÓRIO: ${maiusculas(dadosRespiratorios)}`,
+                `CARDIOVASCULAR / INFUSÕES: ${maiusculas(dadosCardiovasculares)}`,
+                gasometria ? `GSA: ${gasometria}` : 'GSA: ---'
+            ].join('\n\n');
+            const cbdf = maiusculas(valor('diagnosticoFisio'));
+            const condutas = estado.condutas.length
+                ? estado.condutas.map((conduta, indice) => `${indice + 1}. ${maiusculas(conduta)}`).join('\n')
+                : '---';
+            const roundMultidisciplinar = maiusculas(valor('observacoesLivres'));
+
+            const celulasHtml = [
+                `<strong>LEITO ${escaparHtml(leito)}</strong>`,
+                `<strong>${escaparHtml(nome)}</strong><br><br><strong>P:</strong> ${escaparHtml(prontuario)}<br><strong>I:</strong> ${escaparHtml(idade)}<br><strong>IH:</strong> ${escaparHtml(internacao)}`,
+                `<strong>DIAGNÓSTICO:</strong><br>${escaparHtml(diagnostico)}<br><br><strong>HPP:</strong><br>${escaparHtml(maiusculas(hpp))}`,
+                `<strong>EVOLUÇÃO / INFUSÕES / VENTILAÇÃO / GSA</strong><br><br>${escaparHtml(evolucao)}`,
+                `<strong>CBDF:</strong><br>${escaparHtml(cbdf)}`,
+                `<strong>CONDUTAS:</strong><br>${escaparHtml(condutas)}`,
+                `<strong>ROUND MULTIDISCIPLINAR:</strong><br>${escaparHtml(roundMultidisciplinar)}`
+            ];
+
+            const estiloCelula = 'border:1px solid #000;padding:6px;vertical-align:top;font-family:Arial,sans-serif;font-size:10pt;';
+            const html = `<table style="border-collapse:collapse;width:100%;"><tbody><tr>${celulasHtml.map(c => `<td style="${estiloCelula}">${c}</td>`).join('')}</tr></tbody></table>`;
+            const texto = [
+                `LEITO ${leito}`,
+                `${nome}\nP: ${prontuario}\nI: ${idade}\nIH: ${internacao}`,
+                `DIAGNÓSTICO:\n${diagnostico}\n\nHPP:\n${maiusculas(hpp)}`,
+                `EVOLUÇÃO / INFUSÕES / VENTILAÇÃO / GSA\n\n${evolucao}`,
+                `CBDF:\n${cbdf}`,
+                `CONDUTAS:\n${condutas}`,
+                `ROUND MULTIDISCIPLINAR:\n${roundMultidisciplinar}`
+            ].join('\t');
+
+            const copiarTextoSimples = () => {
+                const textarea = document.createElement('textarea');
+                textarea.value = texto;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                const copiado = document.execCommand('copy');
+                document.body.removeChild(textarea);
+                if (copiado) alert('Dados copiados para a passagem! Cole na primeira célula da linha no Word.');
+                else alert('Não foi possível copiar automaticamente.');
+            };
+
+            if (navigator.clipboard && window.ClipboardItem) {
+                const item = new ClipboardItem({
+                    'text/html': new Blob([html], { type: 'text/html' }),
+                    'text/plain': new Blob([texto], { type: 'text/plain' })
+                });
+                navigator.clipboard.write([item])
+                    .then(() => alert('Dados copiados para a passagem! Cole na primeira célula da linha no Word.'))
+                    .catch(copiarTextoSimples);
+            } else {
+                copiarTextoSimples();
+            }
+        }
+
+        document.getElementById('copiarPassagemBtn').addEventListener('click', copiarParaPassagem);
 
         // ========== INICIALIZAÇÃO DOS SELECTS GLASGOW ==========
         for (let i = 1; i <= 4; i++) {
