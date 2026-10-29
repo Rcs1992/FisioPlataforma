@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora CPAx • Mandala funcional</title>
+<style>
+:root{--navy:#15324b;--teal:#087e8b;--mint:#dff3ef;--ink:#243746;--muted:#647786;--line:#d9e4e9;--paper:#f4f8fa;--white:#fff;--gold:#e9aa42;--red:#b44747}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+header{background:linear-gradient(120deg,#12324c,#087e8b);color:white;padding:34px 20px 30px}header .wrap,main{max-width:1180px;margin:auto}header .eyebrow{font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;opacity:.82;font-weight:700}h1{font-size:clamp(1.8rem,4vw,2.7rem);line-height:1.08;margin:8px 0}header p{max-width:760px;margin:10px 0 0;color:#e2f1f3}
+main{padding:22px 18px 42px}.toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;margin-bottom:16px}.patient-data{padding:15px 18px 16px;background:#f8fbfc;border-bottom:1px solid var(--line)}.patient-data h3{font-size:.92rem;color:var(--navy);margin:0 0 10px}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.fields label{font-size:.76rem;font-weight:700;color:#536a79}.fields input,.fields textarea{display:block;width:100%;margin-top:4px;border:1px solid #cbd9df;border-radius:8px;padding:8px 9px;background:white;color:var(--ink);font:inherit;font-size:.86rem}.fields textarea{min-height:60px;resize:vertical}.field-wide{grid-column:1/-1}.print-report{display:none}button{border:0;border-radius:9px;padding:10px 15px;font-weight:700;cursor:pointer;font-size:.9rem}.btn-primary{background:var(--teal);color:white}.btn-soft{background:#e6eff2;color:var(--navy);border:1px solid var(--line)}button:hover{filter:brightness(.96)}
+.layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,.9fr);gap:18px;align-items:start}.panel{background:var(--white);border:1px solid var(--line);border-radius:16px;box-shadow:0 5px 18px #15324b0c;overflow:hidden}.panel-head{padding:17px 20px;border-bottom:1px solid var(--line)}.panel-head h2{font-size:1.13rem;margin:0;color:var(--navy)}.panel-head p{margin:4px 0 0;color:var(--muted);font-size:.88rem}.domains{padding:4px 18px 12px}.domain{padding:15px 2px 16px;border-bottom:1px solid #e8eef1}.domain:last-child{border-bottom:0}.domain-top{display:flex;justify-content:space-between;gap:10px;align-items:start}.domain h3{font-size:1rem;margin:0;color:#173e56}.score{flex:none;display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:30px;border-radius:9px;background:var(--mint);color:#076b70;font-weight:800}.domain select{margin-top:9px;width:100%;padding:10px 36px 10px 12px;border:1px solid #cbd9df;border-radius:9px;background:#fff;color:var(--ink);font:inherit;line-height:1.4}.domain select:focus{outline:3px solid #087e8b2b;border-color:var(--teal)}.hint{font-size:.78rem;color:var(--muted);margin:6px 0 0}.side{position:sticky;top:14px}.summary{padding:18px 20px 12px;display:flex;gap:18px;align-items:center}.total{min-width:108px;text-align:center;background:var(--navy);color:white;border-radius:14px;padding:12px 9px}.total strong{font-size:2rem;display:block;line-height:1}.total span{font-size:.75rem;opacity:.85}.summary-copy h2{margin:0;font-size:1.1rem;color:var(--navy)}.summary-copy p{margin:4px 0;color:var(--muted);font-size:.85rem}.progress{height:7px;border-radius:6px;background:#e8eef1;margin:0 20px 8px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#f1bd62,#087e8b);transition:width .25s}.chart-wrap{padding:4px 14px 0}.chart-wrap svg{display:block;width:100%;max-width:500px;height:auto;margin:auto}.legend{display:flex;justify-content:center;gap:15px;flex-wrap:wrap;padding:0 16px 12px;color:var(--muted);font-size:.78rem}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--teal);margin-right:5px}.keyline{display:inline-block;width:13px;height:2px;background:#a9bac4;vertical-align:middle;margin-right:5px}.meta{padding:14px 18px 17px;border-top:1px solid var(--line);font-size:.79rem;color:var(--muted)}.meta b{color:var(--ink)}.notice{background:#fff8e9;border:1px solid #f0dfb4;padding:12px 14px;border-radius:11px;color:#65512c;font-size:.83rem;margin-top:16px}.footer{font-size:.78rem;color:var(--muted);margin:18px 3px 0}.empty-label{fill:#687d8b;font-size:11px;font-weight:600}.axis-label{fill:#354e60;font-size:11px;font-weight:700}.axis-num{fill:#81939e;font-size:9px}.data-shape{fill:#12a4a2;fill-opacity:.23;stroke:#087e8b;stroke-width:2.5;stroke-linejoin:round}.point{fill:#087e8b;stroke:#fff;stroke-width:2}.point.zero{fill:#fff;stroke:#087e8b;stroke-width:2}.grid-ring{fill:none;stroke:#c8d6dc;stroke-width:1}.axis-line{stroke:#d4e0e4;stroke-width:1}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.side{position:static}.chart-wrap svg{max-width:430px}}@media(max-width:500px){header{padding:26px 17px}.summary{align-items:flex-start}.domain{padding-top:13px}.domains{padding:0 14px 8px}.toolbar{justify-content:stretch}.toolbar button{flex:1}.fields{grid-template-columns:1fr}.field-wide{grid-column:auto}}
+@media print{@page{size:A4;margin:13mm}body{background:white;font-size:10pt;color:#243746}header,.toolbar,.toolbar-note,.layout,.notice,.footer{display:none!important}main{max-width:none;padding:0}.print-report{display:block!important}.report-head{border-bottom:3px solid #087e8b;padding-bottom:12px;margin-bottom:13px}.report-kicker{font-size:8pt;letter-spacing:.12em;text-transform:uppercase;color:#087e8b;font-weight:800}.report-head h1{font-size:20pt;margin:3px 0;color:#15324b}.report-head p{margin:0;color:#647786;font-size:9pt}.report-total{display:flex;align-items:center;gap:14px;margin:10px 0 12px;padding:10px 13px;background:#edf6f6;border-radius:9px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.report-total strong{font-size:22pt;color:#087e8b}.report-total span{font-size:9pt}.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;margin:10px 0 14px}.report-cell{border-bottom:1px solid #d9e4e9;padding:4px 1px;min-height:29px}.report-cell b{display:block;text-transform:uppercase;letter-spacing:.04em;color:#647786;font-size:7pt}.report-cell span{font-size:9pt}.report-wide{grid-column:1/-1}.report-body{display:grid;grid-template-columns:1.15fr .85fr;gap:12px;align-items:start}.report-table{width:100%;border-collapse:collapse;font-size:8pt}.report-table th{background:#15324b;color:white;text-align:left;padding:6px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.report-table td{padding:5px 6px;border-bottom:1px solid #d9e4e9;vertical-align:top}.report-table td:first-child{font-weight:700;width:31%}.report-table td:nth-child(2){text-align:center;font-weight:800;width:10%}.report-chart{width:100%;border:1px solid #d9e4e9;border-radius:9px;padding:4px}.report-chart svg{width:100%;height:auto}.report-note{font-size:7.5pt;color:#647786;margin-top:10px;border-top:1px solid #d9e4e9;padding-top:7px}.report-sign{margin-top:19px;width:55%;border-top:1px solid #738692;padding-top:4px;font-size:8pt;color:#647786}.report-empty{color:#8a5d15;background:#fff8e9;padding:7px;border-radius:6px;font-size:8pt}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="eyebrow">Avaliação de funcionalidade • Terapia intensiva</div><h1>CPAx</h1><p>Calculadora dos dez domínios do Chelsea Critical Care Physical Assessment tool, com pontuação individual e mandala funcional atualizada automaticamente.</p></div></header>
+<main>
+<div class="toolbar"><button class="btn-soft" id="clearBtn" type="button">Limpar avaliação</button><button class="btn-primary" id="pdfBtn" type="button">Baixar avaliação em PDF</button></div><p class="toolbar-note" style="text-align:right;color:#647786;font-size:.8rem;margin:-10px 2px 14px">Na janela seguinte, escolha “Salvar como PDF” para baixar o anexo.</p>
+<div class="layout">
+<section class="panel"><div class="panel-head"><h2>Pontue cada domínio</h2><p>Selecione o nível que melhor descreve o desempenho observado. A pontuação escolhida aparece ao lado do domínio.</p></div><section class="patient-data"><h3>Identificação da avaliação</h3><div class="fields">
+<label class="field-wide">Paciente<input id="patientName" autocomplete="off" placeholder="Nome completo"></label>
+<label>Prontuário<input id="record" autocomplete="off"></label><label>Data de nascimento / idade<input id="birthAge" autocomplete="off" placeholder="DD/MM/AAAA ou idade"></label>
+<label>Setor / unidade<input id="unit" autocomplete="off" placeholder="Ex.: CTI Adulto"></label><label>Leito<input id="bed" autocomplete="off"></label>
+<label>Fisioterapeuta<input id="physio" autocomplete="off"></label><label>CREFITO<input id="crefito" autocomplete="off"></label>
+<label>Data da avaliação<input id="evalDate" type="date"></label><label>Horário<input id="evalTime" type="time"></label>
+<label class="field-wide">Diagnóstico / contexto clínico<textarea id="clinicalContext" placeholder="Informações clínicas relevantes para contextualizar a avaliação"></textarea></label>
+</div></section><div class="domains" id="domains"></div></section>
+<aside class="panel side"><div class="panel-head"><h2>Mandala CPAx</h2><p>Perfil visual dos níveis pontuados (0–5).</p></div><div class="summary"><div class="total"><strong id="total">0</strong><span>de 50 pontos</span></div><div class="summary-copy"><h2 id="status">Avaliação não iniciada</h2><p id="count">0 de 10 domínios pontuados</p></div></div><div class="progress"><i id="progress"></i></div><div class="chart-wrap"><svg id="radar" viewBox="0 0 500 470" role="img" aria-label="Mandala radar da pontuação CPAx"></svg></div><div class="legend"><span><i class="dot"></i>Pontuação</span><span><i class="keyline"></i>Escala 0–5</span></div><div class="meta"><b>Interpretação:</b> maior pontuação representa melhor desempenho no domínio. O total é a soma dos dez domínios (0–50); interprete junto à avaliação clínica e ao protocolo local.</div></aside>
+</div>
+<div class="notice"><b>Nota de uso:</b> conteúdo traduzido e organizado a partir dos critérios fornecidos pelo usuário. Esta página é uma calculadora de apoio e não constitui tradução oficial, validação local, recomendação terapêutica ou substituto do instrumento original e do julgamento clínico. A ferramenta original é atribuída ao Chelsea and Westminster NHS Foundation Trust (01/03/2010).</div>
+<p class="footer">CPAx — Chelsea Critical Care Physical Assessment tool • Direitos autorais atribuídos ao Chelsea and Westminster NHS Foundation Trust (01/03/2010).</p>
+<section class="print-report" id="printReport" aria-hidden="true"></section>
+</main>
+<script>
+const domains=[
+{short:'Função\nrespiratória',name:'Função respiratória',levels:[
+'0 — Dependência completa de ventilador. Apenas ciclos mandatórios. Pode estar totalmente sedado/paralisado.',
+'1 — Dependência de ventilador. Ciclos mandatórios com algum esforço espontâneo.',
+'2 — Respiração espontânea com suporte ventilatório invasivo ou não invasivo contínuo.',
+'3 — Respiração espontânea com suporte ventilatório invasivo ou não invasivo intermitente; OU oxigênio de alto fluxo contínuo (>15 L/min).',
+'4 — Recebe oxigenoterapia convencional (<15 L/min).',
+'5 — Ventila espontaneamente sem oxigenoterapia.' ]},
+{short:'Tosse',name:'Tosse',levels:[
+'0 — Tosse ausente; pode estar totalmente sedado/paralisado.',
+'1 — Tosse estimulada somente durante aspiração profunda.',
+'2 — Tosse voluntária fraca e ineficaz; não consegue eliminar secreções sem ajuda (ex.: necessita aspiração profunda).',
+'3 — Tosse voluntária fraca, parcialmente eficaz; às vezes elimina secreções (ex.: necessita aspiração com Yankauer).',
+'4 — Tosse eficaz, eliminando secreções com técnicas de higiene brônquica.',
+'5 — Tosse voluntária consistentemente eficaz, eliminando secreções de forma independente.' ]},
+{short:'Mover-se no\nleito',name:'Mover-se dentro do leito (ex.: rolar)',levels:[
+'0 — Incapaz; pode estar totalmente sedado/paralisado.',
+'1 — Inicia o movimento; necessita assistência máxima (≥2 pessoas).',
+'2 — Inicia o movimento; necessita assistência moderada (≥1 pessoa).',
+'3 — Inicia o movimento; necessita assistência mínima de 1 pessoa.',
+'4 — Independente em ≥3 segundos.',
+'5 — Independente em <3 segundos.' ]},
+{short:'Supino para\nsentado',name:'Supino para sentado à beira do leito',levels:[
+'0 — Incapaz ou instável.',
+'1 — Inicia o movimento; necessita assistência máxima (≥2 pessoas).',
+'2 — Inicia o movimento; necessita assistência moderada (≥1 pessoa).',
+'3 — Inicia o movimento; necessita assistência mínima de 1 pessoa.',
+'4 — Independente em ≥3 segundos.',
+'5 — Independente em <3 segundos.' ]},
+{short:'Equilíbrio\n sentado',name:'Equilíbrio sentado dinâmico',levels:[
+'0 — Incapaz ou instável.',
+'1 — Necessita assistência máxima (≥2 pessoas).',
+'2 — Necessita assistência moderada (≥1 pessoa).',
+'3 — Necessita assistência mínima de 1 pessoa.',
+'4 — Independente, com algum equilíbrio dinâmico; altera a posição do tronco dentro da base de suporte.',
+'5 — Independente, com equilíbrio dinâmico completo; alcança objetos fora da base de suporte.' ]},
+{short:'Equilíbrio\nem pé',name:'Equilíbrio em pé',levels:[
+'0 — Incapaz, instável ou restrito ao leito.',
+'1 — Utiliza mesa ortostática ou similar.',
+'2 — Utiliza guincho de ortostatismo ou similar.',
+'3 — Depende de andador, muletas ou similar.',
+'4 — Independente, sem dispositivos auxiliares.',
+'5 — Independente, sem dispositivos auxiliares e com equilíbrio dinâmico completo; alcança objetos fora da base de suporte.' ]},
+{short:'Sentar e\nlevantar',name:'Sentar para levantar (quadril ≤90°)',levels:[
+'0 — Incapaz ou instável.',
+'1 — Necessita assistência máxima (ex.: guincho de ortostatismo ou similar).',
+'2 — Necessita assistência moderada (ex.: 1–2 pessoas).',
+'3 — Necessita assistência mínima (ex.: 1 pessoa).',
+'4 — Realiza de forma independente, impulsionando-se pelos braços da cadeira.',
+'5 — Realiza de forma independente, sem apoio dos membros superiores.' ]},
+{short:'Transferência\nleito–cadeira',name:'Transferência do leito para a cadeira',levels:[
+'0 — Incapaz ou instável.',
+'1 — Transferência com guincho completo.',
+'2 — Utiliza guincho de ortostatismo ou similar.',
+'3 — Transferência pivotante (sem dar passos) com dispositivo de mobilidade ou assistência física.',
+'4 — Transferência em pé e com passos, usando dispositivo de mobilidade OU assistência física.',
+'5 — Transferência independente, sem equipamento.' ]},
+{short:'Passos',name:'Passos',levels:[
+'0 — Incapaz ou instável.',
+'1 — Utiliza guincho de ortostatismo ou similar.',
+'2 — Utiliza dispositivo de mobilidade E assistência de mais de 1 pessoa (moderada).',
+'3 — Utiliza dispositivo de mobilidade E assistência de 1 pessoa (mínima).',
+'4 — Utiliza dispositivo de mobilidade OU assistência mínima de 1 pessoa.',
+'5 — Independente, sem auxílio.' ]},
+{short:'Força de\npreensão',name:'Força de preensão (mão mais forte)',levels:[
+'0 — Não foi possível avaliar.',
+'1 — <20% da média prevista para idade e sexo.',
+'2 — <40% da média prevista para idade e sexo.',
+'3 — <60% da média prevista para idade e sexo.',
+'4 — <80% da média prevista para idade e sexo.',
+'5 — ≥80% da média prevista para idade e sexo.' ],hint:'Comparar com a média prevista para idade e sexo, conforme o método de referência utilizado.'}
+];
+const selected=Array(domains.length).fill(null);
+const today=new Date();document.getElementById('evalDate').value=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function field(id){return document.getElementById(id).value.trim()}
+function formatDate(v){if(!v)return '—';const [y,m,d]=v.split('-');return `${d}/${m}/${y}`}
+function downloadPdf(){
+ const n=selected.filter(v=>v!==null).length;
+ if(!n){alert('Pontue pelo menos um domínio antes de gerar o PDF.');return}
+ const score=selected.reduce((a,v)=>a+(v===null?0:v),0);
+ const rows=domains.map((d,i)=>`<tr><td>${esc(d.name)}</td><td>${selected[i]===null?'—':selected[i]}</td><td>${selected[i]===null?'Não pontuado':esc(d.levels[selected[i]].replace(/^\d+ — /,''))}</td></tr>`).join('');
+ const chart=document.getElementById('radar').cloneNode(true);chart.setAttribute('role','img');chart.setAttribute('aria-label','Mandala CPAx com os níveis avaliados');
+ const cells=[['Paciente',field('patientName')],['Prontuário',field('record')],['Nascimento / idade',field('birthAge')],['Unidade / setor',field('unit')],['Leito',field('bed')],['Data da avaliação',formatDate(field('evalDate'))],['Horário',field('evalTime')],['Fisioterapeuta',field('physio')],['CREFITO',field('crefito')]];
+ const context=field('clinicalContext');
+ document.getElementById('printReport').innerHTML=`<div class="report-head"><div class="report-kicker">Avaliação fisioterapêutica • Perfil funcional</div><h1>CPAx — Perfil funcional</h1><p>Chelsea Critical Care Physical Assessment tool</p></div><div class="report-total"><strong>${score} / 50</strong><span><b>${n}/10 domínios pontuados</b><br>Maior pontuação representa melhor desempenho no domínio.</span></div><div class="report-grid">${cells.map(([k,v])=>`<div class="report-cell"><b>${esc(k)}</b><span>${esc(v||'—')}</span></div>`).join('')}<div class="report-cell report-wide"><b>Diagnóstico / contexto clínico</b><span>${esc(context||'—')}</span></div></div><div class="report-body"><div><table class="report-table"><thead><tr><th>Domínio</th><th>Nível</th><th>Critério selecionado</th></tr></thead><tbody>${rows}</tbody></table></div><div class="report-chart"><div style="font-size:8pt;font-weight:800;color:#15324b;text-align:center;padding:4px">MANDALA CPAx • ESCALA 0–5</div>${chart.outerHTML}</div></div><div class="report-note"><b>Registro:</b> Pontuações não selecionadas aparecem como “não pontuado” e não são consideradas na soma. Total apresentado como soma dos níveis selecionados, com máximo de 50 quando os dez domínios são pontuados.<br><b>Nota:</b> Conteúdo traduzido e organizado a partir dos critérios fornecidos pelo usuário. Não constitui tradução oficial, validação local ou substituto do instrumento original e do julgamento clínico. Instrumento atribuído ao Chelsea and Westminster NHS Foundation Trust (01/03/2010).</div><div class="report-sign">${esc(field('physio')||'Fisioterapeuta')} ${field('crefito')?' • '+esc(field('crefito')):''}</div>`;
+ document.getElementById('printReport').setAttribute('aria-hidden','false');
+ window.print();
+ setTimeout(()=>document.getElementById('printReport').setAttribute('aria-hidden','true'),1000);
+}
+const host=document.getElementById('domains');
+domains.forEach((d,i)=>{const row=document.createElement('article');row.className='domain';const options=d.levels.map((x,n)=>`<option value="${n}">${x.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')}</option>`).join('');row.innerHTML=`<div class="domain-top"><h3>${d.name}</h3><span class="score" id="score-${i}" aria-label="Sem pontuação">—</span></div><select id="sel-${i}" aria-label="Pontuação: ${d.name}"><option value="">Selecione um nível…</option>${options}</select>${d.hint?`<p class="hint">${d.hint}</p>`:''}`;host.appendChild(row);row.querySelector('select').addEventListener('change',e=>{selected[i]=e.target.value===''?null:Number(e.target.value);update()})});
+function update(){let total=0,n=0;selected.forEach((v,i)=>{const el=document.getElementById(`score-${i}`);el.textContent=v===null?'—':v;el.setAttribute('aria-label',v===null?'Sem pontuação':`Pontuação ${v}`);if(v!==null){total+=v;n++}});document.getElementById('total').textContent=total;document.getElementById('count').textContent=`${n} de 10 domínios pontuados`;document.getElementById('progress').style.width=`${n*10}%`;document.getElementById('status').textContent=n===0?'Avaliação não iniciada':n<10?'Avaliação parcial':'Avaliação completa';draw(total)}
+function draw(total){const svg=document.getElementById('radar'),cx=250,cy=225,R=155,labelR=204,N=domains.length;svg.innerHTML='';const ns='http://www.w3.org/2000/svg';function add(tag,attrs,text){const e=document.createElementNS(ns,tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));if(text)e.textContent=text;svg.appendChild(e);return e}const pt=(i,r)=>{const a=-Math.PI/2+2*Math.PI*i/N;return [cx+r*Math.cos(a),cy+r*Math.sin(a)]};for(let level=1;level<=5;level++){const coords=domains.map((_,i)=>pt(i,R*level/5).join(',')).join(' ');add('polygon',{points:coords,class:'grid-ring'});const [x,y]=pt(0,R*level/5);add('text',{x:x+4,y:y+3,class:'axis-num'},String(level))}domains.forEach((d,i)=>{const [x,y]=pt(i,R);add('line',{x1:cx,y1:cy,x2:x,y2:y,class:'axis-line'});const [lx,ly]=pt(i,labelR);let anchor='middle';if(lx<cx-24)anchor='end';if(lx>cx+24)anchor='start';const lines=d.short.split('\n');lines.forEach((line,j)=>add('text',{x:lx,y:ly+(j-(lines.length-1)/2)*13,'text-anchor':anchor,class:'axis-label'},line))});if(selected.some(v=>v!==null)){const coords=domains.map((_,i)=>{const v=selected[i]===null?0:selected[i];return pt(i,R*v/5).join(',')}).join(' ');add('polygon',{points:coords,class:'data-shape'});domains.forEach((_,i)=>{const [x,y]=pt(i,R*(selected[i]||0)/5);add('circle',{cx:x,cy:y,r:4.5,class:`point ${selected[i]===0?'zero':''}`})})}else{add('text',{x:cx,y:cy-5,'text-anchor':'middle',class:'empty-label'},'Selecione os domínios');add('text',{x:cx,y:cy+12,'text-anchor':'middle',class:'empty-label'},'para preencher a mandala')} }
+document.getElementById('clearBtn').addEventListener('click',()=>{selected.fill(null);domains.forEach((_,i)=>document.getElementById(`sel-${i}`).value='');update()});document.getElementById('pdfBtn').addEventListener('click',downloadPdf);update();
+</script>
+</body></html>
